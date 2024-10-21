@@ -1,0 +1,22 @@
+//prompt for spawned AI(i.e. AI that is newly made with a fresh set of prompts available)
+in a previous chat the AI <Enter current progress here>. But nonetheless I want you to traverse this file called combined_output.txt and fully understand the code in it and the progress made and the practices used. So that you can pick up and continue where the previous AI left off.
+
+
+//prompt for dying AI(i.e. AI that is running out of messages)
+I am running out of messages to give to you and hence I want you to collate all the information you have about the application, the plans, the requirements of the application, all information about me, and literally every other detail about the application so far. Also include details about the project structure (the files, the names of those files and what they contain), also include metadata about the project such as the settings enabled during the initial project setup process, the progress of the applciation so far and the project development roadmap that we are currently following right now.
+
+The purpose of this collated document is to be shared with another AI model who is not aware about the project at all, but is required to essentially continue where the previous AI (that is you) left off.
+
+
+
+
+
+
+
+
+// incomplete prompt that must be integrated into the prompt above
+
+
+I want you to generate an extremely optimized AI prompt that will tell the AI to guide me through the entire process of making the application whilst being very coherent with it's code output, like I do not want any case where I have to painstakingly trace the errors in my code just because the AI wasn't consistent with the code.
+
+Also I want the AI to generate a document that contains another prompt that is derived from the ENTIRE CONVERSATION so far and from any previous conversations and the original prompt. its kind of like a master document that will be passed on between different AIs so that each AI will have ALL and I mean ALL the information regarding the application, the code and other stuff like my own personal requirements like the one I mentioned before regarding guiding me through the process, etc..

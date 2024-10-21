@@ -1,0 +1,57 @@
+CS IA Baseline idea
+I have a client (which is myself), an IBDP student that needs a robust web application that can manage their life in terms of making and managing schedules of multiple different aspects of their life.
+
+Client Details
+The over-arching aspects in their life are:
+- Academics
+    - Includes studying for exam related course content and producing Internal Assessments and fulfilling the core components (TOK, CAS, EE).
+- University search and application writing
+- Sports (The client is a Triathlete) and Fitness (my client also wants to learn Muay Thai and Calisthenics)
+- Extracurriculars (stuff like Ultra learning projects for engineering or the course they are planning to take at university, side hustle businesses)
+- Mental Health (includes broadly: Self-Esteem checkups, Observations/thoughts note-taking, Relaxation activities (includes stuff like playing with a ball with a wall, reading a really good book just for the pleasure of reading)).
+
+Client Requirements
+- The client needs a “Scheduler” application, which from the meeting it has been determined to contain the following over-arching expected features.
+    - Main Scheduler
+        - This is the component that does the heavy lifting of the main scheduling of the inputted tasks and their individual constraints (refer to the information on constraints in the constraints section.) The main scheduler is also divided into the following sub-features
+        - The client also wants the main scheduler to extensively use the concept of spaced repetition so that he doesn’t have to worry about having to relearn things.
+        - The client also wants the scheduler to have an AI component specially trained to enhanced the scheduling processes.
+        - Additionally the client wants to be able to input to the Tracking component, what ever specific requirements he has for his tasks. For example: If the client as a sudden exam coming up he needs to be able to input the details of the exam, like the syllabus being tested and the concepts that he needs to learn/relearn/review/practice (the concepts that need review has to be taken either from the existing database from the Note-Taker application or from the user themselves. Although the user must be able to override the existing data if he feels that certain aspects of the database are inaccurate.)
+    - Tracking component
+        - This component processes constraints and other inputs from the user regarding the performance of tasks, and other data useful for the following analytics component.
+    - Analytics component
+        - The client has requested to display the analytics every time the client logs onto the application. (The client also requests the application to be password locked so that only they can access it.)
+        - Ideally this component would be heavily reliant on a specially trained AI that can edit and/or generate new analytics reports based on the input handled from the Tracking component.
+        - The client requested that the reports must have a certain predefined format, and that any new components added by the AI to the reports should be presented to the user first and only be added into the reports until the user wishes to add them. Also allow the user to add their own new components to the report.
+- Additionally the client wants the scheduler to be able to retrieve deadlines and events from Google Calendar. The client has also requested to allow the scheduler to manipulate the client’s calendar, but also maintaining a back up of the original calendar in case of any mistakes or other reasons.
+
+Aside from the scheduler the client also requests another application inside the main web app that works along side the Scheduler.
+This application is called the “Note-taker”. 
+- This Note-taker is meant to be a special application that houses very specific note-taking environments for each of the subjects of the use.
+- The subjects of the user that require this application are: Computer Science HL, Physics HL, Economics SL, English A: Language and Literature SL, and Spanish ab initio SL.
+- The specific note-taking environment requirements for each of the subject are as follows:
+    - Computer Science HL, Physics HL, Economics SL, and English A: Language and Literature SL
+        - Essentially a copy of the UI/UX of Liquid Text app.
+    - Spanish ab initio SL
+        - The environment for this subject mostly requires the input of new vocabulary and Cloze based practice of the new vocabulary.
+- The specific requirements for the database storing the notes.
+        - Relational Database style fact relations map. Where each fact/concept is stored as an entity and the relations between concepts are made through foreign keys and what not.
+        - The data/notes are stored as relational database entities.
+        - The Technology used for the database is PostgreSQL, due to its ability to handle unstructured data and robust querying systems.
+        - The querying feature of PostgreSQL allows the user to generate specific sets of notes as per their requirement.
+
+Overall feature requirements for the Note-Taker app:
+- Zettelkasten style note-taking
+    - Obsidian like knowledge connections mind-map.
+    - Another special feature that would be really helpful is the ability to make connections between two pieces of knowledge/concepts. The connections are usually going to be in the form of elaborate descriptions of the connections. And I do not want them to be the same kind of note as the concepts/pieces of knowledge, instead I want them to be the line itself that connect the two notes, refer to the following illustration.
+    - All of that style of note-taking would revolve around the PostgreSQL relational database.
+
+And as mentioned earlier the Note-Taker application, will be working hand-in-hand with the Scheduler to make appropriate study plans, fully equipped with appropriate resources and tests for the subject matter.
+
+Constraints section:
+- The constraints will depend on the client’s explicit inputs on the study plans, stuff like deadlines, holidays (where extra studying could be done, but sometimes even those holidays are taken up by important events.), lapses in following the generated plans (sudden events may trigger the client to abandon the generated plan, in such a case the client would be prompted to enter the duration of time that was spent in the lapse, once that is entered by the client the application will then revise the plan to suit the new conditions.)
+- Other commitments: the client has multiple commitments including but not limited to: training for Triathlons, and other extracurriculars like Muay Thai training, Ultralearning projects. So, the client wants the application to handle the planning for the other commitments too.
+- Time availability - sometimes the client cannot devote equal amounts of time to a particular commitment due to other commitments and the client would like it if the application is able to handle the variable time allotment.
+- Expected time for completion: the client may also want to enter any time constraints that are required for a certain tasks.
+
+I want you to break down each task that I have to do to make the entire application. Make sure to break it down until every step is atomic (cannot be broken down further).
