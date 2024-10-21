@@ -20,8 +20,8 @@ def combine_files(root_dir, output_file):
         'indexengineer/README.md',
         'indexengineer/tailwind.config.ts',
         'indexengineer/tsconfig.json',
-        'indexengineer/package-lock.json',
-        'indexengineer/package.json'
+        'indexengineer/package.json',
+        '''indexengineer/package-lock.json'''#change this bit of code if you are planning to upload the package-lock.json file
     ]
 
     with open(output_file, 'w', encoding='utf-8') as outfile:
@@ -40,7 +40,7 @@ def combine_files(root_dir, output_file):
 
 # Specify the root directory and output file path
 root_directory = r"C:\Users\SUN\Desktop\programs\IBDP-SIMS"
-output_file_path = r"C:\Users\SUN\Desktop\programs\IBDP-SIMS\combined_output.txt"
+output_file_path = r"C:\Users\SUN\Desktop\programs\IBDP-SIMS\Handover\Collater & Collated\combined_output.txt"
 
 # Run the function
 combine_files(root_directory, output_file_path)

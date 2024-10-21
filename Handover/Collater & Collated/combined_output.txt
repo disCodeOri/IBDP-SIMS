@@ -1,0 +1,765 @@
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/layout.tsx
+
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
+export const metadata: Metadata = {
+  title: "Scheduler App",
+  description: "A simple scheduler application",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 min-h-screen text-gray-900`}>
+        <main className="container mx-auto p-4">
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/page.tsx
+
+import Link from 'next/link'
+
+export default function Home() {
+  return (
+    <div className="text-center">
+      <h1 className="text-4xl font-bold mb-4 text-gray-900">Welcome to the Scheduler App</h1>
+      <Link href="/scheduler" className="text-blue-500 hover:text-blue-700">
+        Go to Scheduler
+      </Link>
+    </div>
+  )
+}
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/globals.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/scheduler/page.tsx
+
+
+// src/app/scheduler/page.tsx (updated)
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import TaskForm from '@/components/TaskForm';
+import TaskList from '@/components/TaskList';
+import Calendar from '@/components/Calendar';
+import FilterSort from '@/components/FilterSort';
+import TaskDetails from '@/components/TaskDetails';
+import { Task } from '@/types/task';
+
+export default function Scheduler() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [filter, setFilter] = useState('all');
+  const [sort, setSort] = useState('date');
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    applyFilterAndSort();
+  }, [tasks, filter, sort]);
+
+  const applyFilterAndSort = () => {
+    let filtered = [...tasks];
+
+    // Apply filter
+    const today = new Date();
+    const oneWeekLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const oneMonthLater = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+    switch (filter) {
+      case 'today':
+        filtered = filtered.filter(task => new Date(task.date).toDateString() === today.toDateString());
+        break;
+      case 'week':
+        filtered = filtered.filter(task => {
+          const taskDate = new Date(task.date);
+          return taskDate >= today && taskDate <= oneWeekLater;
+        });
+        break;
+      case 'month':
+        filtered = filtered.filter(task => {
+          const taskDate = new Date(task.date);
+          return taskDate >= today && taskDate <= oneMonthLater;
+        });
+        break;
+    }
+
+    // Apply sort
+    switch (sort) {
+      case 'date':
+        filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        break;
+      case 'duration':
+        filtered.sort((a, b) => a.duration - b.duration);
+        break;
+      case 'title':
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+    }
+
+    setFilteredTasks(filtered);
+  };
+
+  const addTask = (task: Omit<Task, 'id'>) => {
+    const newTask = { ...task, id: Date.now() };
+    setTasks([...tasks, newTask]);
+  };
+
+  const updateTask = (updatedTask: Task) => {
+    setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+    setEditingTask(null);
+  };
+
+  const deleteTask = (id: number) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const editTask = (task: Task) => {
+    setEditingTask(task);
+  };
+
+  const viewTaskDetails = (task: Task) => {
+    setSelectedTask(task);
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4 text-gray-900">Scheduler</h1>
+      <TaskForm onAddTask={addTask} onUpdateTask={updateTask} editingTask={editingTask} />
+      <FilterSort onFilterChange={setFilter} onSortChange={setSort} />
+      <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className="md:w-1/2">
+          <h2 className="text-xl font-bold mb-2">Task List</h2>
+          <TaskList
+            tasks={filteredTasks}
+            onDeleteTask={deleteTask}
+            onEditTask={editTask}
+            onViewTask={viewTaskDetails}
+          />
+        </div>
+        <div className="md:w-1/2">
+          <Calendar tasks={filteredTasks} />
+        </div>
+      </div>
+      {selectedTask && (
+        <TaskDetails task={selectedTask} onClose={() => setSelectedTask(null)} />
+      )}
+    </div>
+  );
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/Calendar.tsx
+
+"use client";
+
+import React from "react";
+import { Task } from "@/types/task";
+
+interface CalendarProps {
+  tasks: Task[];
+}
+
+export default function Calendar({ tasks }: CalendarProps) {
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  const daysInMonth = lastDayOfMonth.getDate();
+  const startingDay = firstDayOfMonth.getDay();
+
+  const calendar = [];
+  let day = 1;
+
+  for (let i = 0; i < 6; i++) {
+    const week = [];
+    for (let j = 0; j < 7; j++) {
+      if (i === 0 && j < startingDay) {
+        week.push(<td key={`empty-${j}`} className="p-2 border"></td>);
+      } else if (day > daysInMonth) {
+        break;
+      } else {
+        const currentDate = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          day
+        );
+        const tasksForDay = tasks.filter(
+          (task) =>
+            new Date(task.date).toDateString() === currentDate.toDateString()
+        );
+        week.push(
+          <td key={day} className="p-2 border">
+            <div className="font-bold">{day}</div>
+            {tasksForDay.map((task) => (
+              <div
+                key={task.id}
+                className="text-xs bg-blue-100 p-1 mt-1 rounded"
+              >
+                {task.title}
+              </div>
+            ))}
+          </td>
+        );
+        day++;
+      }
+    }
+    calendar.push(<tr key={i}>{week}</tr>);
+    if (day > daysInMonth) break;
+  }
+
+  return (
+    <div className="mt-4">
+      <h2 className="text-xl font-bold mb-2">Calendar</h2>
+      <table className="w-full border-collapse">
+        <thead>
+          <tr>
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+              <th key={day} className="p-2 border">
+                {day}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{calendar}</tbody>
+      </table>
+    </div>
+  );
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/TaskForm.tsx
+
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Task } from "@/types/task";
+
+//interface TaskFormProps {  onAddTask: (task: { title: string; date: string; duration: number }) => void;}
+
+interface TaskFormProps {
+  onAddTask: (task: Omit<Task, "id">) => void;
+  onUpdateTask: (task: Task) => void;
+  editingTask: Task | null;
+}
+
+export default function TaskForm({
+  onAddTask,
+  onUpdateTask,
+  editingTask,
+}: TaskFormProps) {
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [duration, setDuration] = useState("");
+
+  useEffect(() => {
+    if (editingTask) {
+      setTitle(editingTask.title);
+      setDate(editingTask.date);
+      setDuration(editingTask.duration.toString());
+    }
+  }, [editingTask]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (title && date && duration) {
+      if (editingTask) {
+        onUpdateTask({
+          id: editingTask.id,
+          title,
+          date,
+          duration: parseInt(duration),
+        });
+      } else {
+        onAddTask({ title, date, duration: parseInt(duration) });
+      }
+      setTitle("");
+      setDate("");
+      setDuration("");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-4">
+      <div className="mb-2">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Task Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-900"
+          required
+        />
+      </div>
+      <div className="mb-2">
+        <label
+          htmlFor="date"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Date
+        </label>
+        <input
+          type="date"
+          id="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-900"
+          required
+        />
+      </div>
+      <div className="mb-2">
+        <label
+          htmlFor="duration"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Duration (minutes)
+        </label>
+        <input
+          type="number"
+          id="duration"
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-900"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        {editingTask ? "Update Task" : "Add Task"}
+      </button>
+    </form>
+  );
+}
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/FilterSort.tsx
+
+"use client";
+
+import React from "react";
+
+interface FilterSortProps {
+  onFilterChange: (filter: string) => void;
+  onSortChange: (sort: string) => void;
+}
+
+export default function FilterSort({ onFilterChange, onSortChange }: FilterSortProps) {
+  return (
+    <div className="mb-4 flex space-x-4">
+      <select
+        onChange={(e) => onFilterChange(e.target.value)}
+        className="p-2 border rounded"
+      >
+        <option value="all">All Tasks</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+      <select
+        onChange={(e) => onSortChange(e.target.value)}
+        className="p-2 border rounded"
+      >
+        <option value="date">Sort by Date</option>
+        <option value="duration">Sort by Duration</option>
+        <option value="title">Sort by Title</option>
+      </select>
+    </div>
+  );
+}
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/TaskDetails.tsx
+
+"use client";
+
+import React from "react";
+import { Task } from "@/types/task";
+
+interface TaskDetailsProps {
+  task: Task;
+  onClose: () => void;
+}
+
+export default function TaskDetails({ task, onClose }: TaskDetailsProps) {
+  return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="mt-3 text-center">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">{task.title}</h3>
+          <div className="mt-2 px-7 py-3">
+            <p className="text-sm text-gray-500">Date: {task.date}</p>
+            <p className="text-sm text-gray-500">Duration: {task.duration} minutes</p>
+          </div>
+          <div className="items-center px-4 py-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/TaskList.tsx
+
+
+'use client';
+
+import React from 'react';
+import { Task } from '@/types/task';
+
+interface TaskListProps {
+  tasks: Task[];
+  onDeleteTask: (id: number) => void;
+  onEditTask: (task: Task) => void;
+  onViewTask: (task: Task) => void;
+}
+
+export default function TaskList({ tasks, onDeleteTask, onEditTask, onViewTask }: TaskListProps) {
+  return (
+    <ul className="space-y-2">
+      {tasks.map((task) => (
+        <li key={task.id} className="bg-white p-4 rounded-md shadow">
+          <h3 className="font-bold text-gray-900">{task.title}</h3>
+          <p className="text-sm text-gray-600">Date: {task.date}</p>
+          <p className="text-sm text-gray-600">Duration: {task.duration} minutes</p>
+          <div className="mt-2 space-x-2">
+            <button 
+              onClick={() => onViewTask(task)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
+            >
+              View
+            </button>
+            <button 
+              onClick={() => onEditTask(task)}
+              className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-sm"
+            >
+              Edit
+            </button>
+            <button 
+              onClick={() => onDeleteTask(task.id)}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm"
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/types/task.ts
+
+export interface Task {
+    id: number;
+    title: string;
+    date: string;
+    duration: number;
+  }
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/.eslintrc.json
+
+{
+  "extends": ["next/core-web-vitals", "next/typescript"]
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/.gitignore
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/next-env.d.ts
+
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/building-your-application/configuring/typescript for more information.
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/next.config.mjs
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default nextConfig;
+
+
+================================================================================
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/package.json
+
+{
+  "name": "indexengineer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.15"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.15"
+  }
+}
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/postcss.config.mjs
+
+/** @type {import('postcss-load-config').Config} */
+const config = {
+  plugins: {
+    tailwindcss: {},
+  },
+};
+
+export default config;
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/README.md
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/tailwind.config.ts
+
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;
+
+
+================================================================================
+
+File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/tsconfig.json
+
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+
+================================================================================
