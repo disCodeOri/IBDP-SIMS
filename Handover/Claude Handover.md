@@ -175,7 +175,7 @@ The project currently has a basic Scheduler application implemented with the fol
 1. **Task Management**: Users can add, edit, and delete tasks. Each task has a title, date, and duration.
 2. **Task Display**: Tasks are displayed in a list view, showing the task details.
 3. **Calendar View**: The application includes a calendar view that displays the tasks on the appropriate days.
-4. **Filtering and Sorting**: Users can filter tasks by "Today", "This Week", "This Month", or "All Tasks". They can also sort tasks by date, duration, or title.
+4. **Filtering and Sorting**: Users can filter tasks by "Today", "This Week", "This Month", "This Year", or "All Tasks". They can also sort tasks in ascending and descending order by date, duration, or title.
 5. **Data Persistence**: Tasks are stored in the browser's local storage, allowing the data to persist between sessions.
 
 ## Development Roadmap
