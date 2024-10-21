@@ -14,7 +14,8 @@ export default function Scheduler() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('date');
+  const [sort, setSort] = useState('date_asc');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
@@ -26,15 +27,15 @@ export default function Scheduler() {
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
     applyFilterAndSort();
-  }, [tasks, filter, sort]);
+  }, [tasks, filter, sort, sortDirection]);
 
   const applyFilterAndSort = () => {
     let filtered = [...tasks];
 
     // Apply filter
     const today = new Date();
-    const oneWeekLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const oneMonthLater = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+    const thisYear = new Date(today.getFullYear(), 0, 1);
+    const nextYear = new Date(today.getFullYear() + 1, 0, 1);
 
     switch (filter) {
       case 'today':
@@ -43,27 +44,42 @@ export default function Scheduler() {
       case 'week':
         filtered = filtered.filter(task => {
           const taskDate = new Date(task.date);
-          return taskDate >= today && taskDate <= oneWeekLater;
+          return taskDate >= today && taskDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
         });
         break;
       case 'month':
         filtered = filtered.filter(task => {
           const taskDate = new Date(task.date);
-          return taskDate >= today && taskDate <= oneMonthLater;
+          return taskDate >= today && taskDate <= new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        });
+        break;
+      case 'year':
+        filtered = filtered.filter(task => {
+          const taskDate = new Date(task.date);
+          return taskDate >= thisYear && taskDate < nextYear;
         });
         break;
     }
 
     // Apply sort
     switch (sort) {
-      case 'date':
+      case 'date_asc':
         filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         break;
-      case 'duration':
+      case 'date_desc':
+        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        break;
+      case 'duration_asc':
         filtered.sort((a, b) => a.duration - b.duration);
         break;
-      case 'title':
+      case 'duration_desc':
+        filtered.sort((a, b) => b.duration - a.duration);
+        break;
+      case 'title_asc':
         filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'title_desc':
+        filtered.sort((a, b) => b.title.localeCompare(a.title));
         break;
     }
 
@@ -96,7 +112,12 @@ export default function Scheduler() {
     <div>
       <h1 className="text-2xl font-bold mb-4 text-gray-900">Scheduler</h1>
       <TaskForm onAddTask={addTask} onUpdateTask={updateTask} editingTask={editingTask} />
-      <FilterSort onFilterChange={setFilter} onSortChange={setSort} />
+      <FilterSort
+        onFilterChange={setFilter}
+        onSortChange={setSort}
+        onSortDirectionChange={setSortDirection}
+        sortDirection={sortDirection}
+      />
       <div className="flex flex-col md:flex-row md:space-x-4">
         <div className="md:w-1/2">
           <h2 className="text-xl font-bold mb-2">Task List</h2>
