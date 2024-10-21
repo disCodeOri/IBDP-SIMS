@@ -21,7 +21,7 @@ def combine_files(root_dir, output_file):
         'indexengineer/tailwind.config.ts',
         'indexengineer/tsconfig.json',
         'indexengineer/package.json',
-        '''indexengineer/package-lock.json'''#change this bit of code if you are planning to upload the package-lock.json file
+        # 'indexengineer/package-lock.json' #change this bit of code if you are planning to upload the package-lock.json file
     ]
 
     with open(output_file, 'w', encoding='utf-8') as outfile:
