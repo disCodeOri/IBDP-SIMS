@@ -16,12 +16,12 @@ def combine_files(root_dir, output_file):
         'indexengineer/.gitignore',
         'indexengineer/next-env.d.ts',
         'indexengineer/next.config.mjs',
-        'indexengineer/package-lock.json',
-        'indexengineer/package.json',
         'indexengineer/postcss.config.mjs',
         'indexengineer/README.md',
         'indexengineer/tailwind.config.ts',
-        'indexengineer/tsconfig.json'
+        'indexengineer/tsconfig.json',
+        'indexengineer/package-lock.json',
+        'indexengineer/package.json'
     ]
 
     with open(output_file, 'w', encoding='utf-8') as outfile:

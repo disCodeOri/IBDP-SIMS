@@ -1,0 +1,12 @@
+modules = ["nodejs-20", "python-3.12", "web"]
+run = "cd indexengineer && npm run dev"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "cd indexengineer && npm run dev"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

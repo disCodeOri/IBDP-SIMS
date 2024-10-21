@@ -133,10 +133,13 @@ The project currently has a basic Scheduler application implemented with the fol
 ## Development Roadmap  ----------------------- _**improvement required**_
 
 1. Enhance the Scheduler application:
+   - Add a more sophisticated calendar view with week and day views
    - Implement more advanced scheduling algorithms
    - Add AI-powered scheduling suggestions
    - Integrate with Google Calendar
    - Develop the Tracking and Analytics components
+   - Add user authentication and multi-user support
+   - Implement proper SQL Database integration for data persistence and advanced data handling.
 2. Develop the Note-taker application:
    - Create subject-specific note-taking environments
    - Implement Zettelkasten-style note organization
@@ -175,6 +178,94 @@ The developer is "Parth" an IBDP student with beginner-level programming experie
 3. Implementing a robust note-taking system with knowledge connections is complex
 4. Ensuring data security and privacy, especially for mental health-related data
 5. Balancing feature richness with project manageability for a CS IA
+
+## Coding Conventions and Practices
+
+### 1. File Naming and Structure
+- Use PascalCase for component files: `TaskForm.tsx`, `TaskList.tsx`
+- Use camelCase for non-component files: `task.ts`
+- Each component is in its own file
+- Types are defined in separate files under the `types` directory
+
+### 2. Component Structure
+- Use functional components with hooks
+- Props are defined using TypeScript interfaces
+- Each component file starts with the `'use client';` directive
+
+### 3. Naming Conventions
+- Components: PascalCase (e.g., `TaskForm`, `TaskList`)
+- Functions: camelCase (e.g., `addTask`, `updateTask`)
+- Interfaces: PascalCase, prefixed with 'I' (e.g., `ITask`)
+- Props: camelCase (e.g., `onAddTask`, `editingTask`)
+- State variables: camelCase (e.g., `tasks`, `editingTask`)
+
+### 4. Hooks Usage
+- `useState` for local component state
+- `useEffect` for side effects (e.g., loading/saving data to localStorage)
+
+### 5. Event Handling
+- Event handlers are prefixed with 'handle' (e.g., `handleSubmit`)
+- Callbacks passed as props are prefixed with 'on' (e.g., `onAddTask`, `onDeleteTask`)
+
+### 6. TypeScript Practices
+- Use explicit typing for function parameters and return values
+- Use interfaces for defining shape of objects (e.g., `Task` interface)
+- Use type inference where possible to reduce verbosity
+
+### 7. Styling
+- Use TailwindCSS classes for styling
+- Prefer utility classes over custom CSS
+- Use responsive classes for layout (e.g., `md:w-1/2`)
+
+### 8. State Management
+- Use React's built-in state management (useState and useEffect)
+- Lift state up to common ancestors when needed
+- Use local storage for data persistence
+
+### 9. Form Handling
+- Controlled components for form inputs
+- Form submission prevention using `e.preventDefault()`
+
+### 10. Data Flow
+- Unidirectional data flow: parent components pass data down as props
+- Child components communicate with parents through callback props
+
+## Key Variables and Functions
+
+### In Scheduler Component (scheduler/page.tsx)
+- State:
+  - `tasks`: array of Task objects
+  - `editingTask`: currently editing Task or null
+- Functions:
+  - `addTask`: adds a new task to the tasks array
+  - `updateTask`: updates an existing task
+  - `deleteTask`: removes a task from the tasks array
+  - `editTask`: sets the editingTask state
+
+### In TaskForm Component
+- Props:
+  - `onAddTask`: function to add a new task
+  - `onUpdateTask`: function to update an existing task
+  - `editingTask`: task being edited (if any)
+- State:
+  - `title`: task title input
+  - `date`: task date input
+  - `duration`: task duration input
+
+### In TaskList Component
+- Props:
+  - `tasks`: array of tasks to display
+  - `onDeleteTask`: function to delete a task
+  - `onEditTask`: function to start editing a task
+
+### In Calendar Component
+- Props:
+  - `tasks`: array of tasks to display on the calendar
+
+### Data Persistence
+- Tasks are stored in and retrieved from localStorage
+- Data is saved whenever the tasks state changes
+- Data is loaded when the Scheduler component mounts
 
 ## Original prompt given by developer
 ```
