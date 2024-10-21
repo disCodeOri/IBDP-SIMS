@@ -100,15 +100,62 @@ IBDP-SIMS/
  
 ```
 
-### File Contents Overview ----------------------- _**improvement required**_
+### File Contents Overview
 
-- `src/app/layout.tsx`: Main layout component with Geist font setup
-- `src/app/page.tsx`: Home page component
-- `src/app/scheduler/page.tsx`: Main Scheduler page component
-- `src/components/Calendar.tsx`: Calendar view component
-- `src/components/TaskForm.tsx`: Form for adding/editing tasks
-- `src/components/TaskList.tsx`: List view of tasks
-- `src/types/task.ts`: TypeScript interface for Task
+#### `src/app/layout.tsx`
+This file sets up the main layout of the application, including the use of the Geist font and the global CSS styles.
+
+#### `src/app/page.tsx`
+This is the home page component, which provides a simple welcome message and a link to the Scheduler page.
+
+#### `src/app/scheduler/page.tsx`
+This is the main Scheduler component, which handles the core functionality of the application, including:
+- Managing the state of tasks (adding, editing, deleting)
+- Applying filtering and sorting to the tasks
+- Rendering the TaskForm, TaskList, Calendar, and TaskDetails components
+
+#### `src/components/Calendar.tsx`
+This component renders a calendar view, displaying tasks on the appropriate days. It calculates the days of the month and maps the tasks to the corresponding days.
+
+#### `src/components/TaskForm.tsx`
+This component provides a form for adding or editing tasks. It manages the state of the form fields and calls the appropriate callback functions (onAddTask or onUpdateTask) when the form is submitted.
+
+#### `src/components/FilterSort.tsx`
+This component handles the filtering and sorting of tasks in the Scheduler. It provides select elements for the user to choose the filter and sort options.
+
+#### `src/components/TaskDetails.tsx`
+This component displays the details of a selected task in a modal. It receives the task object and an onClose callback function as props.
+
+#### `src/types/task.ts`
+This file defines the TypeScript interface for a task, which includes the properties id, title, date, and duration.
+
+#### `.eslintrc.json`
+This is the ESLint configuration file for the project, which extends the Next.js recommended rules.
+
+#### `.gitignore`
+This file specifies which files and directories should be ignored by Git, such as dependency files, build outputs, and local environment files.
+
+#### `next-env.d.ts`
+This file provides type definitions for Next.js-specific features, allowing TypeScript to understand the Next.js runtime environment.
+
+#### `next.config.mjs`
+This is the Next.js configuration file, which is currently empty as no custom configuration is required.
+
+#### `package.json`
+This file contains the project's dependencies and scripts, including Next.js, React, TypeScript, Tailwind CSS, and ESLint.
+
+#### `postcss.config.mjs`
+This is the PostCSS configuration file, which enables the use of Tailwind CSS in the project.
+
+#### `README.md`
+This file contains information about the project, including instructions for running the development server and deploying the application.
+
+#### `tailwind.config.ts`
+This is the Tailwind CSS configuration file, which defines the project's color palette and plugins.
+
+#### `tsconfig.json`
+This is the TypeScript configuration file, which sets up the project's compilation options, including the use of the Next.js TypeScript plugin.
+
 
 ## Project Setup
 
@@ -121,43 +168,68 @@ The project was set up using create-next-app with the following options:
 - App Router: Yes
 - Import alias: No
 
-## Current Progress ----------------------- _**improvement required**_
+## Current Progress
 
 The project currently has a basic Scheduler application implemented with the following features:
 
-1. Add, edit, and delete tasks
-2. Display tasks in a list view
-3. Show tasks in a calendar view
-4. Persist tasks using local storage
+1. **Task Management**: Users can add, edit, and delete tasks. Each task has a title, date, and duration.
+2. **Task Display**: Tasks are displayed in a list view, showing the task details.
+3. **Calendar View**: The application includes a calendar view that displays the tasks on the appropriate days.
+4. **Filtering and Sorting**: Users can filter tasks by "Today", "This Week", "This Month", or "All Tasks". They can also sort tasks by date, duration, or title.
+5. **Data Persistence**: Tasks are stored in the browser's local storage, allowing the data to persist between sessions.
 
-## Development Roadmap  ----------------------- _**improvement required**_
+## Development Roadmap
 
-1. Enhance the Scheduler application:
-   - Add a more sophisticated calendar view with week and day views
-   - Implement more advanced scheduling algorithms
-   - Add AI-powered scheduling suggestions
-   - Integrate with Google Calendar
-   - Develop the Tracking and Analytics components
-   - Add user authentication and multi-user support
-   - Implement proper SQL Database integration for data persistence and advanced data handling.
-2. Develop the Note-taker application:
-   - Create subject-specific note-taking environments
-   - Implement Zettelkasten-style note organization
-   - Develop knowledge connection visualization
-3. Integrate Scheduler and Note-taker applications
-4. Implement user authentication and data security
-5. Develop the Mental Health tracking features
-6. Create a dashboard for an overview of all life aspects
-7. Implement data export and backup features
-8. Conduct thorough testing and debugging
-9. Prepare documentation for the CS IA submission
+1. **Enhance the Scheduler Application**:
+   - Implement a more sophisticated calendar view, including week and day views.
+   - Integrate advanced scheduling algorithms to optimize task scheduling.
+   - Incorporate an AI component to provide intelligent scheduling suggestions.
+   - Integrate with Google Calendar to retrieve and modify deadlines and events.
+   - Develop the Tracking and Analytics components to gather and display key metrics.
+   - Implement user authentication and support for multiple users.
+   - Migrate from local storage to a SQL database (PostgreSQL) for more robust data handling and persistence.
 
-## Next Steps  ----------------------- _**improvement required**_
+2. **Develop the Note-Taker Application**:
+   - Create subject-specific note-taking environments, each with a tailored UI/UX.
+   - Implement Zettelkasten-style note organization, allowing for the creation of connections between concepts.
+   - Develop a knowledge connection visualization tool, inspired by Obsidian's mind map functionality.
 
-1. Complete the basic Scheduler functionality
-2. Start working on the Note-taker application
-3. Research and implement more advanced scheduling algorithms
-4. Begin integration with external services (e.g., Google Calendar)
+3. **Integrate Scheduler and Note-Taker Applications**:
+   - Establish seamless integration between the Scheduler and Note-Taker, allowing the Scheduler to pull relevant notes and resources for each subject.
+   - Ensure that study plans generated by the Scheduler are aligned with the subject-specific content and syllabus within the Note-Taker.
+
+4. **Implement User Authentication and Data Security**:
+   - Develop a robust user authentication system to protect user data.
+   - Ensure proper data encryption and secure storage of sensitive information, such as mental health-related data.
+
+5. **Develop the Mental Health Tracking Features**:
+   - Implement tools for self-esteem checkups, personal reflections, and relaxation activities.
+   - Integrate the mental health tracking features with the overall dashboard and reporting capabilities.
+
+6. **Create a Dashboard for an Overview of All Life Aspects**:
+   - Design a comprehensive dashboard that provides a holistic view of the user's academic, university, sports, extracurricular, and mental health activities.
+   - Ensure the dashboard is intuitive and easy to navigate, allowing users to quickly access relevant information.
+
+7. **Implement Data Export and Backup Features**:
+   - Allow users to export their data in various formats (e.g., CSV, PDF) for backup and sharing purposes.
+   - Provide automated backup functionality to ensure data safety and redundancy.
+
+8. **Conduct Thorough Testing and Debugging**:
+   - Implement a comprehensive test suite to ensure the application's stability and reliability.
+   - Continuously monitor for and address any bugs or issues that arise during development and testing.
+
+9. **Prepare Documentation for the CS IA Submission**:
+   - Compile a detailed user manual, explaining the application's features and how to use them.
+   - Create a technical documentation section, covering the architecture, design decisions, and implementation details.
+   - Ensure the documentation is well-organized and easy to understand for the CS IA submission.
+
+
+## Next Steps
+
+The following text in the code block is written by a human.
+```
+I need you to discuss with me regarding this. Please bring this up during our conversation.
+```
 
 ## Developer Information
 
