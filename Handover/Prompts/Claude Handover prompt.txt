@@ -3,8 +3,6 @@ I need to make a CS IA Application and here is the document that details all the
 
 In a previous chat the AI and I have worked together to build the application so far. I want you to traverse this file and fully understand each and every aspect that is mentioned in the attached document. So that you can pick up and continue where the previous AI left off.
 
-I may also attach another set of documents that contain all the code that has been made so far. I have omitted the package-lock.json file as it is extremely large but if you need it then I will be happy to share it with you.
-
 
 
 
