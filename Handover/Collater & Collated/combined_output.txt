@@ -42,15 +42,17 @@ export default function RootLayout({
 File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/page.tsx
 
 import Link from 'next/link'
+import SearchNavigation from '@/components/SearchNavigation';
 
 export default function Home() {
   return (
-    <div className="text-center">
+    /*<div className="text-center">
       <h1 className="text-4xl font-bold mb-4 text-gray-900">Welcome to the Scheduler App</h1>
       <Link href="/scheduler" className="text-blue-500 hover:text-blue-700">
         Go to Scheduler
       </Link>
-    </div>
+    </div>*/
+    <SearchNavigation />
   )
 }
 
@@ -560,6 +562,8 @@ export default function TaskList({ tasks, onDeleteTask, onEditTask, onViewTask }
 }
 
 ================================================================================
+
+File not found: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/components/SearchNavigation
 
 File: C:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/types/task.ts
 

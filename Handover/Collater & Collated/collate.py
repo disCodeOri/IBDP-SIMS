@@ -11,6 +11,7 @@ def combine_files(root_dir, output_file):
         'indexengineer/src/components/FilterSort.tsx',
         'indexengineer/src/components/TaskDetails.tsx',
         'indexengineer/src/components/TaskList.tsx',
+        'indexengineer/src/components/SearchNavigation',
         'indexengineer/src/types/task.ts'
         #'indexengineer/next.config.mjs',
         #'indexengineer/tailwind.config.ts',
