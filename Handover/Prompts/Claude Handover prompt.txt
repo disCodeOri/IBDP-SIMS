@@ -11,3 +11,14 @@ In a previous chat the AI and I have worked together to build the application so
 I am running out of messages to give to you and hence I want you to collate all the information you have about the application, the plans, the requirements of the application, all information about me, and literally every other detail about the application so far. Also include details about the project structure (the files, the names of those files and what they contain), also include metadata about the project such as the settings enabled during the initial project setup process, the progress of the applciation so far and the project development roadmap that we are currently following right now.
 
 The purpose of this collated document is to be shared with another AI model who is not aware about the project at all, but is required to essentially continue where the previous AI (that is you) left off.
+
+
+
+
+
+
+
+
+ /*I need to make a CS IA Application and here is the document that details all the things that I noted down, that I wanted in the application. In a previous chat the AI and I have worked together to build the application so far. I want you to traverse the files and fully understand each and every aspect that is mentioned in the attached document. So that you can pick up and continue where the previous AI left off. I want you to improve the UI/UX of the Scheduler page. Keep the design nice and simple, and consistent to the design of the main page. Make that entire functionality in a single response right now. Use shadcn components, I have installed the following components from it: Card, Dialog, Tabs, Button, Input, DropdownMenu, command, context-menu, drawer, hover-card, menubar, popover, resizable, tooltip
+
+Make sure there is an option to sort the tasks in ascending or descending order. I also would love to be able to double click on any date and and have a task add window come up. Also update the calendar so that I can see what month or date the calendar is currently in, the default month and year shown and the date highlighted must be the current date of today. Make sure to not make any error that causes the following faults in the application: "when I try to enter details into the boxes, it shifts the selection after I press a single key. Also when I finally click add task nothing comes up in the list or the calendar."*/

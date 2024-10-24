@@ -41,13 +41,11 @@ def combine_files(root_dir, output_file):
             else:
                 outfile.write(f"File not found: {full_path}\n\n")
 
-# Get the directory of the script
+# Automatically get the directory where this script is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Set root directory to point two levels up (since indexengineer is at the same level as Handover)
-root_directory = os.path.abspath(os.path.join(current_dir, '..', '..'))
-
-# Specify the output file path in the current directory
+# Specify the root directory and output file path relative to the current directory
+root_directory = os.path.join(current_dir, "indexengineer")
 output_file_path = os.path.join(current_dir, "combined_output.txt")
 
 # Run the function
