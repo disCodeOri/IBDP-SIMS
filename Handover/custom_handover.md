@@ -58,35 +58,41 @@ The project is a Next.js application with TypeScript and TailwindCSS. Here's the
 
 ```
 IBDP-SIMS/
-├── indexengineer/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── layout.tsx
-│   │   │   ├── page.tsx
-│   │   │   ├── fonts/
-│   │   │   │   ├── GeistMonoVF.woff
-│   │   │   │   └── GeistVF.woff
-│   │   │   └── scheduler/
-│   │   │       └── page.tsx
-│   │   ├── components/
-│   │   │   ├── ui
-│   │   │   ├── TaskForm.tsx
-│   │   │   ├── FilterSort.tsx
-│   │   │   ├── TaskDetails.tsx
-│   │   │   └── TaskList.tsx
-│   │   ├── lib/
-│   │   │   └── utils.ts
-│   │   └── types/
-│   │       └── task.ts
-├── .eslintrc.json
-├── .gitignore
-├── next-env.d.ts
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
-├── README.md
-├── tailwind.config.ts
-└── tsconfig.json
- 
+└── indexengineer/
+    └── src/
+        ├── app/
+        │   ├── layout.tsx
+        │   ├── page.tsx
+        │   ├── fonts/
+        │   │   ├── GeistMonoVF.woff
+        │   │   └── GeistVF.woff
+        │   └── scheduler/
+        │       └── page.tsx
+        ├── components/
+        │   ├── ui/
+        │   ├── CommandProvider.tsx
+        │   ├── SearchContent.tsx
+        │   └── SearchNavigation.tsx
+        └── lib/
+            └── utils.ts
+
 ```
+
+## Project Setup
+
+The project was set up using create-next-app with the following options:
+
+- TypeScript: Yes
+- ESLint: Yes
+- Tailwind CSS: Yes
+- `src/` directory: Yes
+- App Router: Yes
+- Import alias: No
+
+## Technical Stack
+
+- Frontend: Next.js 14 with TypeScript
+- Styling: TailwindCSS
+- State Management: React hooks (useState, useEffect)
+- Data Persistence: Local Storage (currently), planned migration to PostgreSQL
+- Deployment: Not specified yet
