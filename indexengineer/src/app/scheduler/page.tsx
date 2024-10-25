@@ -1,140 +1,367 @@
-'use client';
+// src/app/scheduler/page.tsx
+"use client";
 
 import React, { useState, useEffect } from 'react';
-import TaskForm from '@/components/TaskForm';
-import TaskList from '@/components/TaskList';
-import Calendar from '@/components/Calendar';
-import FilterSort from '@/components/FilterSort';
-import TaskDetails from '@/components/TaskDetails';
-import { Task } from '@/types/task';
+import { Plus, Calendar, Filter, Search } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function Scheduler() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('date_asc');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+const TaskForm = ({ onSubmit, initialData = null, onClose }: any) => {
+  const [task, setTask] = useState<Partial<Task>>(
+  initialData || {
+    title: '',
+    description: '',
+    category: 'Academic',
+    priority: 'Medium',
+    status: 'Pending',
+    dueDate: new Date().toISOString().split('T')[0],
+    concepts: [],
+  }
+  );
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    applyFilterAndSort();
-  }, [tasks, filter, sort, sortDirection]);
-
-  const applyFilterAndSort = () => {
-    let filtered = [...tasks];
-
-    // Apply filter
-    const today = new Date();
-    const thisYear = new Date(today.getFullYear(), 0, 1);
-    const nextYear = new Date(today.getFullYear() + 1, 0, 1);
-
-    switch (filter) {
-      case 'today':
-        filtered = filtered.filter(task => new Date(task.date).toDateString() === today.toDateString());
-        break;
-      case 'week':
-        filtered = filtered.filter(task => {
-          const taskDate = new Date(task.date);
-          return taskDate >= today && taskDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        });
-        break;
-      case 'month':
-        filtered = filtered.filter(task => {
-          const taskDate = new Date(task.date);
-          return taskDate >= today && taskDate <= new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        });
-        break;
-      case 'year':
-        filtered = filtered.filter(task => {
-          const taskDate = new Date(task.date);
-          return taskDate >= thisYear && taskDate < nextYear;
-        });
-        break;
-    }
-
-    // Apply sort
-    switch (sort) {
-      case 'date_asc':
-        filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        break;
-      case 'date_desc':
-        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        break;
-      case 'duration_asc':
-        filtered.sort((a, b) => a.duration - b.duration);
-        break;
-      case 'duration_desc':
-        filtered.sort((a, b) => b.duration - a.duration);
-        break;
-      case 'title_asc':
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'title_desc':
-        filtered.sort((a, b) => b.title.localeCompare(a.title));
-        break;
-    }
-
-    setFilteredTasks(filtered);
-  };
-
-  const addTask = (task: Omit<Task, 'id'>) => {
-    const newTask = { ...task, id: Date.now() };
-    setTasks([...tasks, newTask]);
-  };
-
-  const updateTask = (updatedTask: Task) => {
-    setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
-    setEditingTask(null);
-  };
-
-  const deleteTask = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id));
-  };
-
-  const editTask = (task: Task) => {
-    setEditingTask(task);
-  };
-
-  const viewTaskDetails = (task: Task) => {
-    setSelectedTask(task);
+  const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  onSubmit({ ...task, id: initialData?.id || crypto.randomUUID() });
+  onClose();
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4 text-gray-900">Scheduler</h1>
-      <TaskForm onAddTask={addTask} onUpdateTask={updateTask} editingTask={editingTask} />
-      <FilterSort
-        onFilterChange={setFilter}
-        onSortChange={setSort}
-        onSortDirectionChange={setSortDirection}
-        sortDirection={sortDirection}
+  <form onSubmit={handleSubmit} className="space-y-4">
+    <Input
+    placeholder="Task Title"
+    value={task.title}
+    onChange={(e) => setTask({ ...task, title: e.target.value })}
+    required
+    />
+    <Textarea
+    placeholder="Description"
+    value={task.description}
+    onChange={(e) => setTask({ ...task, description: e.target.value })}
+    />
+    <div className="grid grid-cols-2 gap-4">
+    <Select
+      value={task.category}
+      onValueChange={(value) => setTask({ ...task, category: value as Category })}
+    >
+      <SelectTrigger>
+      <SelectValue placeholder="Category" />
+      </SelectTrigger>
+      <SelectContent>
+      <SelectItem value="Academic">Academic</SelectItem>
+      <SelectItem value="University">University</SelectItem>
+      <SelectItem value="Sports">Sports</SelectItem>
+      <SelectItem value="Extracurricular">Extracurricular</SelectItem>
+      <SelectItem value="Mental Health">Mental Health</SelectItem>
+      </SelectContent>
+    </Select>
+    <Select
+      value={task.priority}
+      onValueChange={(value) => setTask({ ...task, priority: value as Priority })}
+    >
+      <SelectTrigger>
+      <SelectValue placeholder="Priority" />
+      </SelectTrigger>
+      <SelectContent>
+      <SelectItem value="Low">Low</SelectItem>
+      <SelectItem value="Medium">Medium</SelectItem>
+      <SelectItem value="High">High</SelectItem>
+      </SelectContent>
+    </Select>
+    </div>
+    <Input
+    type="date"
+    value={task.dueDate}
+    onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+    />
+    {task.category === 'Academic' && (
+    <div className="space-y-4">
+      <Input
+      placeholder="Subject"
+      value={task.subject}
+      onChange={(e) => setTask({ ...task, subject: e.target.value })}
       />
-      <div className="flex flex-col md:flex-row md:space-x-4">
-        <div className="md:w-1/2">
-          <h2 className="text-xl font-bold mb-2">Task List</h2>
-          <TaskList
-            tasks={filteredTasks}
-            onDeleteTask={deleteTask}
-            onEditTask={editTask}
-            onViewTask={viewTaskDetails}
-          />
-        </div>
-        <div className="md:w-1/2">
-          <Calendar tasks={filteredTasks} />
-        </div>
+      <Textarea
+      placeholder="Syllabus Topics"
+      value={task.syllabus}
+      onChange={(e) => setTask({ ...task, syllabus: e.target.value })}
+      />
+      <Input
+      placeholder="Add concepts (comma-separated)"
+      value={task.concepts?.join(', ')}
+      onChange={(e) => setTask({ 
+        ...task, 
+        concepts: e.target.value.split(',').map(c => c.trim()).filter(Boolean)
+      })}
+      />
+    </div>
+    )}
+    <Button type="submit" className="w-full">
+    {initialData ? 'Update Task' : 'Create Task'}
+    </Button>
+  </form>
+  );
+};
+
+const TaskCard = ({ task, onEdit, onDelete, onStatusChange }: any) => {
+  const getPriorityColor = (priority: Priority) => {
+  const colors = {
+    Low: 'bg-green-100 text-green-800',
+    Medium: 'bg-yellow-100 text-yellow-800',
+    High: 'bg-red-100 text-red-800'
+  };
+  return colors[priority];
+  };
+
+  const getStatusColor = (status: Status) => {
+  const colors = {
+    Pending: 'bg-gray-100 text-gray-800',
+    'In Progress': 'bg-blue-100 text-blue-800',
+    Completed: 'bg-green-100 text-green-800'
+  };
+  return colors[status];
+  };
+
+  return (
+  <Card className="mb-4">
+    <CardHeader>
+    <div className="flex justify-between items-start">
+      <div>
+      <CardTitle>{task.title}</CardTitle>
+      <CardDescription>{task.description}</CardDescription>
       </div>
-      {selectedTask && (
-        <TaskDetails task={selectedTask} onClose={() => setSelectedTask(null)} />
+      <div className="flex gap-2">
+      <Badge className={getPriorityColor(task.priority)}>{task.priority}</Badge>
+      <Badge className={getStatusColor(task.status)}>{task.status}</Badge>
+      </div>
+    </div>
+    </CardHeader>
+    <CardContent>
+    <div className="space-y-2">
+      <p className="text-sm">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+      {task.subject && <p className="text-sm">Subject: {task.subject}</p>}
+      {task.concepts?.length > 0 && (
+      <div className="flex flex-wrap gap-2">
+        {task.concepts.map((concept: string, index: number) => (
+        <Badge key={index} variant="outline">{concept}</Badge>
+        ))}
+      </div>
       )}
     </div>
+    </CardContent>
+    <CardFooter className="justify-between">
+    <Select
+      value={task.status}
+      onValueChange={(value) => onStatusChange(task.id, value)}
+    >
+      <SelectTrigger className="w-32">
+      <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+      <SelectItem value="Pending">Pending</SelectItem>
+      <SelectItem value="In Progress">In Progress</SelectItem>
+      <SelectItem value="Completed">Completed</SelectItem>
+      </SelectContent>
+    </Select>
+    <div className="space-x-2">
+      <Button variant="outline" size="sm" onClick={() => onEdit(task)}>
+      Edit
+      </Button>
+      <Button variant="destructive" size="sm" onClick={() => onDelete(task.id)}>
+      Delete
+      </Button>
+    </div>
+    </CardFooter>
+  </Card>
+  );
+};
+
+export default function SchedulerPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [filter, setFilter] = useState<Status | 'All'>('All');
+  const [search, setSearch] = useState('');
+  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+  const savedTasks = localStorage.getItem('tasks');
+  if (savedTasks) {
+    setTasks(JSON.parse(savedTasks));
+  }
+  }, []);
+
+  useEffect(() => {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  const handleSubmit = (task: Task) => {
+  if (editTask) {
+    setTasks(tasks.map(t => t.id === task.id ? task : t));
+  } else {
+    setTasks([...tasks, task]);
+  }
+  };
+
+  const handleDelete = (id: string) => {
+  setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const handleStatusChange = (id: string, status: Status) => {
+  setTasks(tasks.map(task => 
+    task.id === id ? { ...task, status } : task
+  ));
+  };
+
+  const handleEdit = (task: Task) => {
+  setEditTask(task);
+  setIsDialogOpen(true);
+  };
+
+  const filteredTasks = tasks
+  .filter(task => filter === 'All' || task.status === filter)
+  .filter(task => 
+    task.title.toLowerCase().includes(search.toLowerCase()) ||
+    task.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+  <div className="max-w-4xl mx-auto py-8">
+    <div className="flex justify-between items-center mb-6">
+    <h1 className="text-3xl font-bold">Task Scheduler</h1>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogTrigger asChild>
+      <Button>
+        <Plus className="mr-2 h-4 w-4" /> Add Task
+      </Button>
+      </DialogTrigger>
+      <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{editTask ? 'Edit Task' : 'Create New Task'}</DialogTitle>
+      </DialogHeader>
+      <TaskForm
+        onSubmit={handleSubmit}
+        initialData={editTask}
+        onClose={() => {
+        setIsDialogOpen(false);
+        setEditTask(null);
+        }}
+      />
+      </DialogContent>
+    </Dialog>
+    </div>
+
+    <div className="flex gap-4 mb-6">
+    <div className="flex-1">
+      <Input
+      placeholder="Search tasks..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full"
+      prefix={<Search className="h-4 w-4" />}
+      />
+    </div>
+    <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+      <SelectTrigger className="w-32">
+      <SelectValue placeholder="Filter" />
+      </SelectTrigger>
+      <SelectContent>
+      <SelectItem value="All">All</SelectItem>
+      <SelectItem value="Pending">Pending</SelectItem>
+      <SelectItem value="In Progress">In Progress</SelectItem>
+      <SelectItem value="Completed">Completed</SelectItem>
+      </SelectContent>
+    </Select>
+    </div>
+
+    <Tabs defaultValue="all" className="w-full">
+    <TabsList className="mb-4">
+      <TabsTrigger value="all">All Tasks</TabsTrigger>
+      <TabsTrigger value="academic">Academic</TabsTrigger>
+      <TabsTrigger value="university">University</TabsTrigger>
+      <TabsTrigger value="other">Other</TabsTrigger>
+    </TabsList>
+
+    <ScrollArea className="h-[calc(100vh-300px)]">
+      <TabsContent value="all">
+      {filteredTasks.map(task => (
+        <TaskCard
+        key={task.id}
+        task={task}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onStatusChange={handleStatusChange}
+        />
+      ))}
+      </TabsContent>
+
+      <TabsContent value="academic">
+      {filteredTasks
+        .filter(task => task.category === 'Academic')
+        .map(task => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+        />
+        ))}
+      </TabsContent>
+
+      <TabsContent value="university">
+      {filteredTasks
+        .filter(task => task.category === 'University')
+        .map(task => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+        />
+        ))}
+      </TabsContent>
+
+      <TabsContent value="other">
+      {filteredTasks
+        .filter(task => !['Academic', 'University'].includes(task.category))
+        .map(task => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+        />
+        ))}
+      </TabsContent>
+    </ScrollArea>
+    </Tabs>
+  </div>
   );
 }
