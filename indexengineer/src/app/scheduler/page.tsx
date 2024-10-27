@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from 'next/navigation';
+import { AuthCheck } from '@/components/AuthCheck';
 
 const TaskForm = ({ onSubmit, initialData = null, onClose }: any) => {
   const [task, setTask] = useState<Partial<Task>>(
@@ -304,125 +305,127 @@ export default function SchedulerPage() {
   );
 
   return (
-  <div className="max-w-4xl mx-auto py-8">
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold">Task Scheduler</h1>
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={() => router.push('/scheduler/tracking')}>
-          <Calendar className="mr-2 h-4 w-4" /> Track Progress
-        </Button>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" /> Add Task
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editTask ? 'Edit Task' : 'Create New Task'}</DialogTitle>
-            </DialogHeader>
-            <TaskForm
-              onSubmit={handleSubmit}
-              initialData={editTask}
-              onClose={() => {
-                setIsDialogOpen(false);
-                setEditTask(null);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
+  <AuthCheck>
+    <div className="max-w-4xl mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Task Scheduler</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => router.push('/scheduler/tracking')}>
+            <Calendar className="mr-2 h-4 w-4" /> Track Progress
+          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Add Task
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editTask ? 'Edit Task' : 'Create New Task'}</DialogTitle>
+              </DialogHeader>
+              <TaskForm
+                onSubmit={handleSubmit}
+                initialData={editTask}
+                onClose={() => {
+                  setIsDialogOpen(false);
+                  setEditTask(null);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </div>
 
-    <div className="flex gap-4 mb-6">
-    <div className="flex-1">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          placeholder="Search tasks..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10"
-        />
+      <div className="flex gap-4 mb-6">
+      <div className="flex-1">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search tasks..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10"
+          />
+        </div>
       </div>
+      <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+        <SelectTrigger className="w-32">
+        <SelectValue placeholder="Filter" />
+        </SelectTrigger>
+        <SelectContent>
+        <SelectItem value="All">All</SelectItem>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="In Progress">In Progress</SelectItem>
+        <SelectItem value="Completed">Completed</SelectItem>
+        </SelectContent>
+      </Select>
+      </div>
+
+      <Tabs defaultValue="all" className="w-full">
+      <TabsList className="mb-4">
+        <TabsTrigger value="all">All Tasks</TabsTrigger>
+        <TabsTrigger value="academic">Academic</TabsTrigger>
+        <TabsTrigger value="university">University</TabsTrigger>
+        <TabsTrigger value="other">Other</TabsTrigger>
+      </TabsList>
+
+      <ScrollArea className="h-[calc(100vh-300px)]">
+        <TabsContent value="all">
+        {filteredTasks.map(task => (
+          <TaskCard
+          key={task.id}
+          task={task}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+          />
+        ))}
+        </TabsContent>
+
+        <TabsContent value="academic">
+        {filteredTasks
+          .filter(task => task.category === 'Academic')
+          .map(task => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
+          ))}
+        </TabsContent>
+
+        <TabsContent value="university">
+        {filteredTasks
+          .filter(task => task.category === 'University')
+          .map(task => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
+          ))}
+        </TabsContent>
+
+        <TabsContent value="other">
+        {filteredTasks
+          .filter(task => !['Academic', 'University'].includes(task.category))
+          .map(task => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
+          ))}
+        </TabsContent>
+      </ScrollArea>
+      </Tabs>
     </div>
-    <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
-      <SelectTrigger className="w-32">
-      <SelectValue placeholder="Filter" />
-      </SelectTrigger>
-      <SelectContent>
-      <SelectItem value="All">All</SelectItem>
-      <SelectItem value="Pending">Pending</SelectItem>
-      <SelectItem value="In Progress">In Progress</SelectItem>
-      <SelectItem value="Completed">Completed</SelectItem>
-      </SelectContent>
-    </Select>
-    </div>
-
-    <Tabs defaultValue="all" className="w-full">
-    <TabsList className="mb-4">
-      <TabsTrigger value="all">All Tasks</TabsTrigger>
-      <TabsTrigger value="academic">Academic</TabsTrigger>
-      <TabsTrigger value="university">University</TabsTrigger>
-      <TabsTrigger value="other">Other</TabsTrigger>
-    </TabsList>
-
-    <ScrollArea className="h-[calc(100vh-300px)]">
-      <TabsContent value="all">
-      {filteredTasks.map(task => (
-        <TaskCard
-        key={task.id}
-        task={task}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onStatusChange={handleStatusChange}
-        />
-      ))}
-      </TabsContent>
-
-      <TabsContent value="academic">
-      {filteredTasks
-        .filter(task => task.category === 'Academic')
-        .map(task => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onStatusChange={handleStatusChange}
-        />
-        ))}
-      </TabsContent>
-
-      <TabsContent value="university">
-      {filteredTasks
-        .filter(task => task.category === 'University')
-        .map(task => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onStatusChange={handleStatusChange}
-        />
-        ))}
-      </TabsContent>
-
-      <TabsContent value="other">
-      {filteredTasks
-        .filter(task => !['Academic', 'University'].includes(task.category))
-        .map(task => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onStatusChange={handleStatusChange}
-        />
-        ))}
-      </TabsContent>
-    </ScrollArea>
-    </Tabs>
-  </div>
+  </AuthCheck>
   );
 }

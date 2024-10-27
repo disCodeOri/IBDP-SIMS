@@ -27,6 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { AuthCheck } from '@/components/AuthCheck';
 
 interface TrackingEntry {
   id: string;
@@ -186,150 +187,152 @@ export default function TrackingPage() {
   const getTaskById = (id: string) => tasks.find(t => t.id === id);
 
   return (
-    <div className="max-w-4xl mx-auto py-8">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" onClick={() => router.push('/scheduler')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Scheduler
-        </Button>
-        <h1 className="text-3xl font-bold">Task Tracking</h1>
-      </div>
+    <AuthCheck>
+      <div className="max-w-4xl mx-auto py-8">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" onClick={() => router.push('/scheduler')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Scheduler
+          </Button>
+          <h1 className="text-3xl font-bold">Task Tracking</h1>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="mb-4">
-              {editingEntry ? 'Edit Entry' : 'New Entry'}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingEntry ? 'Edit Entry' : 'New Tracking Entry'}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Select
-                value={selectedTask}
-                onValueChange={setSelectedTask}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Task" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tasks.map(task => (
-                    <SelectItem key={task.id} value={task.id}>
-                      {task.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <input
-                type="date"
-                className="w-full px-3 py-2 border rounded-md"
-                value={currentEntry.date}
-                onChange={e => setCurrentEntry({...currentEntry, date: e.target.value})}
-              />
-
-              <Textarea
-                placeholder="Qualitative Notes"
-                value={currentEntry.qualitativeNotes || ''}
-                onChange={e => setCurrentEntry({...currentEntry, qualitativeNotes: e.target.value})}
-              />
-
-              <Select
-                value={currentEntry.effectiveness?.toString()}
-                onValueChange={value => setCurrentEntry({...currentEntry, effectiveness: parseInt(value) as 1 | 2 | 3 | 4 | 5})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Effectiveness Rating" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5].map(rating => (
-                    <SelectItem key={rating} value={rating.toString()}>
-                      {rating} - {rating === 1 ? 'Poor' : rating === 5 ? 'Excellent' : ''}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Textarea
-                placeholder="Challenges Faced"
-                value={currentEntry.challenges || ''}
-                onChange={e => setCurrentEntry({...currentEntry, challenges: e.target.value})}
-              />
-
-              <Textarea
-                placeholder="Next Steps"
-                value={currentEntry.nextSteps || ''}
-                onChange={e => setCurrentEntry({...currentEntry, nextSteps: e.target.value})}
-              />
-
-              <Button type="submit" className="w-full">
-                {editingEntry ? 'Update Entry' : 'Save Entry'}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="mb-4">
+                {editingEntry ? 'Edit Entry' : 'New Entry'}
               </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editingEntry ? 'Edit Entry' : 'New Tracking Entry'}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Select
+                  value={selectedTask}
+                  onValueChange={setSelectedTask}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Task" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tasks.map(task => (
+                      <SelectItem key={task.id} value={task.id}>
+                        {task.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Entries</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[600px] pr-4">
-              {trackingEntries
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .map((entry) => {
-                  const task = getTaskById(entry.taskId);
-                  return (
-                    <Card key={entry.id} className="mb-4">
-                      <CardContent className="pt-6">
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-semibold">{task?.title || 'Unknown Task'}</h3>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={currentEntry.date}
+                  onChange={e => setCurrentEntry({...currentEntry, date: e.target.value})}
+                />
+
+                <Textarea
+                  placeholder="Qualitative Notes"
+                  value={currentEntry.qualitativeNotes || ''}
+                  onChange={e => setCurrentEntry({...currentEntry, qualitativeNotes: e.target.value})}
+                />
+
+                <Select
+                  value={currentEntry.effectiveness?.toString()}
+                  onValueChange={value => setCurrentEntry({...currentEntry, effectiveness: parseInt(value) as 1 | 2 | 3 | 4 | 5})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Effectiveness Rating" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5].map(rating => (
+                      <SelectItem key={rating} value={rating.toString()}>
+                        {rating} - {rating === 1 ? 'Poor' : rating === 5 ? 'Excellent' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Textarea
+                  placeholder="Challenges Faced"
+                  value={currentEntry.challenges || ''}
+                  onChange={e => setCurrentEntry({...currentEntry, challenges: e.target.value})}
+                />
+
+                <Textarea
+                  placeholder="Next Steps"
+                  value={currentEntry.nextSteps || ''}
+                  onChange={e => setCurrentEntry({...currentEntry, nextSteps: e.target.value})}
+                />
+
+                <Button type="submit" className="w-full">
+                  {editingEntry ? 'Update Entry' : 'Save Entry'}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Entries</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[600px] pr-4">
+                {trackingEntries
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  .map((entry) => {
+                    const task = getTaskById(entry.taskId);
+                    return (
+                      <Card key={entry.id} className="mb-4">
+                        <CardContent className="pt-6">
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-start">
+                              <h3 className="font-semibold">{task?.title || 'Unknown Task'}</h3>
+                              <div className="flex gap-2">
+                                <Badge>{new Date(entry.date).toLocaleDateString()}</Badge>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEdit(entry)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDelete(entry.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600">{entry.qualitativeNotes}</p>
                             <div className="flex gap-2">
-                              <Badge>{new Date(entry.date).toLocaleDateString()}</Badge>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEdit(entry)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDelete(entry.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <Badge variant="outline">
+                                Effectiveness: {entry.effectiveness}/5
+                              </Badge>
                             </div>
+                            {entry.challenges && (
+                              <div className="text-sm">
+                                <strong>Challenges:</strong> {entry.challenges}
+                              </div>
+                            )}
+                            {entry.nextSteps && (
+                              <div className="text-sm">
+                                <strong>Next Steps:</strong> {entry.nextSteps}
+                              </div>
+                            )}
                           </div>
-                          <p className="text-sm text-gray-600">{entry.qualitativeNotes}</p>
-                          <div className="flex gap-2">
-                            <Badge variant="outline">
-                              Effectiveness: {entry.effectiveness}/5
-                            </Badge>
-                          </div>
-                          {entry.challenges && (
-                            <div className="text-sm">
-                              <strong>Challenges:</strong> {entry.challenges}
-                            </div>
-                          )}
-                          {entry.nextSteps && (
-                            <div className="text-sm">
-                              <strong>Next Steps:</strong> {entry.nextSteps}
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-            </ScrollArea>
-          </CardContent>
-        </Card>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </AuthCheck>
   );
 }

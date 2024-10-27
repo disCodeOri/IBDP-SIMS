@@ -1,4 +1,4 @@
-Directory structure generated on 2024-10-27 19:06:51
+Directory structure generated on 2024-10-27 21:08:11
 ├── indexengineer
 │   ├── .eslintrc.json
 │   ├── README.md
@@ -29,6 +29,7 @@ Directory structure generated on 2024-10-27 19:06:51
 │   │   │   │   ├── tracking
 │   │   │   │   │   ├── page.tsx
 │   │   ├── components
+│   │   │   ├── AuthCheck.tsx
 │   │   │   ├── Calendar.tsx
 │   │   │   ├── CommandProvider.tsx
 │   │   │   ├── SearchContent.tsx
@@ -54,9 +55,13 @@ Directory structure generated on 2024-10-27 19:06:51
 │   │   │   │   ├── tabs.tsx
 │   │   │   │   ├── textarea.tsx
 │   │   │   │   ├── tooltip.tsx
+│   │   ├── implementations
+│   │   │   ├── authorisation-enabling-encasing-for-each-sub-page-in-the-application.txt
 │   │   ├── lib
+│   │   │   ├── auth.ts
 │   │   │   ├── data.ts
 │   │   │   ├── utils.ts
+│   │   ├── middleware.ts
 │   │   ├── types
 │   │   │   ├── task.ts
 │   ├── tailwind.config.ts
