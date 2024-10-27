@@ -1,0 +1,66 @@
+Directory structure generated on 2024-10-27 18:47:39
+├── indexengineer
+│   ├── .eslintrc.json
+│   ├── README.md
+│   ├── components
+│   │   ├── Calendar.js
+│   │   ├── TaskForm.js
+│   ├── components.json
+│   ├── data
+│   │   ├── tasks.json
+│   │   ├── tracking.json
+│   ├── next-env.d.ts
+│   ├── next.config.mjs
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── src
+│   │   ├── app
+│   │   │   ├── api
+│   │   │   │   ├── data
+│   │   │   │   │   ├── route.ts
+│   │   │   ├── favicon.ico
+│   │   │   ├── fonts
+│   │   │   │   ├── GeistMonoVF.woff
+│   │   │   │   ├── GeistVF.woff
+│   │   │   ├── globals.css
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── scheduler
+│   │   │   │   ├── Types.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── tracking
+│   │   │   │   │   ├── page.tsx
+│   │   ├── components
+│   │   │   ├── Calendar.tsx
+│   │   │   ├── CommandProvider.tsx
+│   │   │   ├── SearchContent.tsx
+│   │   │   ├── SearchNavigation.tsx
+│   │   │   ├── ui
+│   │   │   │   ├── badge.tsx
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── calendar.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── command.tsx
+│   │   │   │   ├── context-menu.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── drawer.tsx
+│   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   ├── hover-card.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── menubar.tsx
+│   │   │   │   ├── popover.tsx
+│   │   │   │   ├── progress.tsx
+│   │   │   │   ├── resizable.tsx
+│   │   │   │   ├── scroll-area.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── textarea.tsx
+│   │   │   │   ├── tooltip.tsx
+│   │   ├── lib
+│   │   │   ├── data.ts
+│   │   │   ├── utils.ts
+│   │   ├── types
+│   │   │   ├── task.ts
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
