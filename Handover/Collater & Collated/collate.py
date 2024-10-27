@@ -3,15 +3,17 @@ import os
 def combine_files(root_dir, output_file):
     target_files = [
         #main/root files
-        'indexengineer/src/app/layout.tsx',
-        'indexengineer/src/app/page.tsx',
-        'indexengineer/src/app/globals.css',
+        #'indexengineer/src/app/layout.tsx',
+        #'indexengineer/src/app/page.tsx',
+        #'indexengineer/src/app/globals.css',
         
         #Scheduler files
         'indexengineer/src/app/scheduler/page.tsx',
         'indexengineer/src/components/Calendar.tsx',
         'indexengineer/src/app/scheduler/Types.ts',
         'indexengineer/src/types/task.ts',
+        'indexengineer/src/lib/data.ts',
+        'indexengineer/src/app/api/data/route.ts',
         
         #Tracker files
         'indexengineer/src/app/scheduler/tracking/page.tsx'

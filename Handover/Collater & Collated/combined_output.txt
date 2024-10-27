@@ -1,158 +1,3 @@
-File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/layout.tsx
-
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { CommandProvider } from "@/components/CommandProvider";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-export const metadata: Metadata = {
-  title: "Scheduler App",
-  description: "A simple scheduler application",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" className="overflow-hidden">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 min-h-screen text-gray-900`}>
-        <CommandProvider>
-          <main className="container mx-auto p-4">
-            {children}
-          </main>
-        </CommandProvider>
-      </body>
-    </html>
-  );
-}
-
-================================================================================
-
-File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/page.tsx
-
-import SearchNavigation from '@/components/SearchNavigation';
-import { Command } from '@/components/ui/command';
-import SearchContent from '@/components/SearchContent';
-
-export default function Home() {
-  /*return (
-    //<SearchContent />
-    <div className="min-h-screen flex items-start justify-center pt-32">
-      <div className="w-full max-w-2xl">
-        <Command className="rounded-lg">
-          
-          <SearchNavigation />
-        </Command>
-        <div className="mt-4 flex justify-center space-x-4 text-sm">
-          <span><kbd className="px-2 py-1 bg-gray-100 border border-gray-200 rounded">↑↓</kbd> to navigate</span>
-          <span><kbd className="px-2 py-1 bg-gray-100 border border-gray-200 rounded">enter</kbd> to select</span>
-          <span><kbd className="px-2 py-1 bg-gray-100 border border-gray-200 rounded">esc</kbd> to close</span>
-        </div>
-      </div>
-    </div>
-  );*/
-  return <SearchNavigation />;
-}
-
-================================================================================
-
-File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/globals.css
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-  }
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-
-================================================================================
-
 File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/scheduler/page.tsx
 
 // src/app/scheduler/page.tsx
@@ -361,7 +206,6 @@ const TaskCard = ({ task, onEdit, onDelete, onStatusChange }: any) => {
 
 export default function SchedulerPage() {
   const router = useRouter();
-
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Status | 'All'>('All');
   const [search, setSearch] = useState('');
@@ -369,14 +213,48 @@ export default function SchedulerPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    setTasks(JSON.parse(savedTasks));
-  }
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('/api/data?type=tasks');
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        // Fallback to localStorage if API fails
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+          setTasks(JSON.parse(savedTasks));
+        }
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   useEffect(() => {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+    const saveTasks = async () => {
+      try {
+        const response = await fetch('/api/data?type=tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tasks),
+        });
+
+        if (!response.ok) throw new Error('Failed to save tasks');
+        
+        // Keep localStorage as backup
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      } catch (error) {
+        console.error('Error saving tasks:', error);
+        // Ensure localStorage backup is still updated
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+    };
+
+    if (tasks.length > 0) {
+      saveTasks();
+    }
   }, [tasks]);
 
   const handleSubmit = (task: Task) => {
@@ -387,8 +265,26 @@ export default function SchedulerPage() {
   }
   };
 
-  const handleDelete = (id: string) => {
-  setTasks(tasks.filter(task => task.id !== id));
+  const handleDelete = async (id: string) => {
+    const updatedTasks = tasks.filter(task => task.id !== id);
+    setTasks(updatedTasks);
+    
+    try {
+      const response = await fetch('/api/data?type=tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTasks),
+      });
+  
+      if (!response.ok) throw new Error('Failed to save tasks');
+      
+      // Update localStorage only after successful API call
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    } catch (error) {
+      console.error('Error saving tasks:', error);
+      // Fallback to localStorage if API fails
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    }
   };
 
   const handleStatusChange = (id: string, status: Status) => {
@@ -618,25 +514,31 @@ export default function Calendar({ tasks }: CalendarProps) {
 
 File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/scheduler/Types.ts
 
-// src/app/scheduler/types.ts
-type Priority = 'Low' | 'Medium' | 'High';
-type Status = 'Pending' | 'In Progress' | 'Completed';
-type Category = 'Academic' | 'University' | 'Sports' | 'Extracurricular' | 'Mental Health';
+// src/app/scheduler/Types.ts
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  category: Category;
-  priority: Priority;
-  status: Status;
-  dueDate: string;
-  subject?: string;
-  syllabus?: string;
-  concepts?: string[];
-  reviewDates: string[];
-  lastReviewDate?: string;
+declare global {
+  type Priority = 'Low' | 'Medium' | 'High';
+  type Status = 'Pending' | 'In Progress' | 'Completed';
+  type Category = 'Academic' | 'University' | 'Sports' | 'Extracurricular' | 'Mental Health';
+
+  interface Task {
+    id: string;
+    title: string;
+    description: string;
+    category: Category;
+    priority: Priority;
+    status: Status;
+    dueDate: string;
+    subject?: string;
+    syllabus?: string;
+    concepts?: string[];
+    reviewDates: string[];
+    lastReviewDate?: string;
+  }
 }
+
+// This empty export makes the file a module
+export {};
 
 ================================================================================
 
@@ -651,6 +553,105 @@ export interface Task {
 
 ================================================================================
 
+File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/lib/data.ts
+
+// src/lib/data.ts
+import fs from 'fs';
+import path from 'path';
+import { Task } from '@/types/task';
+
+const DATA_DIR = path.join(process.cwd(), 'data');
+const TASKS_FILE = path.join(DATA_DIR, 'tasks.json');
+const TRACKING_FILE = path.join(DATA_DIR, 'tracking.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Initialize files with empty arrays if they don't exist
+[TASKS_FILE, TRACKING_FILE].forEach(file => {
+  if (!fs.existsSync(file)) {
+    fs.writeFileSync(file, '[]', 'utf-8');
+  }
+});
+
+export async function readData(type: 'tasks' | 'tracking') {
+  const file = type === 'tasks' ? TASKS_FILE : TRACKING_FILE;
+  try {
+    const data = await fs.promises.readFile(file, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading ${type}:`, error);
+    return [];
+  }
+}
+
+export async function writeData(type: 'tasks' | 'tracking', data: any) {
+  const file = type === 'tasks' ? TASKS_FILE : TRACKING_FILE;
+  try {
+    await fs.promises.writeFile(file, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (error) {
+    console.error(`Error writing ${type}:`, error);
+    return false;
+  }
+}
+
+// API route handlers
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') as 'tasks' | 'tracking';
+
+  if (!type || !['tasks', 'tracking'].includes(type)) {
+    return new Response('Invalid type parameter', { status: 400 });
+  }
+
+  const data = await readData(type);
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export async function POST(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') as 'tasks' | 'tracking';
+
+  if (!type || !['tasks', 'tracking'].includes(type)) {
+    return new Response('Invalid type parameter', { status: 400 });
+  }
+
+  try {
+    const body = await request.json();
+    const success = await writeData(type, body);
+    
+    if (!success) {
+      throw new Error('Failed to write data');
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Failed to process request' 
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+================================================================================
+
+File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/api/data/route.ts
+
+// src/app/api/data/route.ts
+export { GET, POST } from '@/lib/data';
+
+================================================================================
+
 File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/scheduler/tracking/page.tsx
 
 // src/app/scheduler/tracking/page.tsx
@@ -658,7 +659,7 @@ File: c:\Users\SUN\Desktop\programs\IBDP-SIMS\indexengineer/src/app/scheduler/tr
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -676,8 +677,16 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface TrackingEntry {
+  id: string;
   taskId: string;
   date: string;
   qualitativeNotes: string;
@@ -695,17 +704,70 @@ export default function TrackingPage() {
     date: new Date().toISOString().split('T')[0],
     effectiveness: 3
   });
+  const [editingEntry, setEditingEntry] = useState<TrackingEntry | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    const savedEntries = localStorage.getItem('trackingEntries');
-    if (savedTasks) setTasks(JSON.parse(savedTasks));
-    if (savedEntries) setTrackingEntries(JSON.parse(savedEntries));
+    const fetchData = async () => {
+      try {
+        const tasksResponse = await fetch('/api/data?type=tasks');
+        const tasksData = await tasksResponse.json();
+        setTasks(tasksData);
+
+        const trackingResponse = await fetch('/api/data?type=tracking');
+        const trackingData = await trackingResponse.json();
+        setTrackingEntries(trackingData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        const savedTasks = localStorage.getItem('tasks');
+        const savedEntries = localStorage.getItem('trackingEntries');
+        if (savedTasks) setTasks(JSON.parse(savedTasks));
+        if (savedEntries) setTrackingEntries(JSON.parse(savedEntries));
+      }
+    };
+
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    const saveTrackingEntries = async () => {
+      try {
+        await fetch('/api/data?type=tracking', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(trackingEntries),
+        });
+        localStorage.setItem('trackingEntries', JSON.stringify(trackingEntries));
+      } catch (error) {
+        console.error('Error saving tracking entries:', error);
+        localStorage.setItem('trackingEntries', JSON.stringify(trackingEntries));
+      }
+    };
+
+    if (trackingEntries.length > 0) {
+      saveTrackingEntries();
+    }
+  }, [trackingEntries]);
+
+  const validateEntry = (entry: Partial<TrackingEntry>) => {
+    if (!entry.taskId || !entry.date || !entry.qualitativeNotes) {
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateEntry(currentEntry)) {
+      alert('Please fill in all required fields (Task, Date, and Notes)');
+      return;
+    }
+
     const newEntry: TrackingEntry = {
+      id: editingEntry?.id || crypto.randomUUID(),
       taskId: selectedTask,
       date: currentEntry.date || new Date().toISOString().split('T')[0],
       qualitativeNotes: currentEntry.qualitativeNotes || '',
@@ -714,9 +776,13 @@ export default function TrackingPage() {
       nextSteps: currentEntry.nextSteps || ''
     };
 
-    const updatedEntries = [...trackingEntries, newEntry];
-    setTrackingEntries(updatedEntries);
-    localStorage.setItem('trackingEntries', JSON.stringify(updatedEntries));
+    if (editingEntry) {
+      setTrackingEntries(entries => 
+        entries.map(e => e.id === editingEntry.id ? newEntry : e)
+      );
+    } else {
+      setTrackingEntries(entries => [...entries, newEntry]);
+    }
 
     // Reset form
     setCurrentEntry({
@@ -724,6 +790,27 @@ export default function TrackingPage() {
       effectiveness: 3
     });
     setSelectedTask('');
+    setEditingEntry(null);
+    setIsDialogOpen(false);
+  };
+
+  const handleEdit = (entry: TrackingEntry) => {
+    setEditingEntry(entry);
+    setSelectedTask(entry.taskId);
+    setCurrentEntry({
+      date: entry.date,
+      qualitativeNotes: entry.qualitativeNotes,
+      effectiveness: entry.effectiveness,
+      challenges: entry.challenges,
+      nextSteps: entry.nextSteps
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = (entryId: string) => {
+    if (window.confirm('Are you sure you want to delete this entry?')) {
+      setTrackingEntries(entries => entries.filter(e => e.id !== entryId));
+    }
   };
 
   const getTaskById = (id: string) => tasks.find(t => t.id === id);
@@ -739,11 +826,16 @@ export default function TrackingPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>New Tracking Entry</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="mb-4">
+              {editingEntry ? 'Edit Entry' : 'New Entry'}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{editingEntry ? 'Edit Entry' : 'New Tracking Entry'}</DialogTitle>
+            </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Select
                 value={selectedTask}
@@ -753,13 +845,11 @@ export default function TrackingPage() {
                   <SelectValue placeholder="Select Task" />
                 </SelectTrigger>
                 <SelectContent>
-                  {tasks
-                    .filter(t => t.status !== 'Completed')
-                    .map(task => (
-                      <SelectItem key={task.id} value={task.id}>
-                        {task.title}
-                      </SelectItem>
-                    ))}
+                  {tasks.map(task => (
+                    <SelectItem key={task.id} value={task.id}>
+                      {task.title}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
@@ -805,11 +895,11 @@ export default function TrackingPage() {
               />
 
               <Button type="submit" className="w-full">
-                Save Entry
+                {editingEntry ? 'Update Entry' : 'Save Entry'}
               </Button>
             </form>
-          </CardContent>
-        </Card>
+          </DialogContent>
+        </Dialog>
 
         <Card>
           <CardHeader>
@@ -819,15 +909,31 @@ export default function TrackingPage() {
             <ScrollArea className="h-[600px] pr-4">
               {trackingEntries
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .map((entry, index) => {
+                .map((entry) => {
                   const task = getTaskById(entry.taskId);
                   return (
-                    <Card key={index} className="mb-4">
+                    <Card key={entry.id} className="mb-4">
                       <CardContent className="pt-6">
                         <div className="space-y-2">
                           <div className="flex justify-between items-start">
-                            <h3 className="font-semibold">{task?.title}</h3>
-                            <Badge>{new Date(entry.date).toLocaleDateString()}</Badge>
+                            <h3 className="font-semibold">{task?.title || 'Unknown Task'}</h3>
+                            <div className="flex gap-2">
+                              <Badge>{new Date(entry.date).toLocaleDateString()}</Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(entry)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDelete(entry.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           <p className="text-sm text-gray-600">{entry.qualitativeNotes}</p>
                           <div className="flex gap-2">

@@ -211,14 +211,48 @@ export default function SchedulerPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    setTasks(JSON.parse(savedTasks));
-  }
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('/api/data?type=tasks');
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        // Fallback to localStorage if API fails
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+          setTasks(JSON.parse(savedTasks));
+        }
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   useEffect(() => {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+    const saveTasks = async () => {
+      try {
+        const response = await fetch('/api/data?type=tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tasks),
+        });
+
+        if (!response.ok) throw new Error('Failed to save tasks');
+        
+        // Keep localStorage as backup
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      } catch (error) {
+        console.error('Error saving tasks:', error);
+        // Ensure localStorage backup is still updated
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+    };
+
+    if (tasks.length > 0) {
+      saveTasks();
+    }
   }, [tasks]);
 
   const handleSubmit = (task: Task) => {
@@ -229,8 +263,26 @@ export default function SchedulerPage() {
   }
   };
 
-  const handleDelete = (id: string) => {
-  setTasks(tasks.filter(task => task.id !== id));
+  const handleDelete = async (id: string) => {
+    const updatedTasks = tasks.filter(task => task.id !== id);
+    setTasks(updatedTasks);
+    
+    try {
+      const response = await fetch('/api/data?type=tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTasks),
+      });
+  
+      if (!response.ok) throw new Error('Failed to save tasks');
+      
+      // Update localStorage only after successful API call
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    } catch (error) {
+      console.error('Error saving tasks:', error);
+      // Fallback to localStorage if API fails
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    }
   };
 
   const handleStatusChange = (id: string, status: Status) => {
