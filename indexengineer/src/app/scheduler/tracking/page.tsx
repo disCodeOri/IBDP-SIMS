@@ -1,307 +1,204 @@
 // src/app/scheduler/tracking/page.tsx
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Calendar } from 'lucide-react';
 
-interface ReviewSession {
-  id: string;
+interface TrackingEntry {
   taskId: string;
   date: string;
-  confidence: number;
-  notes: string;
+  qualitativeNotes: string;
+  effectiveness: 1 | 2 | 3 | 4 | 5;
+  challenges: string;
+  nextSteps: string;
 }
-
-interface TrackingStats {
-  completed: number;
-  inProgress: number;
-  pending: number;
-  totalReviews: number;
-  avgConfidence: number;
-  streak: number;
-  nextReviews: { taskId: string; title: string; dueDate: string }[];
-}
-
-const TrackedTask = ({ task, onReview }: any) => {
-  const [confidence, setConfidence] = useState<number>(0);
-  const [notes, setNotes] = useState<string>('');
-
-  return (
-	<Card className="mb-4">
-	  <CardHeader>
-		<CardTitle className="text-lg">{task.title}</CardTitle>
-	  </CardHeader>
-	  <CardContent>
-		<div className="space-y-4">
-		  <div>
-			<p className="text-sm mb-2">Confidence Level</p>
-			<div className="flex gap-2">
-			  {[1, 2, 3, 4, 5].map((level) => (
-				<Button
-				  key={level}
-				  variant={confidence === level ? "default" : "outline"}
-				  size="sm"
-				  onClick={() => setConfidence(level)}
-				>
-				  {level}
-				</Button>
-			  ))}
-			</div>
-		  </div>
-		  <div className="flex justify-end">
-			<Button 
-			  onClick={() => onReview(task.id, { confidence, notes })}
-			  disabled={!confidence}
-			>
-			  Complete Review
-			</Button>
-		  </div>
-		</div>
-	  </CardContent>
-	</Card>
-  );
-};
-
-const StatsOverview = ({ stats }: { stats: TrackingStats }) => {
-  return (
-	<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-	  <Card>
-		<CardHeader>
-		  <CardTitle className="text-sm">Task Progress</CardTitle>
-		</CardHeader>
-		<CardContent>
-		  <div className="space-y-2">
-			<div className="flex justify-between text-sm">
-			  <span>Completed</span>
-			  <span>{stats.completed}</span>
-			</div>
-			<Progress value={(stats.completed / (stats.completed + stats.inProgress + stats.pending)) * 100} />
-		  </div>
-		</CardContent>
-	  </Card>
-
-	  <Card>
-		<CardHeader>
-		  <CardTitle className="text-sm">Review Streak</CardTitle>
-		</CardHeader>
-		<CardContent>
-		  <div className="text-3xl font-bold">{stats.streak} days</div>
-		</CardContent>
-	  </Card>
-
-	  <Card>
-		<CardHeader>
-		  <CardTitle className="text-sm">Average Confidence</CardTitle>
-		</CardHeader>
-		<CardContent>
-		  <div className="text-3xl font-bold">{stats.avgConfidence.toFixed(1)}/5</div>
-		</CardContent>
-	  </Card>
-	</div>
-  );
-};
-
-const ProgressChart = ({ data }: { data: any[] }) => {
-  return (
-	<Card className="mb-6">
-	  <CardHeader>
-		<CardTitle>Progress Over Time</CardTitle>
-	  </CardHeader>
-	  <CardContent>
-		<div className="h-[300px]">
-		  <ResponsiveContainer width="100%" height="100%">
-			<LineChart data={data}>
-			  <CartesianGrid strokeDasharray="3 3" />
-			  <XAxis dataKey="date" />
-			  <YAxis />
-			  <Tooltip />
-			  <Line type="monotone" dataKey="completed" stroke="#4CAF50" name="Completed" />
-			  <Line type="monotone" dataKey="confidence" stroke="#2196F3" name="Confidence" />
-			</LineChart>
-		  </ResponsiveContainer>
-		</div>
-	  </CardContent>
-	</Card>
-  );
-};
-
-const NextReviews = ({ reviews }: { reviews: TrackingStats['nextReviews'] }) => {
-  return (
-	<Card>
-	  <CardHeader>
-		<CardTitle>Upcoming Reviews</CardTitle>
-	  </CardHeader>
-	  <CardContent>
-		<ScrollArea className="h-[200px]">
-		  {reviews.map((review) => (
-			<div key={review.taskId} className="flex justify-between items-center py-2 border-b">
-			  <div>
-				<p className="font-medium">{review.title}</p>
-				<p className="text-sm text-gray-500">
-				  Due: {new Date(review.dueDate).toLocaleDateString()}
-				</p>
-			  </div>
-			  <Calendar className="h-4 w-4 text-gray-500" />
-			</div>
-		  ))}
-		</ScrollArea>
-	  </CardContent>
-	</Card>
-  );
-};
 
 export default function TrackingPage() {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<ReviewSession[]>([]);
-  const [stats, setStats] = useState<TrackingStats>({
-	completed: 0,
-	inProgress: 0,
-	pending: 0,
-	totalReviews: 0,
-	avgConfidence: 0,
-	streak: 0,
-	nextReviews: []
+  const router = useRouter();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<string>('');
+  const [trackingEntries, setTrackingEntries] = useState<TrackingEntry[]>([]);
+  const [currentEntry, setCurrentEntry] = useState<Partial<TrackingEntry>>({
+    date: new Date().toISOString().split('T')[0],
+    effectiveness: 3
   });
 
   useEffect(() => {
-	// Load tasks and reviews from localStorage
-	const savedTasks = localStorage.getItem('tasks');
-	const savedReviews = localStorage.getItem('reviews');
-
-	if (savedTasks) {
-	  setTasks(JSON.parse(savedTasks));
-	}
-	if (savedReviews) {
-	  setReviews(JSON.parse(savedReviews));
-	}
+    const savedTasks = localStorage.getItem('tasks');
+    const savedEntries = localStorage.getItem('trackingEntries');
+    if (savedTasks) setTasks(JSON.parse(savedTasks));
+    if (savedEntries) setTrackingEntries(JSON.parse(savedEntries));
   }, []);
 
-  useEffect(() => {
-	// Calculate statistics
-	const calculateStats = () => {
-	  const taskStats = tasks.reduce(
-		(acc, task) => {
-		  acc[task.status.toLowerCase()]++;
-		  return acc;
-		},
-		{ completed: 0, inProgress: 0, pending: 0 }
-	  );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newEntry: TrackingEntry = {
+      taskId: selectedTask,
+      date: currentEntry.date || new Date().toISOString().split('T')[0],
+      qualitativeNotes: currentEntry.qualitativeNotes || '',
+      effectiveness: currentEntry.effectiveness as 1 | 2 | 3 | 4 | 5,
+      challenges: currentEntry.challenges || '',
+      nextSteps: currentEntry.nextSteps || ''
+    };
 
-	  const avgConfidence = reviews.length
-		? reviews.reduce((sum, review) => sum + review.confidence, 0) / reviews.length
-		: 0;
+    const updatedEntries = [...trackingEntries, newEntry];
+    setTrackingEntries(updatedEntries);
+    localStorage.setItem('trackingEntries', JSON.stringify(updatedEntries));
 
-	  // Calculate streak
-	  const today = new Date().toISOString().split('T')[0];
-	  const reviewDates = [...new Set(reviews.map(r => r.date))].sort();
-	  let streak = 0;
-	  let currentDate = new Date(today);
-
-	  for (let i = reviewDates.length - 1; i >= 0; i--) {
-		const reviewDate = new Date(reviewDates[i]);
-		if (
-		  reviewDate.toISOString().split('T')[0] ===
-		  currentDate.toISOString().split('T')[0]
-		) {
-		  streak++;
-		  currentDate.setDate(currentDate.getDate() - 1);
-		} else {
-		  break;
-		}
-	  }
-
-	  // Calculate next reviews
-	  const nextReviews = tasks
-		.filter(task => task.status !== 'Completed')
-		.map(task => ({
-		  taskId: task.id,
-		  title: task.title,
-		  dueDate: task.dueDate
-		}))
-		.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-		.slice(0, 5);
-
-	  setStats({
-		...taskStats,
-		totalReviews: reviews.length,
-		avgConfidence,
-		streak,
-		nextReviews
-	  });
-	};
-
-	calculateStats();
-  }, [tasks, reviews]);
-
-  const handleReview = (taskId: string, reviewData: { confidence: number; notes: string }) => {
-	const newReview: ReviewSession = {
-	  id: crypto.randomUUID(),
-	  taskId,
-	  date: new Date().toISOString().split('T')[0],
-	  confidence: reviewData.confidence,
-	  notes: reviewData.notes
-	};
-
-	const updatedReviews = [...reviews, newReview];
-	setReviews(updatedReviews);
-	localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+    // Reset form
+    setCurrentEntry({
+      date: new Date().toISOString().split('T')[0],
+      effectiveness: 3
+    });
+    setSelectedTask('');
   };
 
-  const progressData = reviews.reduce((acc: any[], review) => {
-	const date = review.date;
-	const existingEntry = acc.find(entry => entry.date === date);
-
-	if (existingEntry) {
-	  existingEntry.confidence = (existingEntry.confidence + review.confidence) / 2;
-	  existingEntry.completed++;
-	} else {
-	  acc.push({
-		date,
-		confidence: review.confidence,
-		completed: 1
-	  });
-	}
-
-	return acc;
-  }, []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const getTaskById = (id: string) => tasks.find(t => t.id === id);
 
   return (
-	<div className="max-w-4xl mx-auto py-8">
-	  <h1 className="text-3xl font-bold mb-6">Progress Tracking</h1>
+    <div className="max-w-4xl mx-auto py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" onClick={() => router.push('/scheduler')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Scheduler
+        </Button>
+        <h1 className="text-3xl font-bold">Task Tracking</h1>
+      </div>
 
-	  <StatsOverview stats={stats} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>New Tracking Entry</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Select
+                value={selectedTask}
+                onValueChange={setSelectedTask}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Task" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tasks
+                    .filter(t => t.status !== 'Completed')
+                    .map(task => (
+                      <SelectItem key={task.id} value={task.id}>
+                        {task.title}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
 
-	  <Tabs defaultValue="progress" className="w-full">
-		<TabsList className="mb-4">
-		  <TabsTrigger value="progress">Progress</TabsTrigger>
-		  <TabsTrigger value="reviews">Reviews</TabsTrigger>
-		</TabsList>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border rounded-md"
+                value={currentEntry.date}
+                onChange={e => setCurrentEntry({...currentEntry, date: e.target.value})}
+              />
 
-		<TabsContent value="progress">
-		  <ProgressChart data={progressData} />
-		  <NextReviews reviews={stats.nextReviews} />
-		</TabsContent>
+              <Textarea
+                placeholder="Qualitative Notes"
+                value={currentEntry.qualitativeNotes}
+                onChange={e => setCurrentEntry({...currentEntry, qualitativeNotes: e.target.value})}
+              />
 
-		<TabsContent value="reviews">
-		  <ScrollArea className="h-[calc(100vh-300px)]">
-			{tasks
-			  .filter(task => task.status === 'In Progress')
-			  .map(task => (
-				<TrackedTask
-				  key={task.id}
-				  task={task}
-				  onReview={handleReview}
-				/>
-			  ))}
-		  </ScrollArea>
-		</TabsContent>
-	  </Tabs>
-	</div>
+              <Select
+                value={currentEntry.effectiveness?.toString()}
+                onValueChange={value => setCurrentEntry({...currentEntry, effectiveness: parseInt(value) as 1 | 2 | 3 | 4 | 5})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Effectiveness Rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5].map(rating => (
+                    <SelectItem key={rating} value={rating.toString()}>
+                      {rating} - {rating === 1 ? 'Poor' : rating === 5 ? 'Excellent' : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Textarea
+                placeholder="Challenges Faced"
+                value={currentEntry.challenges}
+                onChange={e => setCurrentEntry({...currentEntry, challenges: e.target.value})}
+              />
+
+              <Textarea
+                placeholder="Next Steps"
+                value={currentEntry.nextSteps}
+                onChange={e => setCurrentEntry({...currentEntry, nextSteps: e.target.value})}
+              />
+
+              <Button type="submit" className="w-full">
+                Save Entry
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Entries</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[600px] pr-4">
+              {trackingEntries
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((entry, index) => {
+                  const task = getTaskById(entry.taskId);
+                  return (
+                    <Card key={index} className="mb-4">
+                      <CardContent className="pt-6">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-semibold">{task?.title}</h3>
+                            <Badge>{new Date(entry.date).toLocaleDateString()}</Badge>
+                          </div>
+                          <p className="text-sm text-gray-600">{entry.qualitativeNotes}</p>
+                          <div className="flex gap-2">
+                            <Badge variant="outline">
+                              Effectiveness: {entry.effectiveness}/5
+                            </Badge>
+                          </div>
+                          {entry.challenges && (
+                            <div className="text-sm">
+                              <strong>Challenges:</strong> {entry.challenges}
+                            </div>
+                          )}
+                          {entry.nextSteps && (
+                            <div className="text-sm">
+                              <strong>Next Steps:</strong> {entry.nextSteps}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }

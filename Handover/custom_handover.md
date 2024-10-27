@@ -67,12 +67,17 @@ IBDP-SIMS/
         │   │   ├── GeistMonoVF.woff
         │   │   └── GeistVF.woff
         │   └── scheduler/
+        │       ├── tracking/
+        │           └── page.tsx
         │       └── page.tsx
         ├── components/
         │   ├── ui/
+        │   ├── Calendar.tsx
         │   ├── CommandProvider.tsx
         │   ├── SearchContent.tsx
         │   └── SearchNavigation.tsx
+        ├── types/
+        │   └── task.ts
         └── lib/
             └── utils.ts
 
@@ -92,7 +97,7 @@ The project was set up using create-next-app with the following options:
 ## Technical Stack
 
 - Frontend: Next.js 14 with TypeScript
-- Styling: TailwindCSS
+- Styling: TailwindCSS and any shadcn ui components
 - State Management: React hooks (useState, useEffect)
 - Data Persistence: Local Storage (currently), planned migration to PostgreSQL
 - Deployment: Not specified yet

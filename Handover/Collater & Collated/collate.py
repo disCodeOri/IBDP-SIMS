@@ -8,19 +8,19 @@ def combine_files(root_dir, output_file):
         'indexengineer/src/app/globals.css',
         
         #Scheduler files
-        #'indexengineer/src/app/scheduler/page.tsx',
-        #'indexengineer/src/components/Calendar.tsx',
-        #'indexengineer/src/components/TaskForm.tsx',
-        #'indexengineer/src/components/FilterSort.tsx',
-        #'indexengineer/src/components/TaskDetails.tsx',
-        #'indexengineer/src/components/TaskList.tsx',
-        #'indexengineer/src/types/task.ts',
+        'indexengineer/src/app/scheduler/page.tsx',
+        'indexengineer/src/components/Calendar.tsx',
+        'indexengineer/src/app/scheduler/Types.ts',
+        'indexengineer/src/types/task.ts',
+        
+        #Tracker files
+        'indexengineer/src/app/scheduler/tracking/page.tsx'
         
         #Components
-        'indexengineer/src/components/SearchNavigation.tsx',
-        'indexengineer/src/components/SearchContent.tsx',
-        'indexengineer/src/components/SearchNavigation.tsx',
-        'indexengineer/src/components/CommandProvider.tsx'
+        #'indexengineer/src/components/SearchNavigation.tsx',
+        #'indexengineer/src/components/SearchContent.tsx',
+        #'indexengineer/src/components/SearchNavigation.tsx',
+        #'indexengineer/src/components/CommandProvider.tsx'
         
         # misc config files
         #'indexengineer/next.config.mjs',

@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from 'next/navigation';
 
 const TaskForm = ({ onSubmit, initialData = null, onClose }: any) => {
   const [task, setTask] = useState<Partial<Task>>(
@@ -202,6 +203,7 @@ const TaskCard = ({ task, onEdit, onDelete, onStatusChange }: any) => {
 };
 
 export default function SchedulerPage() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Status | 'All'>('All');
   const [search, setSearch] = useState('');
@@ -252,38 +254,45 @@ export default function SchedulerPage() {
   return (
   <div className="max-w-4xl mx-auto py-8">
     <div className="flex justify-between items-center mb-6">
-    <h1 className="text-3xl font-bold">Task Scheduler</h1>
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-      <Button>
-        <Plus className="mr-2 h-4 w-4" /> Add Task
-      </Button>
-      </DialogTrigger>
-      <DialogContent>
-      <DialogHeader>
-        <DialogTitle>{editTask ? 'Edit Task' : 'Create New Task'}</DialogTitle>
-      </DialogHeader>
-      <TaskForm
-        onSubmit={handleSubmit}
-        initialData={editTask}
-        onClose={() => {
-        setIsDialogOpen(false);
-        setEditTask(null);
-        }}
-      />
-      </DialogContent>
-    </Dialog>
+      <h1 className="text-3xl font-bold">Task Scheduler</h1>
+      <div className="flex gap-2">
+        <Button variant="outline" onClick={() => router.push('/scheduler/tracking')}>
+          <Calendar className="mr-2 h-4 w-4" /> Track Progress
+        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{editTask ? 'Edit Task' : 'Create New Task'}</DialogTitle>
+            </DialogHeader>
+            <TaskForm
+              onSubmit={handleSubmit}
+              initialData={editTask}
+              onClose={() => {
+                setIsDialogOpen(false);
+                setEditTask(null);
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
 
     <div className="flex gap-4 mb-6">
     <div className="flex-1">
-      <Input
-      placeholder="Search tasks..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="w-full"
-      prefix={<Search className="h-4 w-4" />}
-      />
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-10"
+        />
+      </div>
     </div>
     <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
       <SelectTrigger className="w-32">
