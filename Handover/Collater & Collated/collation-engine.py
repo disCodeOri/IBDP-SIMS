@@ -220,28 +220,73 @@ class FileProcessorGUI:
                         write_tree(os.path.join(path, item), prefix + "│   ")
                         
             write_tree(dir_path)
-            
+    
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("File Structure Generator")
+        self.root.geometry("1000x800")
+        
+        # Get script directory
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Variables
+        self.folder_path = tk.StringVar()
+        self.watch_var = tk.BooleanVar(value=False)
+        self.observer = None
+        self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__'}
+        self.ignore_vars = {}
+        
+        self.setup_gui()
+    
     def combine_files(self, source_dir, output_file):
+        """
+        Enhanced version that properly handles files from different folders
+        """
         selected_files = self.checkbox_tree.get_selected()
         
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
+            # Sort files by directory depth to maintain a logical order
+            selected_files.sort(key=lambda x: x.count(os.sep))
+            
+            current_dir = None
             for relative_path in selected_files:
+                # Skip directory entries
                 if relative_path.startswith('[') and relative_path.endswith(']'):
-                    continue  # Skip directory entries
-                    
+                    continue
+                
+                # Get the directory path for the current file
+                dir_path = os.path.dirname(relative_path)
+                
+                # If we're entering a new directory, add a header
+                if dir_path != current_dir:
+                    if dir_path:
+                        f.write(f"\n{'='*80}\n")
+                        f.write(f"Directory: {dir_path}\n")
+                        f.write(f"{'='*80}\n\n")
+                    current_dir = dir_path
+                
                 file_path = os.path.join(source_dir, relative_path)
-                f.write(f"File: {relative_path}\n\n")
+                f.write(f"File: {os.path.basename(relative_path)}\n")
+                f.write(f"{'-'*80}\n\n")
+                
                 try:
                     if os.path.getsize(file_path) > 1024 * 1024:  # Skip files larger than 1MB
                         f.write("File too large to include in combined output\n")
                     else:
-                        with open(file_path, 'r', encoding='utf-8') as infile:
-                            f.write(infile.read())
+                        try:
+                            with open(file_path, 'r', encoding='utf-8') as infile:
+                                content = infile.read()
+                                f.write(content)
+                        except UnicodeDecodeError:
+                            # Try with different encoding if UTF-8 fails
+                            with open(file_path, 'r', encoding='latin-1') as infile:
+                                content = infile.read()
+                                f.write(content)
                 except Exception as e:
                     f.write(f"Error reading file: {str(e)}\n")
-                f.write("\n\n" + "="*80 + "\n\n")
+                f.write("\n\n")
                     
     def generate(self, mode='both'):
         folder = self.folder_path.get()
