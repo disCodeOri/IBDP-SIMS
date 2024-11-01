@@ -1,3 +1,4 @@
+// This file is only for the scheduler page. It manages the tasks and tracking data. (Parth on 1st nov 2024)
 // src/lib/data.ts
 import fs from 'fs';
 import path from 'path';
