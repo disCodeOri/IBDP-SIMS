@@ -19,9 +19,10 @@ import {
   History,
   Calendar,
   Clock,
-  Keyboard
+  Keyboard,
+  Lock
 } from "lucide-react";
-import { logout } from '@/lib/auth';
+import { authenticate, logout, isAuthenticated } from '@/lib/auth';
 
 const pages = [
   { title: 'Scheduler', path: '/scheduler', description: 'Manage your tasks and calendar' },
@@ -41,10 +42,15 @@ const quickActions = [
 
 const SearchNavigation = () => {
   const [open, setOpen] = React.useState(false);
+  const [isAuth, setIsAuth] = React.useState(false);
+  const [error, setError] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [currentTime, setCurrentTime] = React.useState('');
+  const [inputValue, setInputValue] = React.useState('');
 
   React.useEffect(() => {
+    setIsAuth(isAuthenticated());
+    
     const updateTime = () => {
       setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     };
@@ -69,44 +75,85 @@ const SearchNavigation = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/';
+    setIsAuth(false);
+    setInputValue('');
+    setOpen(false);
   };
 
   const handleNavigation = (path: string) => {
     window.location.href = path;
   };
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    setError('');
+
+    // Try to authenticate if input looks like a password attempt
+    if (value.length > 0 && !isAuth) {
+      if (authenticate(value)) {
+        setIsAuth(true);
+        setInputValue('');
+      }
+    }
+  };
+
   return (
     <div className="flex items-start justify-center pt-32">
       <div className="w-full max-w-2xl">
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={handleLogout}
-            className="flex items-center text-sm text-gray-500 hover:text-gray-700"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </button>
-        </div>
+        {isAuth && (
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={handleLogout}
+              className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </button>
+          </div>
+        )}
         <Command className="rounded-xl shadow-md overflow-visible">
           <div className="relative">
-            <CommandInput 
-              ref={inputRef}
-              placeholder="Search pages... (Press '/' to focus)" 
-              className="h-12"
-              onFocus={() => setOpen(true)}
-              onBlur={() => {
-                setTimeout(() => setOpen(false), 200);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  inputRef.current?.blur();
-                  setOpen(false);
-                }
-              }}
-            />
+            {isAuth ? (
+              <CommandInput 
+                ref={inputRef}
+                placeholder="Search pages... (Press '/' to focus)"
+                value={inputValue}
+                onValueChange={handleInputChange}
+                className="h-12"
+                onFocus={() => setOpen(true)}
+                onBlur={() => setTimeout(() => setOpen(false), 200)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    inputRef.current?.blur();
+                    setOpen(false);
+                  }
+                }}
+              />
+            ) : (
+              <input
+                ref={inputRef}
+                type="password"
+                placeholder="Enter password..."
+                value={inputValue}
+                onChange={(e) => handleInputChange(e.target.value)}
+                className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    inputRef.current?.blur();
+                  }
+                }}
+              />
+            )}
+            {!isAuth && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <Lock className="h-4 w-4 text-gray-400" />
+              </div>
+            )}
           </div>
-          {open && (
+          {error && (
+            <p className="text-sm text-red-500 px-3 py-2">{error}</p>
+          )}
+          {open && isAuth && (
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               
@@ -123,28 +170,6 @@ const SearchNavigation = () => {
                   <div className="flex items-center">
                     <Home className="h-4 w-4 mr-2" />
                     <span className="font-medium text-sm">Home</span>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
-                </CommandItem>
-                <CommandItem
-                  value="Profile Settings"
-                  onSelect={() => handleNavigation('/profile')}
-                  className="flex items-center justify-between py-3"
-                >
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 mr-2" />
-                    <span className="font-medium text-sm">Profile</span>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
-                </CommandItem>
-                <CommandItem
-                  value="Settings"
-                  onSelect={() => handleNavigation('/settings')}
-                  className="flex items-center justify-between py-3"
-                >
-                  <div className="flex items-center">
-                    <Settings className="h-4 w-4 mr-2" />
-                    <span className="font-medium text-sm">Settings</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
                 </CommandItem>
@@ -189,6 +214,22 @@ const SearchNavigation = () => {
                     <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
                   </CommandItem>
                 ))}
+              </CommandGroup>
+
+              <CommandSeparator className="my-2" />
+
+              <CommandGroup heading="System">
+                <CommandItem
+                  value="logout sign out exit"
+                  onSelect={handleLogout}
+                  className="flex items-center justify-between py-3 text-red-600"
+                >
+                  <div className="flex items-center">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span className="font-medium text-sm">Logout</span>
+                  </div>
+                  <ArrowRight className="h-4 w-4 opacity-0 group-aria-selected:opacity-100" />
+                </CommandItem>
               </CommandGroup>
             </CommandList>
           )}
