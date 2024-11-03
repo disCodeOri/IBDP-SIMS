@@ -6,6 +6,7 @@ import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import time
+import re
 
 class FileCheckboxTree(ttk.Frame):
     def __init__(self, master, **kwargs):
@@ -82,6 +83,7 @@ class FileProcessorGUI:
         # Variables
         self.folder_path = tk.StringVar()
         self.watch_var = tk.BooleanVar(value=False)
+        self.remove_comments_var = tk.BooleanVar(value=True)  # Set to True by default
         self.observer = None
         self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__'}
         self.ignore_vars = {}
@@ -220,32 +222,103 @@ class FileProcessorGUI:
                         write_tree(os.path.join(path, item), prefix + "│   ")
                         
             write_tree(dir_path)
-    
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("File Structure Generator")
-        self.root.geometry("1000x800")
+
+    def remove_comments(self, content, file_extension):
+        """
+        Remove comments from code based on file extension
+        """
+        # Define comment patterns for different languages
+        patterns = {
+            '.py': {
+                'single': r'#.*$',
+                'multi': r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
+                'inline_multi': True
+            },
+            '.js': {
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True
+            },
+            '.ts': {  # TypeScript patterns
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True,
+                'jsdoc': r'/\*\*[\s\S]*?\*/'  # JSDoc comments
+            },
+            '.tsx': {  # TypeScript JSX patterns
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True,
+                'jsdoc': r'/\*\*[\s\S]*?\*/'  # JSDoc comments
+            },
+            '.jsx': {
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True,
+                'jsdoc': r'/\*\*[\s\S]*?\*/'
+            },
+            '.java': {
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True
+            },
+            '.cpp': {
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True
+            },
+            '.cs': {
+                'single': r'//.*$',
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True
+            },
+            '.html': {
+                'single': None,
+                'multi': r'<!--[\s\S]*?-->',
+                'inline_multi': True
+            },
+            '.css': {
+                'single': None,
+                'multi': r'/\*[\s\S]*?\*/',
+                'inline_multi': True
+            }
+        }
         
-        # Get script directory
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        # Get patterns for file type or use TypeScript patterns as default
+        ext = os.path.splitext(file_extension.lower())[0] + os.path.splitext(file_extension.lower())[1]
+        pattern = patterns.get(ext, patterns['.ts'])  # Default to TypeScript patterns
         
-        # Variables
-        self.folder_path = tk.StringVar()
-        self.watch_var = tk.BooleanVar(value=False)
-        self.observer = None
-        self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__'}
-        self.ignore_vars = {}
+        # Remove JSDoc comments first if pattern supports it
+        if pattern.get('jsdoc'):
+            content = re.sub(pattern['jsdoc'], '', content)
+            
+        # Remove multi-line comments
+        if pattern['multi']:
+            content = re.sub(pattern['multi'], '', content)
         
-        self.setup_gui()
-    
+        # Remove single-line comments
+        if pattern['single']:
+            # Split into lines, remove comments, and rejoin
+            lines = content.split('\n')
+            lines = [re.sub(pattern['single'], '', line) for line in lines]
+            content = '\n'.join(lines)
+        
+        # Remove empty lines and normalize spacing
+        lines = content.split('\n')
+        lines = [line.rstrip() for line in lines if line.strip()]
+        return '\n'.join(lines)
+
     def combine_files(self, source_dir, output_file):
         """
-        Enhanced version that properly handles files from different folders
+        Enhanced version that properly handles files from different folders and removes comments if enabled
         """
         selected_files = self.checkbox_tree.get_selected()
         
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            if self.remove_comments_var.get():
+                f.write("Comments have been removed from the source files\n")
+            f.write("\n")
             
             # Sort files by directory depth to maintain a logical order
             selected_files.sort(key=lambda x: x.count(os.sep))
@@ -278,16 +351,20 @@ class FileProcessorGUI:
                         try:
                             with open(file_path, 'r', encoding='utf-8') as infile:
                                 content = infile.read()
+                                if self.remove_comments_var.get():
+                                    content = self.remove_comments(content, os.path.splitext(file_path)[1])
                                 f.write(content)
                         except UnicodeDecodeError:
                             # Try with different encoding if UTF-8 fails
                             with open(file_path, 'r', encoding='latin-1') as infile:
                                 content = infile.read()
+                                if self.remove_comments_var.get():
+                                    content = self.remove_comments(content, os.path.splitext(file_path)[1])
                                 f.write(content)
                 except Exception as e:
                     f.write(f"Error reading file: {str(e)}\n")
                 f.write("\n\n")
-                    
+
     def generate(self, mode='both'):
         folder = self.folder_path.get()
         if not folder:
