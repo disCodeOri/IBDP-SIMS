@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { CommandProvider } from "@/components/CommandProvider";
+import { GlobalCommandProvider } from "@/components/CommandBar/GlobalCommandBar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,11 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="overflow-hidden">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 min-h-screen text-gray-900`}>
-        <CommandProvider>
+        <GlobalCommandProvider>
           <main className="container mx-auto p-4">
             {children}
           </main>
-        </CommandProvider>
+        </GlobalCommandProvider>
       </body>
     </html>
   );

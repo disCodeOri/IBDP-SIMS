@@ -2,8 +2,8 @@
 "use client";
 
 import React from 'react';
-import SearchNavigation from '@/components/SearchNavigation';
+import HomeCommandBar from '@/components/CommandBar/HomeCommandBar';
 
 export default function Home() {
-  return <SearchNavigation />;
+  return <HomeCommandBar />;
 }
