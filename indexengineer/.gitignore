@@ -37,3 +37,10 @@ next-env.d.ts
 
 # data
 /data/*.json
+node_modules/
+
+# test reports and related data
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
