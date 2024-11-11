@@ -37,7 +37,8 @@
     "vaul": "^1.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.16.13",
+    "@playwright/test": "^1.48.2",
+    "@types/node": "^20.17.6",
     "@types/react": "18.3.11",
     "@types/react-dom": "^18",
     "eslint": "^8",
