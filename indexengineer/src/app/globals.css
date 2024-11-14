@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 body {
   font-family: Arial, Helvetica, sans-serif;
