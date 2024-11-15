@@ -1,13 +1,13 @@
 // src/components/search-navigation/command-palette/index.tsx
 import React from 'react';
 import { Command, CommandList, CommandEmpty, CommandSeparator, CommandGroup, CommandItem } from '@/components/ui/command';
-import { CommandSearch } from './command-input';
-import { NavigationGroup } from './command-groups';
+import { CommandBarSearchAndInputBox } from './CommandBarSearchAndInputBox';
+import { CommandBarNavigationGroups } from './CommandBarNavigationGroups';
 import { pages } from '@/config/navigation/pages';
 import { quickActions } from '@/config/navigation/quick-actions';
-import { CommandPaletteProps } from '@/types/command';
-import { useTime } from '@/hooks/use-time';
-import { ArrowRight } from 'lucide-react';
+import { CommandPaletteProps } from '@/types/commandBarPropertyInterfaces';//
+import { useTime } from '@/hooks/useTime';//
+import { ArrowRight } from 'lucide-react';//
 
 export const CommandPalette = ({ isOpen, onOpenChange, inputRef, onNavigation }: CommandPaletteProps) => {
   const currentTime = useTime();
@@ -15,7 +15,7 @@ export const CommandPalette = ({ isOpen, onOpenChange, inputRef, onNavigation }:
   return (
     <Command className="rounded-xl shadow-md overflow-visible">
       <div className="relative">
-        <CommandSearch inputRef={inputRef} onOpen={onOpenChange} />
+        <CommandBarSearchAndInputBox inputRef={inputRef} onOpen={onOpenChange} />
       </div>
       {isOpen && (
         <CommandList>
@@ -66,7 +66,7 @@ export const CommandPalette = ({ isOpen, onOpenChange, inputRef, onNavigation }:
 
           <CommandSeparator className="my-2" />
 
-          <NavigationGroup onSelect={onNavigation} />
+          <CommandBarNavigationGroups onSelect={onNavigation} />
         </CommandList>
       )}
     </Command>

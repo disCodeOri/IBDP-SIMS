@@ -3,7 +3,7 @@ import React from 'react';
 import { CommandGroup, CommandItem } from '@/components/ui/command';
 import { ArrowRight, Home, Settings, User } from 'lucide-react';
 
-export const NavigationGroup = ({ onSelect }: { onSelect: (path: string) => void }) => (
+export const CommandBarNavigationGroups = ({ onSelect }: { onSelect: (path: string) => void }) => (
   <CommandGroup heading="Navigation">
     {[
       { icon: Home, title: 'Home', path: '/' },

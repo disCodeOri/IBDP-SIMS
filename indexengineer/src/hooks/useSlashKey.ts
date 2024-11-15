@@ -1,4 +1,4 @@
-// src/hooks/use-keyboard-shortcuts.ts
+// src/hooks/useSlashKey.ts
 import { RefObject, useEffect } from 'react';
 
 export const useSlashKey = (

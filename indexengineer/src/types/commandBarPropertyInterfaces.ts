@@ -1,6 +1,6 @@
-// src/types/command.ts
+// src/types/commandBarPropertyInterfaces.ts
 import { RefObject } from 'react';
-import { Page, QuickAction } from './navigation';
+import { Page, QuickAction } from './commandBarNavigationPropertyInterfaces';
 
 export interface CommandPaletteProps {
   isOpen: boolean;

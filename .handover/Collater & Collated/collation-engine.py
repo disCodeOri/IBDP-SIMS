@@ -210,7 +210,7 @@ class FileProcessorGUI:
         
     def generate_tree(self, dir_path, output_file, ignore_patterns):
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(f"Directory structure generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            #f.write(f"Directory structure generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             
             def write_tree(path, prefix=""):
                 if any(pattern in path for pattern in ignore_patterns):
@@ -315,9 +315,9 @@ class FileProcessorGUI:
         selected_files = self.checkbox_tree.get_selected()
         
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            #f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             if self.remove_comments_var.get():
-                f.write("Comments have been removed from the source files\n")
+                f.write("Comments have been removed from the source files")
             f.write("\n")
             
             # Sort files by directory depth to maintain a logical order

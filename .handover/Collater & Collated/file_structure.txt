@@ -1,57 +1,133 @@
-Directory structure generated on 2024-11-15 15:25:34
-├── src
-│   ├── .file_purpose_descriptions.txt
-│   ├── app
-│   │   ├── favicon.ico
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   ├── scheduler
-│   │   │   ├── page.tsx
-│   ├── components
-│   │   ├── search-navigation
-│   │   │   ├── command-palette
-│   │   │   │   ├── command-groups.tsx
-│   │   │   │   ├── command-input.tsx
-│   │   │   │   ├── index.tsx
-│   │   │   ├── index.tsx
-│   │   │   ├── keyboard-shortcuts.tsx
-│   │   ├── ui
-│   │   │   ├── badge.tsx
-│   │   │   ├── button.tsx
-│   │   │   ├── calendar.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── command.tsx
-│   │   │   ├── context-menu.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   ├── drawer.tsx
-│   │   │   ├── dropdown-menu.tsx
-│   │   │   ├── hover-card.tsx
-│   │   │   ├── input.tsx
-│   │   │   ├── label.tsx
-│   │   │   ├── menubar.tsx
-│   │   │   ├── popover.tsx
-│   │   │   ├── progress.tsx
-│   │   │   ├── resizable.tsx
-│   │   │   ├── scroll-area.tsx
-│   │   │   ├── select.tsx
-│   │   │   ├── tabs.tsx
-│   │   │   ├── textarea.tsx
-│   │   │   ├── tooltip.tsx
-│   │   ├── universal-command
-│   │   │   ├── UniversalCommandBarProvider.tsx
-│   ├── config
-│   │   ├── navigation
-│   │   │   ├── pages.ts
-│   │   │   ├── quick-actions.ts
-│   ├── data
-│   │   ├── scheduler
-│   │   │   ├── sched-data.json
-│   ├── hooks
-│   │   ├── use-keyboard-shortcuts.ts
-│   │   ├── use-time.ts
-│   ├── lib
-│   │   ├── utils.ts
-│   ├── types
-│   │   ├── command.ts
-│   │   ├── navigation.ts
+├── IBDP-SIMS
+│   ├── .handover
+│   │   ├── Collater & Collated
+│   │   │   ├── collation-engine.py
+│   │   │   ├── file_structure.txt
+│   │   │   ├── old engines
+│   │   │   │   ├── collate.py
+│   │   │   │   ├── combined_output.txt
+│   │   │   │   ├── file_structure-gen.py
+│   │   │   │   ├── old_collater.py
+│   │   │   ├── pasteage_engine.py
+│   │   ├── Handovers
+│   │   │   ├── Claude Main Full Handover.md
+│   │   │   ├── Claude Main Scheduler Handover.md
+│   │   │   ├── Claude Main page handover.md
+│   │   │   ├── old
+│   │   │   │   ├── Claude Full Handover.md
+│   │   │   │   ├── Claude Handover.md
+│   │   │   │   ├── Handover editing.md
+│   │   │   │   ├── custom_handover.md
+│   │   ├── Prompts
+│   │   │   ├── Claude Handover prompt.txt
+│   ├── .idx
+│   │   ├── dev.nix
+│   │   ├── integrations.json
+│   ├── .plans
+│   │   ├── CS IA Baseline idea.txt
+│   │   ├── Offline Tech Stack.md
+│   │   ├── claude.md
+│   │   ├── cs-ia-task-breakdown.md
+│   │   ├── mental health section plans
+│   │   │   ├── comprehensive-reference.md
+│   │   │   ├── mental health state management application-features.md
+│   │   │   ├── unified-state-master-plan.md
+│   │   ├── prompt.txt
+│   │   ├── simplified-project-outline.md
+│   ├── .product snapshots
+│   │   ├── Main page with dropdown.png
+│   │   ├── TD and pages.txt
+│   │   ├── log in page.png
+│   │   ├── main page.png
+│   ├── .replit
+│   ├── .replitfiles
+│   │   ├── .replitpyenvcode
+│   ├── .vscode
+│   │   ├── settings.json
+│   ├── CS Notes
+│   │   ├── Konosuke Matsushita Quotes.md
+│   │   ├── Notes unit-5-data-structures.pdf
+│   │   ├── Topic 5.md
+│   │   ├── tips.md
+│   ├── README.md
+│   ├── git hard reset command.txt
+│   ├── indexengineer
+│   │   ├── .eslintrc.json
+│   │   ├── README.md
+│   │   ├── components.json
+│   │   ├── next-env.d.ts
+│   │   ├── next.config.mjs
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── playwright-report
+│   │   │   ├── index.html
+│   │   ├── playwright.config.ts
+│   │   ├── postcss.config.mjs
+│   │   ├── src
+│   │   │   ├── .file_purpose_descriptions.txt
+│   │   │   ├── app
+│   │   │   │   ├── favicon.ico
+│   │   │   │   ├── globals.css
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── scheduler
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── components
+│   │   │   │   ├── command-bar
+│   │   │   │   │   ├── command-palette
+│   │   │   │   │   │   ├── CommandBarNavigationGroups.tsx
+│   │   │   │   │   │   ├── CommandBarSearchAndInputBox.tsx
+│   │   │   │   │   │   ├── index.tsx
+│   │   │   │   │   ├── main-page-command-bar-provider
+│   │   │   │   │   │   ├── index.tsx
+│   │   │   │   │   │   ├── keyboard-shortcuts-guide.tsx
+│   │   │   │   │   ├── universal-command
+│   │   │   │   │   │   ├── UniversalCommandBarProvider.tsx
+│   │   │   │   ├── ui
+│   │   │   │   │   ├── badge.tsx
+│   │   │   │   │   ├── button.tsx
+│   │   │   │   │   ├── calendar.tsx
+│   │   │   │   │   ├── card.tsx
+│   │   │   │   │   ├── command.tsx
+│   │   │   │   │   ├── context-menu.tsx
+│   │   │   │   │   ├── dialog.tsx
+│   │   │   │   │   ├── drawer.tsx
+│   │   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   │   ├── hover-card.tsx
+│   │   │   │   │   ├── input.tsx
+│   │   │   │   │   ├── label.tsx
+│   │   │   │   │   ├── menubar.tsx
+│   │   │   │   │   ├── popover.tsx
+│   │   │   │   │   ├── progress.tsx
+│   │   │   │   │   ├── resizable.tsx
+│   │   │   │   │   ├── scroll-area.tsx
+│   │   │   │   │   ├── select.tsx
+│   │   │   │   │   ├── tabs.tsx
+│   │   │   │   │   ├── textarea.tsx
+│   │   │   │   │   ├── tooltip.tsx
+│   │   │   ├── config
+│   │   │   │   ├── metadata.ts
+│   │   │   │   ├── navigation
+│   │   │   │   │   ├── pages.ts
+│   │   │   │   │   ├── quick-actions.ts
+│   │   │   ├── data
+│   │   │   │   ├── scheduler
+│   │   │   │   │   ├── sched-data.json
+│   │   │   ├── hooks
+│   │   │   │   ├── useCtrlSlashKey.ts
+│   │   │   │   ├── useSlashKey.ts
+│   │   │   │   ├── useTime.ts
+│   │   │   ├── lib
+│   │   │   │   ├── utils.ts
+│   │   │   ├── media
+│   │   │   │   ├── Batman-Logo-500x281.png
+│   │   │   │   ├── Batman-Logo-500x281.svg
+│   │   │   ├── types
+│   │   │   │   ├── commandBarNavigationPropertyInterfaces.ts
+│   │   │   │   ├── commandBarPropertyInterfaces.ts
+│   │   ├── tailwind.config.ts
+│   │   ├── test-results
+│   │   ├── tests
+│   │   │   ├── tester-jester.spec.ts
+│   │   ├── tsconfig.json
+│   ├── pastebin.tsx

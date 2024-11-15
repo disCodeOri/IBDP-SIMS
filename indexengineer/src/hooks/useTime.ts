@@ -1,4 +1,4 @@
-// src/hooks/use-time.ts
+// src/hooks/useTime.ts
 import { useState, useEffect } from 'react';
 
 export const useTime = () => {

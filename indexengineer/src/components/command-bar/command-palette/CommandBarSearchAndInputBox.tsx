@@ -7,7 +7,7 @@ interface CommandSearchProps {
   onOpen: (open: boolean) => void;
 }
 
-export const CommandSearch = ({ inputRef, onOpen }: CommandSearchProps) => (
+export const CommandBarSearchAndInputBox = ({ inputRef, onOpen }: CommandSearchProps) => (
   <CommandInput 
     ref={inputRef}
     placeholder="Search pages... (Press '/' to focus)" 
