@@ -3,9 +3,6 @@ import tkinter as tk
 from tkinter import ttk, filedialog, scrolledtext
 from datetime import datetime
 import threading
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import time
 import re
 
 class FileCheckboxTree(ttk.Frame):
