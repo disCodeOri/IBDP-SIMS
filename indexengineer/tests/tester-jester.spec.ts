@@ -17,7 +17,7 @@ test('Commandbar menu keyboard up and down arrow key functionality', async ({ pa
 
   // Assert that the current option in the menu is not the first option
   const currentOption = await page.getByRole('option', { selected: true }).textContent();
-  expect(currentOption).not.toBe('Today\'s Tasks');
+  expect(currentOption).not.toBe('Scheduler');
 });
 
 test('Esc command focus activation Test', async ({ page }) => {
