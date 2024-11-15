@@ -1,25 +1,57 @@
-Directory structure generated on 2024-11-06 14:24:35
-├── idxeng
-│   ├── .eslintrc.json
-│   ├── README.md
-│   ├── next.config.ts
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── postcss.config.mjs
-│   ├── public
-│   │   ├── file.svg
-│   │   ├── globe.svg
-│   │   ├── next.svg
-│   │   ├── vercel.svg
-│   │   ├── window.svg
-│   ├── src
-│   │   ├── app
-│   │   │   ├── favicon.ico
-│   │   │   ├── fonts
-│   │   │   │   ├── GeistMonoVF.woff
-│   │   │   │   ├── GeistVF.woff
-│   │   │   ├── globals.css
-│   │   │   ├── layout.tsx
+Directory structure generated on 2024-11-15 15:25:34
+├── src
+│   ├── .file_purpose_descriptions.txt
+│   ├── app
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── scheduler
 │   │   │   ├── page.tsx
-│   ├── tailwind.config.ts
-│   ├── tsconfig.json
+│   ├── components
+│   │   ├── search-navigation
+│   │   │   ├── command-palette
+│   │   │   │   ├── command-groups.tsx
+│   │   │   │   ├── command-input.tsx
+│   │   │   │   ├── index.tsx
+│   │   │   ├── index.tsx
+│   │   │   ├── keyboard-shortcuts.tsx
+│   │   ├── ui
+│   │   │   ├── badge.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── calendar.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── command.tsx
+│   │   │   ├── context-menu.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── drawer.tsx
+│   │   │   ├── dropdown-menu.tsx
+│   │   │   ├── hover-card.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── label.tsx
+│   │   │   ├── menubar.tsx
+│   │   │   ├── popover.tsx
+│   │   │   ├── progress.tsx
+│   │   │   ├── resizable.tsx
+│   │   │   ├── scroll-area.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── tabs.tsx
+│   │   │   ├── textarea.tsx
+│   │   │   ├── tooltip.tsx
+│   │   ├── universal-command
+│   │   │   ├── UniversalCommandBarProvider.tsx
+│   ├── config
+│   │   ├── navigation
+│   │   │   ├── pages.ts
+│   │   │   ├── quick-actions.ts
+│   ├── data
+│   │   ├── scheduler
+│   │   │   ├── sched-data.json
+│   ├── hooks
+│   │   ├── use-keyboard-shortcuts.ts
+│   │   ├── use-time.ts
+│   ├── lib
+│   │   ├── utils.ts
+│   ├── types
+│   │   ├── command.ts
+│   │   ├── navigation.ts

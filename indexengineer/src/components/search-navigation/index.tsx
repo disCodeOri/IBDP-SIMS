@@ -3,13 +3,13 @@ import React, { useRef, useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { CommandPalette } from './command-palette';
 import { KeyboardShortcuts } from './keyboard-shortcuts';
-import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts';
+import { useSlashKey } from '@/hooks/use-keyboard-shortcuts';
 
 const SearchNavigation = () => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  useKeyboardShortcuts(inputRef, setOpen);
+  useSlashKey(inputRef, setOpen);
 
   const handleLogout = () => {
     //logout();

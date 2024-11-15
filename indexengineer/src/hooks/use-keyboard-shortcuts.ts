@@ -1,7 +1,7 @@
 // src/hooks/use-keyboard-shortcuts.ts
 import { RefObject, useEffect } from 'react';
 
-export const useKeyboardShortcuts = (
+export const useSlashKey = (
   inputRef: RefObject<HTMLInputElement>,
   onOpen: (open: boolean) => void
 ) => {
