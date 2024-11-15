@@ -393,13 +393,6 @@ class FileProcessorGUI:
                 
         threading.Thread(target=process, daemon=True).start()
         
-    def start_watching(self, folder, mode):
-        self.log_message("Starting file watch...")
-        event_handler = FileChangeHandler(lambda: self.generate(mode))
-        self.observer = Observer()
-        self.observer.schedule(event_handler, folder, recursive=True)
-        self.observer.start()
-        
     def run(self):
         self.root.mainloop()
         if self.observer:
