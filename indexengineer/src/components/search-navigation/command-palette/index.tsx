@@ -25,7 +25,22 @@ export const CommandPalette = ({ isOpen, onOpenChange, inputRef, onNavigation }:
             {currentTime} - Quick Access Menu
           </div>
 
-          <NavigationGroup onSelect={onNavigation} />
+          <CommandGroup heading="Pages">
+            {pages.map((page) => (
+              <CommandItem
+                key={page.path}
+                value={page.title}
+                onSelect={() => onNavigation(page.path)}
+                className="flex items-center justify-between py-3"
+              >
+                <div>
+                  <p className="font-medium text-sm">{page.title}</p>
+                  <p className="text-sm text-gray-500">{page.description}</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
+              </CommandItem>
+            ))}
+          </CommandGroup>
 
           <CommandSeparator className="my-2" />
 
@@ -51,22 +66,7 @@ export const CommandPalette = ({ isOpen, onOpenChange, inputRef, onNavigation }:
 
           <CommandSeparator className="my-2" />
 
-          <CommandGroup heading="Pages">
-            {pages.map((page) => (
-              <CommandItem
-                key={page.path}
-                value={page.title}
-                onSelect={() => onNavigation(page.path)}
-                className="flex items-center justify-between py-3"
-              >
-                <div>
-                  <p className="font-medium text-sm">{page.title}</p>
-                  <p className="text-sm text-gray-500">{page.description}</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-blue-500 opacity-0 group-aria-selected:opacity-100" />
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <NavigationGroup onSelect={onNavigation} />
         </CommandList>
       )}
     </Command>
