@@ -1,4 +1,3 @@
-// src/components/search-navigation/command-palette/command-input.tsx
 import React from 'react';
 import { CommandInput } from '@/components/ui/command';
 
@@ -8,10 +7,10 @@ interface CommandSearchProps {
 }
 
 export const CommandBarSearchAndInputBox = ({ inputRef, onOpen }: CommandSearchProps) => (
-  <CommandInput 
+  <CommandInput
     ref={inputRef}
-    placeholder="Search pages... (Press '/' to focus)" 
-    className="h-12"
+    placeholder="Search pages... (Press '/' to focus)"
+    className="h-12 bg-muted/50 border-none focus:ring-0 focus:outline-none placeholder:text-muted-foreground px-4 rounded-lg [&_[cmdk-input-wrapper]_svg]:text-foreground [&_[cmdk-input-wrapper]_svg]:dark:text-foreground [&_[cmdk-input-wrapper]_svg]:opacity-70"
     onFocus={() => onOpen(true)}
     onBlur={() => {
       setTimeout(() => onOpen(false), 200);

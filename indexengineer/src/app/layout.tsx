@@ -1,21 +1,25 @@
-// src/app/layout.tsx
-"use client";
-
-import React from 'react';
 import './globals.css';
-import UniversalCommandBarProvider from '@/components/command-bar/universal-command/UniversalCommandBarProvider';
+import './globals.css';
+import { ThemeProvider } from 'next-themes';
+import { ClientProvider } from '@/components/providers/ClientProvider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const currentPagePath = typeof window !== 'undefined' ? window.location.pathname : '';
-  const showCommandBar = currentPagePath !== '/';
-
   return (
-    <html lang="en" className="overflow-hidden">
-      <body className={`antialiased bg-gray-100 min-h-screen text-gray-900`}>
-        <div className="container mx-auto p-4">
-          {children}
-          {showCommandBar && <UniversalCommandBarProvider />}
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body className="antialiased min-h-screen">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="container mx-auto p-4">
+            <ClientProvider>
+              {children}
+            </ClientProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

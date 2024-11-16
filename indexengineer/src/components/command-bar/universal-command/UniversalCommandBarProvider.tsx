@@ -37,10 +37,15 @@ const UniversalCommandBarProvider = () => {
   );
 };
 
-const UniversalCommandBarOverlay = ({ isOpen, onOpenChange, inputRef, onNavigation }: CommandPaletteProps) => {
+const UniversalCommandBarOverlay = ({
+  isOpen,
+  onOpenChange,
+  inputRef,
+  onNavigation,
+}: CommandPaletteProps) => {
   return isOpen ? (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl shadow-md w-full max-w-3xl">
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-background/80 backdrop-blur-sm">
+      <div className="bg-background border border-border rounded-xl shadow-lg w-full max-w-3xl">
         <CommandPalette
           isOpen={isOpen}
           onOpenChange={onOpenChange}
