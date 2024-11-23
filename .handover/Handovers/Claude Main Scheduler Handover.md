@@ -194,3 +194,8 @@ The developer ("Parth") is an IBDP student with beginner-level programming exper
 - Priority handling
 - Emergency rescheduling
 - Change propagation
+
+
+```
+The following integrations are required to connect the Scheduler to various different components in my application, I only want you to, like, make room for them so that I can plug them in easily, like, I don't want you to actually write the code for them, just like, make the UI for them so that its easier to do these expansions.
+```

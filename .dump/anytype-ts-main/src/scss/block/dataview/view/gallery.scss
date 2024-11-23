@@ -1,0 +1,67 @@
+@import "~scss/_mixins";
+
+.blocks {
+	.block.blockDataview {
+		.viewContent.viewGallery { padding: 0px 0px 80px 0px; }
+		.viewContent.viewGallery {
+			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 14px; }
+
+			.card { 
+				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 
+				transition-timing-function: $easeInQuint; border-radius: 8px; display: inline-block; background: var(--color-bg-primary);
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative; overflow: hidden;
+			}
+
+			.card.add { box-shadow: 0px 0px; }
+			.card.add::after {
+				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); margin: -10px 0px 0px -10px;
+			}
+
+			.card {
+				.dropTarget { height: 100%; }
+				.dropTarget.isOver { box-shadow: 0px 0px; }
+				.dropTarget.isOver::before { content: ""; position: absolute; background: var(--color-system-accent-100); width: 2px; height: 100%; border-radius: 2px; top: 0px; }
+				.dropTarget.isOver.top::before { left: -10px; }
+				.dropTarget.isOver.bottom::before { right: -10px; }
+
+				.selectionTarget { height: 100%; }
+				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
+			}
+			.card:hover { border-color: var(--color-shape-secondary); background: var(--color-shape-highlight-light); }
+			.card:hover {
+				.icon.checkbox { opacity: 1; }
+			}
+
+			.card.isEditing { border: 2px solid var(--color-system-accent-100); }
+			.card.isEditing {
+				.inner { padding: 15px; }
+			}
+
+			.cellContent.c-longText {
+				.name { overflow: hidden; @include clamp2; }
+			}
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.viewContent.viewGallery { padding: 0px; }
+		.viewContent.viewGallery {
+			.galleryWrap { margin: 0px; display: grid; gap: 16px; }
+			.galleryWrap.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+			.galleryWrap.medium { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			.galleryWrap.large { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+			.card { width: auto; }
+
+			.loadMore { padding: 0px 2px 10px;}
+		}
+	}
+
+	.block.blockDataview.isInline.isVertical {
+		.viewContent.viewGallery {
+			.galleryWrap.small { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			.galleryWrap.medium { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.galleryWrap.large { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+		}
+	}
+}

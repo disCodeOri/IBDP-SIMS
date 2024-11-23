@@ -1,0 +1,175 @@
+﻿[
+    {
+        "tabs": [
+            {
+                "favIconUrl": "https://wordcounter.net/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "WordCounter - Count Words & Correct Writing",
+                "url": "https://wordcounter.net/"
+            },
+            {
+                "favIconUrl": "https://cdn.kastatic.org/images/favicon.ico?logo",
+                "muted": false,
+                "pinned": false,
+                "title": "Digital SAT Math | Test prep | Khan Academy",
+                "url": "https://www.khanacademy.org/test-prep/v2-sat-math"
+            },
+            {
+                "favIconUrl": "https://cdn.kastatic.org/images/favicon.ico?logo",
+                "muted": false,
+                "pinned": false,
+                "title": "Linear and exponential growth: medium (practice) | Khan Academy",
+                "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-medium/x0fcc98a58ba3bea7:linear-and-exponential-growth-medium/e/v2-linear-and-exponential-growth-2"
+            },
+            {
+                "muted": false,
+                "pinned": false,
+                "title": "Economics guide",
+                "url": "https://xmltwo.ibo.org/publications/DP/Group3/d_3_econo_gui_1011_1/html/production-app3.ibo.org/publication/252/part/3/chapter/5.html"
+            },
+            {
+                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Google Docs",
+                "url": "https://docs.google.com/document/u/0/"
+            },
+            {
+                "favIconUrl": "https://www.gstatic.com/aistudio/ai_studio_favicon_32x32.svg",
+                "muted": false,
+                "pinned": false,
+                "title": "Tune a model | Google AI Studio",
+                "url": "https://aistudio.google.com/tune"
+            },
+            {
+                "favIconUrl": "https://www.gstatic.com/devrel-devsite/prod/vc38a15f5a89ceb3dee5ad4d2d7b57b718d8556c0e3724a12c131a2b9d037d8c7/googledevai/images/favicon-new.png",
+                "muted": false,
+                "pinned": false,
+                "title": "Fine-tuning with the Gemini API  |  Google AI for Developers",
+                "url": "https://ai.google.dev/gemini-api/docs/model-tuning"
+            },
+            {
+                "favIconUrl": "https://www.gstatic.com/aistudio/ai_studio_favicon_32x32.svg",
+                "muted": false,
+                "pinned": false,
+                "title": "Get API key | Google AI Studio",
+                "url": "https://aistudio.google.com/apikey"
+            },
+            {
+                "favIconUrl": "https://mermaid.js.org/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Mermaid User Guide | Mermaid",
+                "url": "https://mermaid.js.org/intro/getting-started.html"
+            },
+            {
+                "favIconUrl": "https://mermaid.js.org/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Integrations | Mermaid",
+                "url": "https://mermaid.js.org/ecosystem/integrations-community.html"
+            },
+            {
+                "favIconUrl": "https://mermaid.live/favicon.svg",
+                "muted": false,
+                "pinned": false,
+                "title": "Online FlowChart & Diagrams Editor - Mermaid Live Editor",
+                "url": "https://mermaid.live/edit#pako:eNqVWltv27gS_iuEgX1rgqZNmp48HMC5bYxN2mzstsAqfWAkxuZaFr2UlNRb9L-fGXJIUdQlOX0pv_F8IsXL8JtRfk5SlYnJyWSp-XbFFuf3BYN_94X9_7ff2DTLZLFkhXhmc5HWWlY7ds13QluPeboSWZ0Lzfb2_us9jEPS9v9OhNDFkKZ1tbrhBV8CBduiqGTKK6kKRmaiBo6GuFBrUVzxIoPuEwMYoQHCXJQlPNZ1RvCFXm6F3sgWr7FE1O67nfOKXxSp3m3xfRKErMGDtFmxras5L2Ql_4UODWQej8xkJqtrtbQzCW1mwfdgPc84rBib78pKbPqW0Pxuf05CX-o0-Nm434iN0jtjTWzbugy4w9SVElBRWUqDR2kGz4onnsuMV0rTyALLGPFWS6VpKi0xsIRzMzvdm29FKh9lys7UZqsKGFhpf17wch1ui9mp2w6zU3Yn_qmlFht0j_aE97Os6bngWS4LUSazKXOALTRP1wOcxec__BIlANhFWfJds2y9pIuLhnPxAyY4E9mriGfTOQ0mgSa7UrUuR4c3rx_-FmnVdEeGvWdZik5nsbd5xNX1N6XXueJZcnXtXJizjTHnDXP-_zHPlBaei6BZ8ZDv98YN_MBzdiV4Xq1g51UCQiYe4r5DZJ2t741Ce9LmWyONr-tt363SEKBuFJx62PEWsWvxJHJGRvd-oaOhuheYZn_XcBZ04gzMWQapp1rw9UXxqHQKPIOYg-PjvVEqc1sH29GuCX62r0cz9hlC4cacTWdh3jRAnaaVfILIN68hupn3cxbmTeNj_SbyvMA3F5WWaZk4zMhA7MjNTlCtC1VXt1pkMsWVIQPzlhEyrsO1fBSnPOdFKsy67KGBkSXccvOt0hBP_LS8sOmsO223mNvacKGnDTFa8mqVq-IWBlFgmHEGRhZixo6242e5cR0lCHDlZQGyYYx1KtfCsxC8inVXF54E7ZjTebObmu8WKy7diyFmaIherEM8g5ulRDECS-fIoe0l_p1I1ZPQO3dLOBxdD5EbUcsKLkapsjLBNrOgE0v7uLhHihJOgr-dnCHo2O-wi2KFmy5jX2adC-_LzKq48Ke2kmvtPnJvce3eWsG9SILCtNuCIviZ4nKuND56A1ekAYzQAGGx2yqjXndJ0xzwnW95Cpslof_bIwkHPS3kxhy0i2IJ93PiMbOGHgpONMSoKhCKgSlWBR1n84zfYbVrLZymJRip2gHuH2L3oLjOHNnh17EXqk5XjZYGEPD8fvmkKhRHdiaGNWToRivfw6QBdZ2bZ_wu4IQZwdfie_P4I85FLsMj6HC0FgNs0oie7fDr2GcrjA65IxOMuG0nq9s2XObmmWVi2q0OymHibV2uiIfN19JmxXS7Jd6s2APQYfrVN9mLV-ypCPNA_O2Bl6I5D6i04YzZIEKgFT-6lD9rWJ1GDxjYEQNd2gzE7Y_mzAGI5rlLOQUxUW9pb1rQ3pVdyo2ku9f15A19kfXz46MR9md8yx9kDrmGKPuOCvm5Zzpae_xtJxvJdkVKsQmb7bDU43-mCrClFdwnKn_CFSEDc5ZhLs4FrEUtbP5qmiMjg3MJwCfZFvbN0TRNMQM30zNSVJgeHFBBoYfgknbnQ9JSC1HcQXJlVCUCZhHowy3e1L00FzE_8acmegKQSx5k622OuaFgLivNy4ruKwd7CZcqrUs3OQbQ1GDyGM4OHDRQ3Ru8n90ZCKQf_hrK9msQ9wu5EU6AI2ZoiFR4zLM5-61WjxIjP6XwDg-Q7jCd1M1BtbhzUmPaJ1E9g951GQ3BIJlpihRqAy-ewTHVL6lecgVPcEwGiC7-hb4-k1CwU5YQ0vQusZA5PEibr2APpXXlNznhOL53iTY9aYRFY2gf4S4Vd5X44bsk2HuusoxpkdsAvpLbkj3AVOMhwCpeGum8vgxpHxVBU_Dok7j7ViPDynPdKQvgj9OZfaHha3LfRAteiXY37bKWedRtKC5bNZ59ik8-VvfHpX0SaK2NFBzM_VjBRvPf-j2Y6Ccrn6czdik4ajWaVPfy9oyZy09cC64xVUkIM2do3zyRt72uxArCkNLTguc7uH4TZ2DOMkK-5RVIvgKzhSVWEFWRkIkFtrEH2MQWtBMsPmgoeIXGxJxt5AHTjG_R18-AM_gp-O7qzj4xEXq5c9UOHx_7AoB1dceCiA2lPbkt54BugiSOrNVxO3R2uRAms5oqD7eCr0F6BRaGJhChlQiKAt2HXMKOXNbCLCQGU8LMGQaJJtzynGajGfzeKZyFdrbY3bHmaognFo2tpADwXxArfF6AJDREOUXkZ7iIIUaBsMD6jCF5OEI7ny9cb9CM4mnf-C7KilIzO7wGtwNq29eWHSHIg6RPee7PVWOKT1YPHyMkpsa5-AHLnTRNDIxpnQcZSrOxN7BEIJ53I-mT9yF92nBaSsHsirarzcTRgkLPV2SthQWmEbrLcz7DWmmZiSbxcZYRMulqX9YhZU14hHimJcw1xpLENk1c6ctBvxSYxJmKBmQrucsJX5AJwHIhYuAB7a3W-FMqaQv1Tl6FRF_R76eaorurINkKvEFN1IsICyz_aLFNFqb2Ay3eUjGRO8bwzQbvYfRxA2xbIZ5hwB8Y4S3c648ql8qnus4wIE19FJmrVMJReakwaby8VupwXD0pdLPlEK1gM1V1tktMk5l295tCh7gQfAOhGKv-ZYKAEYo_2HWYN0JUsDK-XGghhC6lM1kEJ7pLBfGf8wcsLYnEthXlh8YWTiDmXLVOxQtXm3Nraogdmi8FtjwpEYPJugF5pWGgZWLnzuMR4sU_tdziw91m8oboRuwjfxVFLU6VMrepAYzQCGmhVD7Nc5VSIAfIGty79YY-xAx9TMmF2Lr3MYC5O98taODRUP6sOSabRCEU3w0dKlZtmw9ipoYbb9qBcX6qKy3Dg-wNcd0pcqTdy_Nm68IpiyJNL-lql-lW7PCGcIr8CnwDobsSL-Zl5EafI3pI_itJ4BcyQfR7GrQjydGluU9A_puX_yYUffPqUj_XVQYH3M0cQf_EoNQfnOAnaf4CwCqGXf_xtT50jceUtjJtO_sa4lLQ93wLmg_6A5yveLOpwpQgVJ4QZISHeXcQsB5gsX2oIdz5XNFhnsvHx69SPKNig6bQpjRoLb0n1xyeSqYuVXIwyjW8PUw2vNGVGLru9EELrj6v6gyKD-0Q9bLGPI7uC4xG1sAay0tPuJPlelqWoiwxZiYIWYNjRUg1IFA7fXvIlotQFjV-7Y3jPWg1yorK-6cQP9dmVbyJka2Xeqs2KlNaodJFDWCREb79hHOIevgB08UNxOYLZ3RNtFmXuXo2WX9TP0KTrQS0akh-ikhGYmHHffPqmyt4UY7n3PkkzuBZrrgbObo_Q1K2I_wrJAU6X2TU8xgNiw8Y4OmutyXSwDDGveQyR0QBwsGoEt3HtHEUYtPZSqRr26m3tStptkw0feZwCGAL9tfQjBOVpDqUuDIVOFPt0d7ThpA4RJlvWH2LiecQTVJhabb9ChKVDS3L1RBx89TlIMdpDkvyMmr6BDNuy_PtSdOqLPcg6ldYgTW19ubjmSv626wFHJ1fEtGiWmDoSn8vAT0LfHhim6ajQfdzUa4rtTX-1B4nLPhDLirjb5vj7t_Eg_GF_53jcEWxtybRrfqFiUZ_TbGtortFxeiy7joEwaW3h2gzdMcYX2kDFcVowqKC4uTNBKLkhstscjL5iYz7SYUfn-8nJ9CE0a7vJ_fFL_DjEFxwficnla7FmwkkNsvV5OQRNDmgegsZmziXHB68cS5bXvylVAgnJz8nPyYnh4f77z8eHX78z4d37z8cvfv44cObyW5y8v7t2_3jo_cHH4-Pjg6O3x8eH_16M_nXPOFg_-D44N3B4fHbjweHH9-9-_U_7mWajg"
+            },
+            {
+                "favIconUrl": "https://claude.ai/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Claude",
+                "url": "https://claude.ai/new"
+            },
+            {
+                "favIconUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/gfg_favicon.png",
+                "muted": false,
+                "pinned": false,
+                "title": "Unified Modeling Language (UML) Diagrams - GeeksforGeeks",
+                "url": "https://www.geeksforgeeks.org/unified-modeling-language-uml-introduction/#2-why-do-we-need-uml"
+            },
+            {
+                "favIconUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/gfg_favicon.png",
+                "muted": false,
+                "pinned": false,
+                "title": "Mastering System Design: From Low-Level to High-Level Solutions",
+                "url": "https://www.geeksforgeeks.org/courses/mastering-system-design-low-level-to-high-level-solutions?utm_campaign=503_unified_modeling_language_uml_introduction&utm_medium=gfgcontent_icp&utm_source=geeksforgeeks"
+            },
+            {
+                "favIconUrl": "https://www.gstatic.com/aistudio/ai_studio_favicon_32x32.svg",
+                "muted": false,
+                "pinned": false,
+                "title": "AI-Assisted IB Economics IA Commentary | Google AI Studio",
+                "url": "https://aistudio.google.com/prompts/1GSLYEJOeifQWYFVg705KBta9lf-zzYwM"
+            },
+            {
+                "favIconUrl": "https://www.gstatic.com/aistudio/ai_studio_favicon_32x32.svg",
+                "muted": false,
+                "pinned": false,
+                "title": "Large Language Model Introduction | Google AI Studio",
+                "url": "https://aistudio.google.com/prompts/1ACVyxKKEjYbI4AWUhl7pbpBl60rBYxye"
+            },
+            {
+                "favIconUrl": "https://www.google.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "how to look for macroeconomics articles - Google Search",
+                "url": "https://www.google.com/search?q=how+to+look+for+macroeconomics+articles&oq=how+to+look+for+macroeconomics+articles&gs_lcrp=EgZjaHJvbWUyCwgAEEUYChg5GKABMgYIARAuGEDSAQg5NzkwajBqMagCCLACAQ&sourceid=chrome&ie=UTF-8"
+            },
+            {
+                "favIconUrl": "https://www.perplexity.ai/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "give me some greatly recommended news sites to find a great a Macroeconomics IBDP IA article",
+                "url": "https://www.perplexity.ai/search/give-me-some-greatly-recommend-MWny1nSiS7aiXfUfIV7k1g"
+            },
+            {
+                "favIconUrl": "https://static.guim.co.uk/images/favicon-32x32.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Latest news, sport and opinion from the Guardian",
+                "url": "https://www.theguardian.com/international"
+            },
+            {
+                "favIconUrl": "https://www.thehindu.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "India - Page 3 - The Hindu",
+                "url": "https://www.thehindu.com/news/national/?page=3"
+            },
+            {
+                "favIconUrl": "https://www.thehindu.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Nepal starts exporting energy to Bangladesh with Indian grid support - The Hindu",
+                "url": "https://www.thehindu.com/news/national/nepal-starts-exporting-energy-to-bangladesh-with-indian-grid-support/article68873111.ece"
+            },
+            {
+                "favIconUrl": "https://www.thehindu.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Turmoil in Bangladesh an opportunity to boost exports and create jobs, Congress tells Finance Minister - The Hindu",
+                "url": "https://www.thehindu.com/news/national/turmoil-in-bangladesh-an-opportunity-to-boost-exports-and-create-jobs-congress-tells-finance-minister/article68872038.ece"
+            },
+            {
+                "favIconUrl": "https://www.thehindu.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Global oil market to calm on more oil production says Petroleum Minister Hardeep Singh Puri - The Hindu",
+                "url": "https://www.thehindu.com/news/national/global-oil-market-to-calm-on-more-oil-production-says-minister-puri/article68867702.ece"
+            },
+            {
+                "favIconUrl": "https://www.thehindu.com/favicon.ico",
+                "muted": false,
+                "pinned": false,
+                "title": "Supreme Court dismisses plea to mandate doctors to specify drugs' side effects to patients - The Hindu",
+                "url": "https://www.thehindu.com/news/national/supreme-court-dismisses-plea-to-mandate-doctors-to-specify-drugs-side-effects-to-patients/article68867510.ece"
+            }
+        ],
+        "title": "",
+        "time": 1731749663126
+    }
+]
