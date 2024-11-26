@@ -70,3 +70,54 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Organizational Chart Styles */
+.react-organizational-chart {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.react-organizational-chart__tree {
+  display: table;
+  width: 100%;
+  position: relative;
+}
+
+.react-organizational-chart__tree > tbody > tr > td {
+  text-align: center;
+  vertical-align: top;
+  padding: 0;
+}
+
+.react-organizational-chart__tree > tbody > tr > td:before {
+  content: "";
+  height: 20px;
+  position: absolute;
+  border-left: 2px solid #CBD5E0;
+  top: -20px;
+  left: 50%;
+}
+
+.react-organizational-chart__tree > tbody > tr:first-child > td:before {
+  display: none;
+}
+
+.react-organizational-chart__tree > tbody > tr > td:after {
+  content: "";
+  height: 20px;
+  position: absolute;
+  border-left: 2px solid #CBD5E0;
+  top: 100%;
+  left: 50%;
+}
+
+.react-organizational-chart__tree > tbody > tr:last-child > td:after {
+  display: none;
+}
+
+.react-organizational-chart__tree > tbody > tr > td > div {
+  display: inline-block;
+  padding: 5px;
+}
+

@@ -2,13 +2,18 @@
 
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent } from '@/components/ui/card'
 import { Focus, Book, Target, Medal, Clock, Dumbbell } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext'
 import BreakTimer from '@/components/BreakTimer'
+import FocusBeam from '@/components/FocusBeam'
+import subjectsData from '../data/subjects.json'
 
 export default function MissionControlDashboard() {
   const [activeTab, setActiveTab] = useState('focus-beam')
+  const [activeSubject, setActiveSubject] = useState('Mathematics')
+
+  const subjects = Object.keys(subjectsData.subjects)
 
   return (
     <BreakTimerProvider>
@@ -58,7 +63,56 @@ export default function MissionControlDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            {/* ... (other TabsContent remain unchanged) */}
+            <TabsContent value="focus-beam">
+              <Card className="bg-gray-900 border-green-800">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">Focus Beam</h2>
+                  <Tabs value={activeSubject} onValueChange={setActiveSubject} className="w-full mb-4">
+                    <TabsList className="grid w-full grid-cols-6 bg-gray-800">
+                      {subjects.map((subject) => (
+                        <TabsTrigger
+                          key={subject}
+                          value={subject}
+                          className="text-green-300 data-[state=active]:bg-green-900"
+                        >
+                          {subject}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                  <div className="h-[600px] w-full overflow-auto">
+                    <FocusBeam subjectName={activeSubject} />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="resources">
+              <Card className="bg-gray-900 border-green-800">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">Resources</h2>
+                  {/* Add Resources content here */}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="habits">
+              <Card className="bg-gray-900 border-green-800">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">Habits</h2>
+                  {/* Add Habits content here */}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="achievements">
+              <Card className="bg-gray-900 border-green-800">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">Achievements</h2>
+                  {/* Add Achievements content here */}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
             <TabsContent value="breaks">
               <BreakTimer />
