@@ -1,3 +1,4 @@
+//page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -6,14 +7,10 @@ import { Focus, Book, Target, Medal, Clock, Dumbbell } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext'
 import BreakTimer from '@/components/BreakTimer'
-import FocusBeam from '@/components/FocusBeam'
-import subjectsData from '../data/subjects.json'
+import FocusBeamTabbedTreeView from '@/components/FocusBeam'
 
 export default function MissionControlDashboard() {
   const [activeTab, setActiveTab] = useState('focus-beam')
-  const [activeSubject, setActiveSubject] = useState('Mathematics')
-
-  const subjects = Object.keys(subjectsData.subjects)
 
   return (
     <BreakTimerProvider>
@@ -66,23 +63,7 @@ export default function MissionControlDashboard() {
             <TabsContent value="focus-beam">
               <Card className="bg-gray-900 border-green-800">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-green-500">Focus Beam</h2>
-                  <Tabs value={activeSubject} onValueChange={setActiveSubject} className="w-full mb-4">
-                    <TabsList className="grid w-full grid-cols-6 bg-gray-800">
-                      {subjects.map((subject) => (
-                        <TabsTrigger
-                          key={subject}
-                          value={subject}
-                          className="text-green-300 data-[state=active]:bg-green-900"
-                        >
-                          {subject}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                  </Tabs>
-                  <div className="h-[600px] w-full overflow-auto">
-                    <FocusBeam subjectName={activeSubject} />
-                  </div>
+                  <FocusBeamTabbedTreeView />
                 </CardContent>
               </Card>
             </TabsContent>
