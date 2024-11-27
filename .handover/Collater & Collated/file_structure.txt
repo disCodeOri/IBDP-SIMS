@@ -1,62 +1,47 @@
-├── indexengineer
+├── kill-dem
 │   ├── .eslintrc.json
 │   ├── README.md
 │   ├── components.json
-│   ├── next-env.d.ts
-│   ├── next.config.mjs
+│   ├── next.config.ts
 │   ├── package-lock.json
 │   ├── package.json
-│   ├── playwright.config.ts
 │   ├── postcss.config.mjs
+│   ├── public
+│   │   ├── file.svg
+│   │   ├── globe.svg
+│   │   ├── next.svg
+│   │   ├── sounds
+│   │   │   ├── digital-clock-alarm.mp3
+│   │   │   ├── red-alert_nuclear_buzzer.mp3
+│   │   ├── vercel.svg
+│   │   ├── window.svg
 │   ├── src
-│   │   ├── .file_purpose_descriptions.txt
 │   │   ├── app
 │   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
-│   │   │   ├── scheduler
-│   │   │   │   ├── page.tsx
 │   │   ├── components
-│   │   │   ├── command-bar
-│   │   │   │   ├── command-palette
-│   │   │   │   │   ├── CommandBarNavigationGroups.tsx
-│   │   │   │   │   ├── CommandBarSearchAndInputBox.tsx
-│   │   │   │   │   ├── index.tsx
-│   │   │   │   ├── main-page-command-bar-provider
-│   │   │   │   │   ├── index.tsx
-│   │   │   │   │   ├── keyboard-shortcuts-guide.tsx
-│   │   │   │   ├── universal-command
-│   │   │   │   │   ├── UniversalCommandBarProvider.tsx
-│   │   │   ├── dark-mode
-│   │   │   │   ├── DarkModeToggler.tsx
-│   │   │   │   ├── darkModeController.ts
-│   │   │   ├── loading-screen
-│   │   │   │   ├── BatmanLogo.tsx
-│   │   │   ├── providers
-│   │   │   │   ├── ClientProvider.tsx
-│   │   │   ├── ui (shadcn components only)
-│   │   ├── config
-│   │   │   ├── metadata.ts
-│   │   │   ├── navigation
-│   │   │   │   ├── pages.ts
-│   │   │   │   ├── quick-actions.ts
+│   │   │   ├── BreakTimer.tsx
+│   │   │   ├── Ebbinghaus.tsx
+│   │   │   ├── FocusBeam.tsx
+│   │   │   ├── contexts
+│   │   │   │   ├── BreakTimerContext.tsx
+│   │   │   ├── ui
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── context-menu.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── label.tsx
+│   │   │   │   ├── progress.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── tabs.tsx
 │   │   ├── data
-│   │   │   ├── notes
-│   │   │   ├── scheduler
-│   │   │   │   ├── sched-data.json
-│   │   ├── hooks
-│   │   │   ├── useCtrlSlashKey.ts
-│   │   │   ├── useSlashKey.ts
-│   │   │   ├── useTime.ts
+│   │   │   ├── review-dates.json
+│   │   │   ├── subjects copy.json
+│   │   │   ├── subjects.json
 │   │   ├── lib
+│   │   │   ├── ebbinghaus.ts
 │   │   │   ├── utils.ts
-│   │   ├── media
-│   │   │   ├── Batman-Logo-500x281.svg
-│   │   ├── types
-│   │   │   ├── commandBarNavigationPropertyInterfaces.ts
-│   │   │   ├── commandBarPropertyInterfaces.ts
 │   ├── tailwind.config.ts
-│   ├── tests
-│   │   ├── tester-jester.spec.ts
 │   ├── tsconfig.json

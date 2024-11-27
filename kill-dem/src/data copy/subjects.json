@@ -1,0 +1,203 @@
+{
+  "subjects": {
+    "Mathematics": {
+      "level": "AA HL",
+      "books": [
+        {
+          "name": "Book 1",
+          "chapters": [
+            { "id": "book1_ch1", "title": "Straight Lines", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch2", "title": "Sets and Venn Diagrams", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch3", "title": "Surds and Exponents", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch4", "title": "Equations", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch5", "title": "Sequences and Series", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch6", "title": "Measurement", "status": "not_started", "progress": 0 },
+            { "id": "book1_ch7", "title": "Right Angled Triangle Trigonometry", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch8", "title": "The Unit Circle and Radian Measure", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch9", "title": "Non-right Angled Triangle Trigonometry", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch10", "title": "Points in Space", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch11", "title": "Probability", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch12", "title": "Sampling and Data", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch13", "title": "Statistics", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch14", "title": "Quadratic Functions", "status": "in_progress", "progress": 50, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch15", "title": "Functions", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch16", "title": "Transformations of Functions", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book1_ch17", "title": "Trigonometric Functions", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        },
+        {
+          "name": "Book 2",
+          "chapters": [
+            { "id": "book2_ch1", "title": "Further Trigonometry", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch2", "title": "Exponential Functions", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch3", "title": "Logarithms", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch4", "title": "Introduction to Complex Numbers", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch5", "title": "Real Polynomials", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch6", "title": "Further Functions", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch7", "title": "Counting", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch8", "title": "The Binomial Theorem", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch9", "title": "Reasoning and Proof", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch10", "title": "Proof by Mathematical Induction", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch11", "title": "Linear Algebra", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch12", "title": "Vectors", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch13", "title": "Vector Applications", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch14", "title": "Complex Numbers", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch15", "title": "Limits", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch16", "title": "Introduction to Differential Calculus", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch17", "title": "Rules of Differentiation", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch18", "title": "Properties of Curves", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch19", "title": "Applications of Differentiation", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch20", "title": "Introduction to Integration", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch21", "title": "Techniques for Integration", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch22", "title": "Definite Integrals", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch23", "title": "Kinematics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch24", "title": "Maclaurin Series", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch25", "title": "Differential Equations", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch26", "title": "Bivariate Statistics", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch27", "title": "Discrete Random Variables", "status": "completed", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "book2_ch28", "title": "Continuous Random Variables", "status": "completed", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        }
+      ],
+      "metadata": {
+        "total_chapters": 45,
+        "completed_chapters": 25,
+        "in_progress_chapters": 2,
+        "not_started_chapters": 16,
+        "overall_progress": 58
+      }
+    },
+    "Physics": {
+      "level": "HL",
+      "books": [
+        {
+          "name": "Cambridge Physics for the IB Diploma Seventh Edition",
+          "chapters": [
+            { "id": "physics_ch1", "title": "Kinematics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch2", "title": "Forces and Newton's Laws", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch3", "title": "Work, Energy and Power", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch4", "title": "Linear Momentum", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch5", "title": "Rigid Body Mechanics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch6", "title": "Relativity", "status": "not_started", "progress": 0, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch7", "title": "Thermal Energy Transfers", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch8", "title": "The Greenhouse Effect", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch9", "title": "The Gas Laws", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "physics_ch10", "title": "Thermodynamics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        }
+      ],
+      "metadata": {
+        "total_chapters": 25,
+        "completed_chapters": 0,
+        "in_progress_chapters": 0,
+        "not_started_chapters": 0,
+        "overall_progress": 0
+      }
+    },
+    "Computer Science": {
+      "level": "HL",
+      "books": [
+        {
+          "name": "Topics",
+          "chapters": [
+            { "id": "cs_core_ch1", "title": "System Fundamentals", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch2", "title": "Computer Organisation", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch3", "title": "Networks", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch4", "title": "Computational Thinking", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch5", "title": "Abstract Data Structures", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch6", "title": "Resource Management", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "cs_core_ch7", "title": "Control Systems", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        },
+        {
+          "name": "Option",
+          "chapters": [
+              { "id": "cs_option_A", "title": "Databases", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        },
+        {
+          "name": "Paper 3",
+          "chapters": [
+              { "id": "cs_p3", "title": "The Perfect Chatbot", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        }
+      ],
+      "metadata": {
+        "total_chapters": 9,
+        "completed_chapters": 0,
+        "in_progress_chapters": 0,
+        "not_started_chapters": 0,
+        "overall_progress": 0
+      }
+    },
+    "Economics": {
+      "level": "SL",
+      "books": [
+        {
+          "name": "Cambridge Economics for the IB Diploma Third Edition",
+          "chapters": [
+            { "id": "econ_u1_ch1", "title": "The Foundations of Economics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u2_ch2", "title": "Competitive Markets: Demand and Supply", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u2_ch3", "title": "Elasticities", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u2_ch4", "title": "Governemnt Intervention in Microeconomics", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u2_ch5", "title": "Market Failure and Socially Undesireable Outcomes I: Common pool resources and negative externalities", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u2_ch6", "title": "Market Failure and Socially Undesireable Outcomes II: Positive externalities, public goods, asymmetric information and inability to achieve equity", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch8", "title": "The Level of Overall Economic Activity", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch9", "title": "Aggregate Demand and Aggregate Supply", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch10", "title": "Macroeconomic Objectives I: Low unemployment, low and stable rate of inflation", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch11", "title": "Macroeconomic Objectives II: Economic growth, sustainable level of debt", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch12", "title": "Economics of Inequality and Poverty", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u3_ch13", "title": "Demand-Side and Supply-Side Policies", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch14", "title": "International Trade: Part I", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch15", "title": "International Trade: Part II", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch16", "title": "Exchange Rates and the Balance of Payments", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch18", "title": "Understanding Economic Development", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch19", "title": "Barriers to Economic Growth and Economic Development", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" },
+            { "id": "econ_u4_ch20", "title": "Strategies to Promote Economic Growth and Economic Development", "status": "completed", "progress": 100, "subtopics": {"future_expansion": []}, "current-focus": false, "review-req": false, "covered-date": "" }
+          ]
+        }
+      ],
+      "metadata": {
+        "total_chapters": 18,
+        "completed_chapters": 0,
+        "in_progress_chapters": 0,
+        "not_started_chapters": 0,
+        "overall_progress": 0
+      }
+    },
+    "English": {
+      "level": "SL",
+      "books": [
+        {
+          "name": "Literature Analysis",
+          "chapters": []
+        }
+      ],
+      "metadata": {
+        "total_chapters": 0,
+        "completed_chapters": 0,
+        "in_progress_chapters": 0,
+        "not_started_chapters": 0,
+        "overall_progress": 0
+      }
+    },
+    "Spanish": {
+      "level": "SL",
+      "books": [
+        {
+          "name": "Grammar and Vocabulary",
+          "chapters": []
+        }
+      ],
+      "metadata": {
+        "total_chapters": 0,
+        "completed_chapters": 0,
+        "in_progress_chapters": 0,
+        "not_started_chapters": 0,
+        "overall_progress": 0
+      }
+    }
+  },
+  "version": "1.0.0",
+  "last_updated": "2024-11-25"
+}
