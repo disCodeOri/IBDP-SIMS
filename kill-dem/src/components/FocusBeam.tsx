@@ -1,5 +1,5 @@
-// src/components/FocusBeam.tsx
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, ChevronDown, FocusIcon, ClockIcon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,6 +32,11 @@ interface SubjectData {
   books: BookData[];
 }
 
+
+interface Subjects {
+    [key: string]: SubjectData;
+}
+
 const STATUS_COLORS = {
   not_started: 'bg-red-100 text-red-800',
   in_progress: 'bg-yellow-100 text-yellow-800',
@@ -46,10 +51,9 @@ const PROGRESS_OPTIONS = [
 
 const FocusBeamTabbedTreeView: React.FC = () => {
   const [expandedNodes, setExpandedNodes] = useState<{ [key: string]: boolean }>({});
-  const [subjects, setSubjects] = useState(subjectsData.subjects);
+  const [subjects, setSubjects] = useState<Subjects>(subjectsData.subjects);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; chapterId: string; subjectName: string } | null>(null);
   const [progressDropdown, setProgressDropdown] = useState(false);
-  const ebbinghausService = useEbbinghaus();
   const { updateReviewDates } = useEbbinghaus();
 
   useEffect(() => {
@@ -64,16 +68,18 @@ const FocusBeamTabbedTreeView: React.FC = () => {
   const markChapterCovered = async (subjectName: string, chapterId: string, coveredStatus: boolean) => {
     const updatedSubjects = { ...subjects };
     const targetSubject = updatedSubjects[subjectName];
-    targetSubject.books.forEach((book: any) => {
-      const chapterToUpdate = book.chapters.find((ch: any) => ch.id === chapterId);
-      if (chapterToUpdate) {
-        chapterToUpdate.covered = coveredStatus;
-        chapterToUpdate.last_covered_date = coveredStatus ? new Date().toISOString() : undefined;
-      }
-    });
 
-    setSubjects(updatedSubjects);
-    await updateReviewDates(); //Call the server side function to update the reviewDates.json file
+    if (targetSubject) {
+      targetSubject.books.forEach((book) => {
+        const chapterToUpdate = book.chapters.find((ch) => ch.id === chapterId);
+        if (chapterToUpdate) {
+          chapterToUpdate.covered = coveredStatus;
+          chapterToUpdate.last_covered_date = coveredStatus ? new Date().toISOString() : undefined;
+        }
+      });
+      setSubjects(updatedSubjects);
+      await updateReviewDates();
+    }
   };
 
   const toggleNode = (nodeId: string) => {
@@ -82,25 +88,48 @@ const FocusBeamTabbedTreeView: React.FC = () => {
 
   const updateCurrentFocus = (subjectName: string, chapterId: string) => {
     const updatedSubjects = { ...subjects };
-    Object.keys(updatedSubjects).forEach((subject) => {
-      updatedSubjects[subject].books.forEach((book: any) => {
-        book.chapters.forEach((chapter: any) => {
+
+    Object.values(updatedSubjects).forEach((subject) => {
+      subject.books.forEach((book) => {
+        book.chapters.forEach((chapter) => {
           delete chapter.current_focus;
         });
       });
     });
+
     const targetSubject = updatedSubjects[subjectName];
-    targetSubject.books.forEach((book: any) => {
-      const chapter = book.chapters.find((ch: any) => ch.id === chapterId);
-      if (chapter) {
-        chapter.current_focus = true;
-      }
-    });
-    setSubjects(updatedSubjects);
+
+    if (targetSubject) {
+      targetSubject.books.forEach((book) => {
+        const chapter = book.chapters.find((ch) => ch.id === chapterId);
+        if (chapter) {
+          chapter.current_focus = true;
+        }
+      });
+      setSubjects(updatedSubjects);
+    }
   };
 
   const renderContextMenu = (chapter: ChapterData, subjectName: string) => {
     if (!contextMenu) return null;
+
+    const handleStatusChange = (option: { value: string; progress: number }) => {
+      const updatedSubjects = { ...subjects };
+      const targetSubject = updatedSubjects[subjectName];
+
+      if (targetSubject) {
+        targetSubject.books.forEach((book) => {
+          const chapterToUpdate = book.chapters.find((ch) => ch.id === chapter.id);
+          if (chapterToUpdate) {
+            chapterToUpdate.status = option.value as ChapterData['status'];
+            chapterToUpdate.progress = option.progress;
+          }
+        });
+        setSubjects(updatedSubjects);
+      }
+
+    };
+
     return (
       <div className="fixed bg-gray-800 text-green-400 shadow-lg rounded p-2 z-50 w-64" style={{ top: contextMenu.y, left: contextMenu.x }}>
         <div className="cursor-pointer hover:bg-gray-700 p-1 relative" onClick={() => setProgressDropdown(!progressDropdown)}>
@@ -113,16 +142,7 @@ const FocusBeamTabbedTreeView: React.FC = () => {
                   className="px-2 py-1 hover:bg-gray-700"
                   onClick={(e) => {
                     e.stopPropagation();
-                    const updatedSubjects = { ...subjects };
-                    const targetSubject = updatedSubjects[subjectName];
-                    targetSubject.books.forEach((book: any) => {
-                      const chapterToUpdate = book.chapters.find((ch: any) => ch.id === chapter.id);
-                      if (chapterToUpdate) {
-                        chapterToUpdate.status = option.value as any;
-                        chapterToUpdate.progress = option.progress;
-                      }
-                    });
-                    setSubjects(updatedSubjects);
+                    handleStatusChange(option);
                     setContextMenu(null);
                     setProgressDropdown(false);
                   }}
@@ -135,8 +155,8 @@ const FocusBeamTabbedTreeView: React.FC = () => {
         </div>
         <div
           className="cursor-pointer hover:bg-gray-700 p-1"
-          onClick={async () => { // Added async keyword
-            await markChapterCovered(subjectName, chapter.id, !chapter.covered); // Call markChapterCovered
+          onClick={async () => {
+            await markChapterCovered(subjectName, chapter.id, !chapter.covered);
             setContextMenu(null);
           }}
         >
@@ -147,13 +167,15 @@ const FocusBeamTabbedTreeView: React.FC = () => {
           onClick={() => {
             const updatedSubjects = { ...subjects };
             const targetSubject = updatedSubjects[subjectName];
-            targetSubject.books.forEach((book: any) => {
-              const chapterToUpdate = book.chapters.find((ch: any) => ch.id === chapter.id);
-              if (chapterToUpdate) {
-                chapterToUpdate.review_required = !chapterToUpdate.review_required;
+              if (targetSubject) {
+                targetSubject.books.forEach((book) => {
+                  const chapterToUpdate = book.chapters.find((ch) => ch.id === chapter.id);
+                  if (chapterToUpdate) {
+                    chapterToUpdate.review_required = !chapterToUpdate.review_required;
+                  }
+                });
+                setSubjects(updatedSubjects);
               }
-            });
-            setSubjects(updatedSubjects);
             setContextMenu(null);
           }}
         >
@@ -176,9 +198,10 @@ const FocusBeamTabbedTreeView: React.FC = () => {
       e.preventDefault();
       setContextMenu({ x: e.clientX, y: e.clientY, chapterId: chapter.id, subjectName });
     };
+
     return (
-      <div className={`ml-4 mb-1 flex items-center ${chapter.current_focus ? 'bg-green-900/20' : ''}`} onContextMenu={handleContextMenu}>
-        {chapter.subtopics && chapter.subtopics.future_expansion.length > 0 ? (
+<div className={`ml-4 mb-1 flex items-center ${chapter.current_focus ? 'bg-green-900/20' : ''}`} onContextMenu={handleContextMenu}>
+        {chapter.subtopics && chapter.subtopics.future_expansion && chapter.subtopics.future_expansion.length > 0 ? (
           <button onClick={onToggle} className="mr-2 text-green-600">
             {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </button>
@@ -198,7 +221,7 @@ const FocusBeamTabbedTreeView: React.FC = () => {
           <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${chapter.progress}%` }}></div>
         </div>
         {contextMenu?.chapterId === chapter.id && renderContextMenu(chapter, subjectName)}
-        {isExpanded && chapter.subtopics && chapter.subtopics.future_expansion.length > 0 && (
+        {isExpanded && chapter.subtopics && chapter.subtopics.future_expansion && (
           <div className="ml-8 text-sm text-gray-500">
             {chapter.subtopics.future_expansion.map((subtopic, index) => (
               <div key={index} className="mb-1">
@@ -228,12 +251,12 @@ const FocusBeamTabbedTreeView: React.FC = () => {
               <div className="font-bold text-lg mb-2 text-green-600">
                 {subjectName} ({subjectData.level})
               </div>
-              {subjectData.books.map((book: any, bookIndex) => (
+              {subjectData.books.map((book, bookIndex) => (
                 <div key={`${subjectName}-book-${bookIndex}`} className="ml-4">
                   <div className="font-semibold text-md mb-1 text-green-500">
                     {book.name}
                   </div>
-                  {book.chapters.map((chapter: any) => (
+                  {book.chapters.map((chapter) => (
                     <ChapterRow key={chapter.id} subjectName={subjectName} chapter={chapter} isExpanded={!!expandedNodes[chapter.id]} onToggle={() => toggleNode(chapter.id)} />
                   ))}
                 </div>
