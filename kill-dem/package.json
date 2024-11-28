@@ -27,7 +27,8 @@
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-force-graph-2d": "^1.25.8",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "ts-fsrs": "^4.4.3"
   },
   "devDependencies": {
     "@types/howler": "^2.2.12",
