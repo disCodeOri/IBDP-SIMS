@@ -2,7 +2,7 @@
 'use client';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Focus, Book, Target, Medal, Clock, Dumbbell } from 'lucide-react';
+import { Focus, Book, Target, Medal, Clock, Dumbbell, FlameKindling, Axe } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext';
 import BreakTimer from '@/components/BreakTimer';
@@ -17,7 +17,13 @@ export default function MissionControlDashboard() {
             <h1 className="text-4xl font-bold mb-8 text-green-500 tracking-tight">MISSION CONTROL</h1>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               {/* Tabs List */}
-              <TabsList className="grid w-full grid-cols-6 bg-gray-900 mb-6">
+              <TabsList className="grid w-full grid-cols-8 bg-gray-900 mb-6">
+                <TabsTrigger value="randy" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
+                  <FlameKindling className="h-5 w-5" /> Randy
+                </TabsTrigger>
+                <TabsTrigger value="fuel" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
+                  <Axe className="h-5 w-5" /> Fuel
+                </TabsTrigger>
                 <TabsTrigger value="focus-beam" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
                   <Focus className="h-5 w-5" /> Focus Beam
                 </TabsTrigger>
@@ -38,10 +44,31 @@ export default function MissionControlDashboard() {
                 </TabsTrigger>
               </TabsList>
               
+              {/* Randy */}
+              <TabsContent value="randy">
+                <Card className="bg-gray-900 border-green-800">
+                  <CardContent className="p-6">
+                    <h2 className="text-2xl font-bold mb-4 text-green-500">Randy</h2>
+                    {}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Fuel */}
+              <TabsContent value="fuel">
+                <Card className="bg-gray-900 border-green-800">
+                  <CardContent className="p-6">
+                    <h2 className="text-2xl font-bold mb-4 text-green-500">Fuel</h2>
+                    {}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               {/* Focus Beam */}
               <TabsContent value="focus-beam">
                 <Card className="bg-gray-900 border-green-800">
                   <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">Focus-Beam</h2>
                     {}
                   </CardContent>
                 </Card>
