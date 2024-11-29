@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useBreakTimer } from '@/components/contexts/BreakTimerContext'
-import { Button } from '@/components/ui/button'
+import { useBreakTimer } from './contexts/BreakTimerContext'
+import { Button } from './ui/button'
 import { Clock, Play, Pause, RotateCcw } from 'lucide-react'
 
 const BreakTimer: React.FC = () => {

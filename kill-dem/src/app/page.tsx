@@ -6,9 +6,10 @@ import { Focus, Book, Target, Medal, Clock, Dumbbell } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext';
 import BreakTimer from '@/components/BreakTimer';
+import Achievements from '@/components/Achievements';
 
 export default function MissionControlDashboard() {
-  const [activeTab, setActiveTab] = useState('focus-beam');
+  const [activeTab, setActiveTab] = useState('achievements');
   return (
       <BreakTimerProvider>
         <div className="min-h-screen bg-black text-green-400 p-6">
@@ -71,7 +72,7 @@ export default function MissionControlDashboard() {
                 <Card className="bg-gray-900 border-green-800">
                   <CardContent className="p-6">
                     <h2 className="text-2xl font-bold mb-4 text-green-500">Achievements</h2>
-                    {}
+                    <Achievements />
                   </CardContent>
                 </Card>
               </TabsContent>
