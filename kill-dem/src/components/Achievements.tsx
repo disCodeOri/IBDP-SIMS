@@ -11,6 +11,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
   useDraggable,
   useDroppable
 } from '@dnd-kit/core';
@@ -28,7 +29,8 @@ import {
   updateAchievementPositions,
   deleteAchievement,
   updateAchievement,
-  Achievement
+  Achievement,
+  addAchievement
 } from '@/lib/achievements-actions';
 
 // Droppable Trash Zone
@@ -51,10 +53,12 @@ function TrashZone() {
 // Sortable Achievement Card
 function SortableAchievementCard({
   achievement,
-  onEdit
+  onEdit,
+  isDragging
 }: {
   achievement: Achievement;
   onEdit: (achievement: Achievement) => void;
+  isDragging: boolean;
 }) {
   const {
     attributes,
@@ -64,11 +68,15 @@ function SortableAchievementCard({
     transition,
   } = useSortable({ id: achievement.id });
 
-  const { setNodeRef: setDraggableNodeRef } = useDraggable({ id: achievement.id });
+  const { setNodeRef: setDraggableNodeRef } = useDraggable({ 
+    id: achievement.id,
+    data: { type: 'achievement' }
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -108,7 +116,7 @@ export default function Achievements() {
     description: ''
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [editingAchievementId, setEditingAchievementId] = useState<string | null>(null); // For editing
+  const [editingAchievementId, setEditingAchievementId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -134,13 +142,13 @@ export default function Achievements() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewAchievement(prev => ({
-      ...prev, // Maintain existing values
-      [e.target.id]: e.target.value, // Update the changed field
+      ...prev,
+      [e.target.id]: e.target.value,
     }));
   };
 
   const handleEdit = (achievement: Achievement) => {
-    setNewAchievement(achievement); // Populate the form fields with the current achievement data
+    setNewAchievement(achievement);
     setIsEditing(true);
     setEditingAchievementId(achievement.id);
     setIsModalOpen(true);
@@ -150,55 +158,82 @@ export default function Achievements() {
     e.preventDefault();
 
     if (isEditing && editingAchievementId) {
-      // Create a complete updatedAchievement object with the ID
-      const updatedAchievement: Achievement = { ...newAchievement, id: editingAchievementId } as Achievement;
+      const updatedAchievement: Achievement = { 
+        ...newAchievement, 
+        id: editingAchievementId 
+      } as Achievement;
 
-        try {
-            await updateAchievement(updatedAchievement);
-            // Refresh achievements after update
-            const updatedAchievements = await readAchievements();
-            setAchievements(updatedAchievements);
-        } catch (error) {
-            console.error("Failed to update achievement:", error);
-        } finally {
-            setIsEditing(false);
-            setEditingAchievementId(null);
-            setNewAchievement({ name: '', description: '' });
-            setIsModalOpen(false);
-        }
-
-
+      try {
+        await updateAchievement(updatedAchievement);
+        const updatedAchievements = await readAchievements();
+        setAchievements(updatedAchievements);
+      } catch (error) {
+        console.error("Failed to update achievement:", error);
+      } finally {
+        setIsEditing(false);
+        setEditingAchievementId(null);
+        setNewAchievement({ name: '', description: '' });
+        setIsModalOpen(false);
+      }
     } else {
-       // ... (Logic for adding a new achievement remains the same)
+      try {
+        // Validate that name and description are not undefined
+        if (!newAchievement.name || !newAchievement.description) {
+          console.error("Name and description are required");
+          return;
+        }
+    
+        // Create a new achievement with guaranteed string values
+        const achievementToAdd = {
+          name: newAchievement.name,
+          description: newAchievement.description
+        };
+    
+        // Call the addAchievement server action
+        await addAchievement(achievementToAdd);
+    
+        // Refresh the achievements list
+        const updatedAchievements = await readAchievements();
+        setAchievements(updatedAchievements);
+    
+        // Reset form and close modal
+        setNewAchievement({ name: '', description: '' });
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Failed to add achievement:", error);
+        // Optionally, you could add user-facing error handling here
+      }
     }
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
-      const { over, active } = event;
-      setActiveId(null) //Clear activeId to allow next drag
+    const { over, active } = event;
+    
+    // Reset activeId
+    setActiveId(null);
 
+    // If dragged over trash, delete the achievement
     if (over?.id === 'trash' && active.id) {
-        await deleteAchievement(String(active.id));
-
+      await deleteAchievement(String(active.id));
       const updatedAchievements = await readAchievements();
       setAchievements(updatedAchievements);
       return;
     }
 
-
-
+    // If not over trash, reorder achievements
     setAchievements((items) => {
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over?.id);
 
       if (oldIndex === -1 || newIndex === -1) {
-        // Invalid indices, return the original array to prevent errors
         return items;
       }
 
-
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
-
 
       const updatedItemsWithPositions = reorderedItems.map((item, index) => ({
         ...item,
@@ -208,17 +243,13 @@ export default function Achievements() {
         },
       }));
 
-
       updateAchievementPositions(updatedItemsWithPositions);
       return updatedItemsWithPositions;
     });
-
-
   };
 
   return (
     <div className="p-6">
-
       <button
         onClick={() => {
           setNewAchievement({ name: '', description: '' });
@@ -230,21 +261,11 @@ export default function Achievements() {
         <Plus className="h-5 w-5" /> Add Achievement
       </button>
 
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        onDragStart={({ active }) => setActiveId(active.id as string)} // Set activeId on drag start
-        onDragCancel={() => setActiveId(null)} // Clear activeId on cancel
-        onDragOver={({ active, over }) => {
-          if (over?.id === 'trash' && active.id) {
-            // Important: Set activeId to null ONLY when over trash to prevent snapping
-            setActiveId(null); 
-          } else if (active.id !== activeId) {
-            setActiveId(active.id as string)
-          }
-        }}
       >
         <SortableContext items={achievements.map(a => a.id)} strategy={rectSortingStrategy}>
           <div className="grid grid-cols-4 gap-4">
@@ -252,13 +273,12 @@ export default function Achievements() {
               <SortableAchievementCard
                 key={achievement.id}
                 achievement={achievement}
-
                 onEdit={handleEdit}
+                isDragging={activeId === achievement.id}
               />
             ))}
           </div>
         </SortableContext>
-
 
         <TrashZone />
       </DndContext>
