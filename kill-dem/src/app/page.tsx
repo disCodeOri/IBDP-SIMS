@@ -6,10 +6,10 @@ import { Focus, Book, Target, Medal, Clock, Dumbbell, FlameKindling, Axe } from 
 import { Card, CardContent } from '@/components/ui/card';
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext';
 import BreakTimer from '@/components/BreakTimer';
-import Achievements from '@/components/Achievements';
+import Cookies from '@/components/CookieJar';
 
 export default function MissionControlDashboard() {
-  const [activeTab, setActiveTab] = useState('achievements');
+  const [activeTab, setActiveTab] = useState('cookies');
   return (
       <BreakTimerProvider>
         <div className="min-h-screen bg-black text-green-400 p-6">
@@ -33,8 +33,8 @@ export default function MissionControlDashboard() {
                 <TabsTrigger value="habits" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
                   <Target className="h-5 w-5" /> Habits
                 </TabsTrigger>
-                <TabsTrigger value="achievements" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
-                  <Medal className="h-5 w-5" /> Achievements
+                <TabsTrigger value="cookies" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
+                  <Medal className="h-5 w-5" /> Cookies
                 </TabsTrigger>
                 <TabsTrigger value="breaks" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
                   <Clock className="h-5 w-5" /> Break Timer
@@ -95,11 +95,11 @@ export default function MissionControlDashboard() {
               </TabsContent>
 
               {/* Acheivements */}
-              <TabsContent value="achievements">
+              <TabsContent value="cookies">
                 <Card className="bg-gray-900 border-green-800">
                   <CardContent className="p-6">
-                    <h2 className="text-2xl font-bold mb-4 text-green-500">Achievements</h2>
-                    <Achievements />
+                    <h2 className="text-2xl font-bold mb-4 text-green-500">Cookies</h2>
+                    <Cookies />
                   </CardContent>
                 </Card>
               </TabsContent>
