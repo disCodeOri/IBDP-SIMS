@@ -1,8 +1,8 @@
 // src/components/Achievements.tsx
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, Edit } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -13,16 +13,16 @@ import {
   DragEndEvent,
   DragStartEvent,
   useDraggable,
-  useDroppable
-} from '@dnd-kit/core';
+  useDroppable,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
   SortableContext,
-  useSortable
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import {
   readAchievements,
@@ -30,20 +30,22 @@ import {
   deleteAchievement,
   updateAchievement,
   Achievement,
-  addAchievement
-} from '@/lib/achievements-actions';
+  addAchievement,
+} from "@/lib/achievements-actions";
 
 // Droppable Trash Zone
 function TrashZone() {
   const { isOver, setNodeRef } = useDroppable({
-    id: 'trash',
+    id: "trash",
   });
 
   return (
     <div
       ref={setNodeRef}
       className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white p-4 rounded-full
-        transition-all duration-300 ${isOver ? 'scale-110 bg-red-600' : 'scale-100'}`}
+        transition-all duration-300 ${
+          isOver ? "scale-110 bg-red-600" : "scale-100"
+        }`}
     >
       <Trash2 className="h-6 w-6" />
     </div>
@@ -54,7 +56,7 @@ function TrashZone() {
 function SortableAchievementCard({
   achievement,
   onEdit,
-  isDragging
+  isDragging,
 }: {
   achievement: Achievement;
   onEdit: (achievement: Achievement) => void;
@@ -63,39 +65,48 @@ function SortableAchievementCard({
   const {
     attributes,
     listeners,
-    setNodeRef,
+    setNodeRef: setSortableNodeRef,
     transform,
     transition,
   } = useSortable({ id: achievement.id });
 
-  const { setNodeRef: setDraggableNodeRef } = useDraggable({ 
+  const {
+    attributes: dragAttributes,
+    listeners: dragListeners,
+    setNodeRef: setDraggableNodeRef,
+    transform: dragTransform,
+  } = useDraggable({
     id: achievement.id,
-    data: { type: 'achievement' }
+    data: { type: "achievement" },
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(transform || dragTransform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
 
   return (
     <div
-      ref={node => {
-        setNodeRef(node);
+      ref={(node) => {
+        setSortableNodeRef(node);
         setDraggableNodeRef(node);
       }}
       style={style}
       {...attributes}
       {...listeners}
+      {...dragAttributes}
+      {...dragListeners}
       className="bg-gray-800 p-4 rounded-lg shadow-md cursor-move relative group"
     >
-      <h3 className="text-green-400 font-bold text-lg mb-2">{achievement.name}</h3>
+      <h3 className="text-green-400 font-bold text-lg mb-2">
+        {achievement.name}
+      </h3>
       <p className="text-green-300 text-sm">{achievement.description}</p>
 
       <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             onEdit(achievement);
           }}
@@ -112,17 +123,19 @@ export default function Achievements() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [newAchievement, setNewAchievement] = useState<Partial<Achievement>>({
-    name: '',
-    description: ''
+    name: "",
+    description: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [editingAchievementId, setEditingAchievementId] = useState<string | null>(null);
+  const [editingAchievementId, setEditingAchievementId] = useState<
+    string | null
+  >(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 30, // Slightly increased from 5
       },
     }),
     useSensor(KeyboardSensor, {
@@ -140,8 +153,10 @@ export default function Achievements() {
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setNewAchievement(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setNewAchievement((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
@@ -158,9 +173,9 @@ export default function Achievements() {
     e.preventDefault();
 
     if (isEditing && editingAchievementId) {
-      const updatedAchievement: Achievement = { 
-        ...newAchievement, 
-        id: editingAchievementId 
+      const updatedAchievement: Achievement = {
+        ...newAchievement,
+        id: editingAchievementId,
       } as Achievement;
 
       try {
@@ -172,7 +187,7 @@ export default function Achievements() {
       } finally {
         setIsEditing(false);
         setEditingAchievementId(null);
-        setNewAchievement({ name: '', description: '' });
+        setNewAchievement({ name: "", description: "" });
         setIsModalOpen(false);
       }
     } else {
@@ -182,22 +197,22 @@ export default function Achievements() {
           console.error("Name and description are required");
           return;
         }
-    
+
         // Create a new achievement with guaranteed string values
         const achievementToAdd = {
           name: newAchievement.name,
-          description: newAchievement.description
+          description: newAchievement.description,
         };
-    
+
         // Call the addAchievement server action
         await addAchievement(achievementToAdd);
-    
+
         // Refresh the achievements list
         const updatedAchievements = await readAchievements();
         setAchievements(updatedAchievements);
-    
+
         // Reset form and close modal
-        setNewAchievement({ name: '', description: '' });
+        setNewAchievement({ name: "", description: "" });
         setIsModalOpen(false);
       } catch (error) {
         console.error("Failed to add achievement:", error);
@@ -212,12 +227,12 @@ export default function Achievements() {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
-    
+
     // Reset activeId
     setActiveId(null);
 
     // If dragged over trash, delete the achievement
-    if (over?.id === 'trash' && active.id) {
+    if (over?.id === "trash" && active.id) {
       await deleteAchievement(String(active.id));
       const updatedAchievements = await readAchievements();
       setAchievements(updatedAchievements);
@@ -252,7 +267,7 @@ export default function Achievements() {
     <div className="p-6">
       <button
         onClick={() => {
-          setNewAchievement({ name: '', description: '' });
+          setNewAchievement({ name: "", description: "" });
           setIsEditing(false);
           toggleModal();
         }}
@@ -267,7 +282,10 @@ export default function Achievements() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext items={achievements.map(a => a.id)} strategy={rectSortingStrategy}>
+        <SortableContext
+          items={achievements.map((a) => a.id)}
+          strategy={rectSortingStrategy}
+        >
           <div className="grid grid-cols-4 gap-4">
             {achievements.map((achievement) => (
               <SortableAchievementCard
@@ -283,17 +301,20 @@ export default function Achievements() {
         <TrashZone />
       </DndContext>
 
-
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-900 text-green-400 p-6 rounded-md max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4 text-green-500">
-              {isEditing ? 'Edit Achievement' : 'Add Achievement'}
+              {isEditing ? "Edit Achievement" : "Add Achievement"}
             </h2>
             <form onSubmit={handleSubmit}>
-
               <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Name
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -306,7 +327,12 @@ export default function Achievements() {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium mb-2">Description</label>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Description
+                </label>
                 <textarea
                   id="description"
                   value={newAchievement.description}
@@ -318,9 +344,7 @@ export default function Achievements() {
                 />
               </div>
 
-
               <div className="flex justify-end gap-4">
-
                 <button
                   type="button"
                   onClick={() => {
@@ -336,7 +360,7 @@ export default function Achievements() {
                   type="submit"
                   className="bg-green-500 px-4 py-2 rounded-md text-black font-bold hover:bg-green-700"
                 >
-                  {isEditing ? 'Update' : 'Submit'}
+                  {isEditing ? "Update" : "Submit"}
                 </button>
               </div>
             </form>

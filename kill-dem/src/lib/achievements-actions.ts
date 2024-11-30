@@ -64,9 +64,6 @@ export async function readAchievements(): Promise<Achievement[]> {
   }
 }
 
-
-
-
 // Write achievements to the JSON file
 export async function writeAchievements(achievements: Achievement[]): Promise<void> {
     const validatedAchievements = achievements.map(achievement => AchievementSchema.parse(achievement));
@@ -100,7 +97,6 @@ export async function addAchievement(newAchievement: Omit<Achievement, 'id'>): P
     await writeAchievements(updatedAchievements);
 }
 
-
 export async function deleteAchievement(id: string): Promise<void> {
   try {
       const achievements = await readAchievements();
@@ -130,8 +126,6 @@ export async function updateAchievement(updatedAchievement: Achievement): Promis
         console.error("Error updating achievement:", error)
     }
 }
-
-
 
 // Update achievement positions (for drag and drop)
 export async function updateAchievementPositions(updatedAchievements: Achievement[]): Promise<void> {
