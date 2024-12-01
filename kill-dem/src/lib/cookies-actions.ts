@@ -6,15 +6,15 @@ import path from 'path';
 import { z } from 'zod';
 
 // Path to the cookies JSON file
-const ACHIEVEMENTS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'cookies.json');
+const COOKIES_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'cookies.json');
 
 // Ensure the file and directory exist
 async function ensureFileExists() {
-    const dir = path.dirname(ACHIEVEMENTS_FILE_PATH);
+    const dir = path.dirname(COOKIES_FILE_PATH);
     await mkdir(dir, { recursive: true });
 
     try {
-        await writeFile(ACHIEVEMENTS_FILE_PATH, '[]', { flag: 'wx' });
+        await writeFile(COOKIES_FILE_PATH, '[]', { flag: 'wx' });
     } catch (error) {
         // File already exists, which is fine
         if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
@@ -42,7 +42,7 @@ export async function readCookies(): Promise<Cookie[]> {
   await ensureFileExists();
 
   try {
-      const fileContents = await readFile(ACHIEVEMENTS_FILE_PATH, 'utf8');
+      const fileContents = await readFile(COOKIES_FILE_PATH, 'utf8');
       const parsedCookies: unknown[] = JSON.parse(fileContents); // Type as unknown[]
 
       // Validate and parse with Zod
@@ -69,7 +69,7 @@ export async function writeCookies(cookies: Cookie[]): Promise<void> {
     const validatedCookies = cookies.map(cookie => CookieSchema.parse(cookie));
 
     await writeFile(
-        ACHIEVEMENTS_FILE_PATH,
+        COOKIES_FILE_PATH,
         JSON.stringify(validatedCookies, null, 2)
     );
 }
