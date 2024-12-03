@@ -7,9 +7,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BreakTimerProvider } from '@/components/contexts/BreakTimerContext';
 import BreakTimer from '@/components/BreakTimer';
 import Cookies from '@/components/CookieJar';
+import PKM from '@/components/PKM';
+import Workouts from '@/components/Workouts';
 
 export default function MissionControlDashboard() {
-  const [activeTab, setActiveTab] = useState('cookies');
+  const [activeTab, setActiveTab] = useState('workouts');
   return (
       <BreakTimerProvider>
         <div className="min-h-screen bg-black text-green-400 p-6">
@@ -24,8 +26,8 @@ export default function MissionControlDashboard() {
                 <TabsTrigger value="fuel" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
                   <Axe className="h-5 w-5" /> Fuel
                 </TabsTrigger>
-                <TabsTrigger value="focus-beam" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
-                  <Focus className="h-5 w-5" /> Focus Beam
+                <TabsTrigger value="pkm" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
+                  <Focus className="h-5 w-5" /> PKM 
                 </TabsTrigger>
                 <TabsTrigger value="resources" className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900">
                   <Book className="h-5 w-5" /> Resources
@@ -64,12 +66,12 @@ export default function MissionControlDashboard() {
                 </Card>
               </TabsContent>
 
-              {/* Focus Beam */}
-              <TabsContent value="focus-beam">
+              {/* PKM */}
+              <TabsContent value="pkm">
                 <Card className="bg-gray-900 border-green-800">
                   <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-green-500">Focus-Beam</h2>
-                    {}
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">PKM</h2>
+                  <PKM />
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -114,7 +116,7 @@ export default function MissionControlDashboard() {
                 <Card className="bg-gray-900 border-green-800">
                   <CardContent className="p-6">
                     <h2 className="text-2xl font-bold mb-4 text-green-500">Workouts</h2>
-                    {}
+                    <Workouts />
                   </CardContent>
                 </Card>
               </TabsContent>

@@ -1,4 +1,4 @@
-// src/components/Cookies.tsx
+// src/components/CookieJar.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
