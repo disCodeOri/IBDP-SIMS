@@ -1,18 +1,26 @@
-'use server';
+'use server'
 
 import fs from 'fs/promises';
 import path from 'path';
 import { revalidatePath } from 'next/cache';
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-// Workout schema for type safety
+// Define the Workout type
+type Workout = {
+  id: string;
+  content: string;
+  createdAt: string;
+  tags: string[];
+};
+
+// Define the Workout schema using zod
 const WorkoutSchema = z.object({
   id: z.string(),
   content: z.string(),
-  createdAt: z.string()
+  createdAt: z.string(),
+  tags: z.array(z.string())
 });
-
-type Workout = z.infer<typeof WorkoutSchema>;
 
 // Path to the workouts JSON file
 const WORKOUTS_FILE = path.join(process.cwd(), 'src/data/workouts.json');
@@ -58,21 +66,36 @@ async function saveWorkouts(workouts: Workout[]) {
   }
 }
 
+// Get all workouts
+export async function getWorkouts() {
+  try {
+    const workouts = await readWorkouts();
+    return workouts.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  } catch (error) {
+    console.error('Failed to get workouts:', error);
+    return [];
+  }
+}
+
 // Save a new workout
 export async function saveWorkout(formData: FormData) {
-  const workout = formData.get('workout') as string;
+  const content = formData.get('workout') as string;
+  const tags = JSON.parse(formData.get('tags') as string) as string[];
   
-  if (!workout) {
-    return { success: false, message: 'Workout cannot be empty' };
+  if (!content) {
+    return { success: false, message: 'Workout content cannot be empty' };
   }
 
   try {
     const existingWorkouts = await readWorkouts();
     
     const newWorkout: Workout = {
-      id: crypto.randomUUID(), // Use built-in UUID generation
-      content: workout,
-      createdAt: new Date().toISOString()
+      id: uuidv4(),
+      content,
+      createdAt: new Date().toISOString(),
+      tags
     };
 
     const updatedWorkouts = [newWorkout, ...existingWorkouts];
@@ -87,27 +110,14 @@ export async function saveWorkout(formData: FormData) {
   }
 }
 
-// Get all workouts
-export async function getWorkouts() {
-  try {
-    const workouts = await readWorkouts();
-    return workouts.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  } catch (error) {
-    console.error('Failed to get workouts:', error);
-    return [];
-  }
-}
-
-// Update a specific workout
-export async function updateWorkout(id: string, newContent: string) {
+// Update an existing workout
+export async function updateWorkout(id: string, content: string, tags: string[]) {
   try {
     const workouts = await readWorkouts();
     
     const updatedWorkouts = workouts.map(workout => 
       workout.id === id 
-        ? { ...workout, content: newContent } 
+        ? { ...workout, content, tags } 
         : workout
     );
     
@@ -121,14 +131,14 @@ export async function updateWorkout(id: string, newContent: string) {
   }
 }
 
-// Delete a specific workout
+// Delete a workout
 export async function deleteWorkout(id: string) {
   try {
     const workouts = await readWorkouts();
     
-    const filteredWorkouts = workouts.filter(workout => workout.id !== id);
+    const updatedWorkouts = workouts.filter(workout => workout.id !== id);
     
-    await saveWorkouts(filteredWorkouts);
+    await saveWorkouts(updatedWorkouts);
     revalidatePath('/');
     
     return { success: true, message: 'Workout deleted successfully' };
@@ -137,3 +147,37 @@ export async function deleteWorkout(id: string) {
     return { success: false, message: 'Failed to delete workout' };
   }
 }
+
+// Get all unique tags from workouts
+export async function getAllTags() {
+  try {
+    const workouts = await readWorkouts();
+    const allTags = workouts.flatMap(workout => workout.tags);
+    const uniqueTags = allTags.filter((tag, index) => allTags.indexOf(tag) === index);
+    return uniqueTags.sort();
+  } catch (error) {
+    console.error('Failed to get tags:', error);
+    return [];
+  }
+}
+
+// Search workouts by content or tags
+export async function searchWorkouts(query: string) {
+  try {
+    const workouts = await readWorkouts();
+    const lowercaseQuery = query.toLowerCase();
+    
+    const filteredWorkouts = workouts.filter(workout => 
+      workout.content.toLowerCase().includes(lowercaseQuery) ||
+      workout.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    );
+    
+    return filteredWorkouts.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  } catch (error) {
+    console.error('Failed to search workouts:', error);
+    return [];
+  }
+}
+
