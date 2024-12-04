@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Focus,
-  Book,
+  Angry,
   Target,
   Medal,
   Clock,
@@ -21,6 +21,7 @@ import PKM from "@/components/PKM";
 import Workouts from "@/components/Workouts";
 import Ticker from '@/components/Ticker';
 import Randy from '@/components/Randy'
+import Stopwatch from '@/components/Stopwatch'
 
 export default function MissionControlDashboard() {
   const [activeTab, setActiveTab] = useState("randy");
@@ -60,13 +61,7 @@ export default function MissionControlDashboard() {
                 value="resources"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
               >
-                <Book className="h-5 w-5" /> Resources
-              </TabsTrigger>
-              <TabsTrigger
-                value="habits"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
-              >
-                <Target className="h-5 w-5" /> Habits
+                <Angry className="h-5 w-5" /> Trigger
               </TabsTrigger>
               <TabsTrigger
                 value="cookies"
@@ -75,10 +70,16 @@ export default function MissionControlDashboard() {
                 <Medal className="h-5 w-5" /> Cookies
               </TabsTrigger>
               <TabsTrigger
+                value="stopwatch"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+              >
+                <Target className="h-5 w-5" /> Stopwatch
+              </TabsTrigger>
+              <TabsTrigger
                 value="breaks"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
               >
-                <Clock className="h-5 w-5" /> Break Timer
+                <Clock className="h-5 w-5" /> Timer
               </TabsTrigger>
               <TabsTrigger
                 value="workouts"
@@ -142,14 +143,11 @@ export default function MissionControlDashboard() {
               </Card>
             </TabsContent>
 
-            {/* Habits */}
-            <TabsContent value="habits">
+            {/* Stopwatch */}
+            <TabsContent value="stopwatch">
               <Card className="bg-gray-900 border-green-800">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-green-500">
-                    Habits
-                  </h2>
-                  {}
+                  <Stopwatch />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -166,7 +164,7 @@ export default function MissionControlDashboard() {
               </Card>
             </TabsContent>
 
-            {/* Break Timer */}
+            {/* Timer */}
             <TabsContent value="breaks">
               <BreakTimer />
             </TabsContent>
