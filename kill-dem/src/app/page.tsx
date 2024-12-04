@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Focus,
-  Angry,
   Target,
   Medal,
   Clock,
@@ -22,6 +21,7 @@ import Workouts from "@/components/Workouts";
 import Ticker from '@/components/Ticker';
 import Randy from '@/components/Randy'
 import Stopwatch from '@/components/Stopwatch'
+import Trigger from '@/components/Trigger';
 
 export default function MissionControlDashboard() {
   const [activeTab, setActiveTab] = useState("randy");
@@ -38,7 +38,7 @@ export default function MissionControlDashboard() {
             className="w-full"
           >
             {/* Tabs List */}
-            <TabsList className="grid w-full grid-cols-9 bg-gray-900 mb-6">
+            <TabsList className="grid w-full grid-cols-8 bg-gray-900 mb-6">
               <TabsTrigger
                 value="randy"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
@@ -46,22 +46,16 @@ export default function MissionControlDashboard() {
                 <FlameKindling className="h-5 w-5" /> Randy
               </TabsTrigger>
               <TabsTrigger
-                value="fuel"
+                value="trigger"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
               >
-                <Axe className="h-5 w-5" /> Fuel
+                <Axe className="h-5 w-5" /> Trigger
               </TabsTrigger>
               <TabsTrigger
                 value="pkm"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
               >
                 <Focus className="h-5 w-5" /> PKM
-              </TabsTrigger>
-              <TabsTrigger
-                value="resources"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
-              >
-                <Angry className="h-5 w-5" /> Trigger
               </TabsTrigger>
               <TabsTrigger
                 value="cookies"
@@ -107,14 +101,14 @@ export default function MissionControlDashboard() {
               </Card>
             </TabsContent>
 
-            {/* Fuel */}
-            <TabsContent value="fuel">
+            {/* Trigger */}
+            <TabsContent value="trigger">
               <Card className="bg-gray-900 border-green-800">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-4 text-green-500">
-                    Fuel
+                    Trigger
                   </h2>
-                  {}
+                  <Trigger />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -127,18 +121,6 @@ export default function MissionControlDashboard() {
                     PKM
                   </h2>
                   <PKM />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Resources */}
-            <TabsContent value="resources">
-              <Card className="bg-gray-900 border-green-800">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-green-500">
-                    Resources
-                  </h2>
-                  {}
                 </CardContent>
               </Card>
             </TabsContent>
