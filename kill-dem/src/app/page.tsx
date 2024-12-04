@@ -20,9 +20,10 @@ import Cookies from "@/components/CookieJar";
 import PKM from "@/components/PKM";
 import Workouts from "@/components/Workouts";
 import Ticker from '@/components/Ticker';
+import Randy from '@/components/Randy'
 
 export default function MissionControlDashboard() {
-  const [activeTab, setActiveTab] = useState("ticker");
+  const [activeTab, setActiveTab] = useState("randy");
   return (
     <BreakTimerProvider>
       <div className="min-h-screen bg-black text-green-400 p-6">
@@ -100,7 +101,7 @@ export default function MissionControlDashboard() {
                   <h2 className="text-2xl font-bold mb-4 text-green-500">
                     Randy
                   </h2>
-                  {}
+                  <Randy />
                 </CardContent>
               </Card>
             </TabsContent>
