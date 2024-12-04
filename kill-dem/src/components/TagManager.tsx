@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,11 +13,11 @@ interface TagManagerProps {
 
 const TagManager: React.FC<TagManagerProps> = ({ onTagsChange }) => {
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
     fetchTags();
-  }, []);
+  });
 
   const fetchTags = async () => {
     const fetchedTags = await getTags();
@@ -30,7 +30,7 @@ const TagManager: React.FC<TagManagerProps> = ({ onTagsChange }) => {
       const result = await addTag(newTag.trim());
       if (result.success) {
         await fetchTags();
-        setNewTag('');
+        setNewTag("");
       }
     }
   };
@@ -55,15 +55,27 @@ const TagManager: React.FC<TagManagerProps> = ({ onTagsChange }) => {
             placeholder="New tag"
             className="mr-2 bg-gray-800 text-green-400 border-green-700"
           />
-          <Button onClick={handleAddTag} className="bg-green-700 text-black hover:bg-green-600">
+          <Button
+            onClick={handleAddTag}
+            className="bg-green-700 text-black hover:bg-green-600"
+          >
             Add Tag
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {tags.map(tag => (
-            <Badge key={tag} variant="secondary" className="bg-green-900 text-green-400">
+          {tags.map((tag) => (
+            <Badge
+              key={tag}
+              variant="secondary"
+              className="bg-green-900 text-green-400"
+            >
               {tag}
-              <button onClick={() => handleDeleteTag(tag)} className="ml-2 text-green-600">&times;</button>
+              <button
+                onClick={() => handleDeleteTag(tag)}
+                className="ml-2 text-green-600"
+              >
+                &times;
+              </button>
             </Badge>
           ))}
         </div>
@@ -73,4 +85,3 @@ const TagManager: React.FC<TagManagerProps> = ({ onTagsChange }) => {
 };
 
 export default TagManager;
-

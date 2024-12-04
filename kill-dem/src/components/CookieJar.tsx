@@ -99,9 +99,7 @@ function SortableCookieCard({
       {...dragListeners}
       className="bg-gray-800 p-4 rounded-lg shadow-md cursor-move relative group"
     >
-      <h3 className="text-green-400 font-bold text-lg mb-2">
-        {cookie.name}
-      </h3>
+      <h3 className="text-green-400 font-bold text-lg mb-2">{cookie.name}</h3>
       <p className="text-green-300 text-sm">{cookie.description}</p>
 
       <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -127,9 +125,7 @@ export default function Cookies() {
     description: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [editingCookieId, setEditingCookieId] = useState<
-    string | null
-  >(null);
+  const [editingCookieId, setEditingCookieId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(

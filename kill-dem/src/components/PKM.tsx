@@ -73,11 +73,11 @@ const PKM = () => {
         }}
         whileTap={{ scale: 0.95 }}
         onClick={() =>
-            window.open(
-              "https://idx.google.com/it-is-time-parth-6898425",
-              "_blank"
-            )
-          }
+          window.open(
+            "https://idx.google.com/it-is-time-parth-6898425",
+            "_blank"
+          )
+        }
         className="w-full bg-green-900 text-green-300 border-green-700 p-3 rounded-lg hover:bg-green-800 transition-all duration-300 flex items-center justify-center gap-2"
       >
         It is time Parth
@@ -104,7 +104,7 @@ const PKM = () => {
         }}
         whileTap={{ scale: 0.95 }}
         onClick={() =>
-            window.open("https://idx.google.com/ibdp-sims-189376", "_blank")
+          window.open("https://idx.google.com/ibdp-sims-189376", "_blank")
         }
         className="w-full bg-green-900 text-green-300 border-green-700 p-3 rounded-lg hover:bg-green-800 transition-all duration-300 flex items-center justify-center gap-2"
       >
