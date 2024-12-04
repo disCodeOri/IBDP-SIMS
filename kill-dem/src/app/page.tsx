@@ -11,6 +11,7 @@ import {
   Dumbbell,
   FlameKindling,
   Axe,
+  ClockAlert
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BreakTimerProvider } from "@/components/contexts/BreakTimerContext";
@@ -18,9 +19,10 @@ import BreakTimer from "@/components/BreakTimer";
 import Cookies from "@/components/CookieJar";
 import PKM from "@/components/PKM";
 import Workouts from "@/components/Workouts";
+import Ticker from '@/components/Ticker';
 
 export default function MissionControlDashboard() {
-  const [activeTab, setActiveTab] = useState("workouts");
+  const [activeTab, setActiveTab] = useState("ticker");
   return (
     <BreakTimerProvider>
       <div className="min-h-screen bg-black text-green-400 p-6">
@@ -34,7 +36,7 @@ export default function MissionControlDashboard() {
             className="w-full"
           >
             {/* Tabs List */}
-            <TabsList className="grid w-full grid-cols-8 bg-gray-900 mb-6">
+            <TabsList className="grid w-full grid-cols-9 bg-gray-900 mb-6">
               <TabsTrigger
                 value="randy"
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
@@ -82,6 +84,12 @@ export default function MissionControlDashboard() {
                 className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
               >
                 <Dumbbell className="h-5 w-5" /> Workouts
+              </TabsTrigger>
+              <TabsTrigger
+                value="ticker"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+              >
+                <ClockAlert className="h-5 w-5" /> Ticker
               </TabsTrigger>
             </TabsList>
 
@@ -170,6 +178,18 @@ export default function MissionControlDashboard() {
                     Workouts
                   </h2>
                   <Workouts />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Ticker */}
+            <TabsContent value="ticker">
+              <Card className="bg-gray-900 border-green-800">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-green-500">
+                    Ticker
+                  </h2>
+                  <Ticker />
                 </CardContent>
               </Card>
             </TabsContent>
