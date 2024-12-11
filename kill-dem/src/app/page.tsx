@@ -41,49 +41,49 @@ export default function MissionControlDashboard() {
             <TabsList className="grid w-full grid-cols-8 bg-gray-900 mb-6">
               <TabsTrigger
                 value="randy"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <FlameKindling className="h-5 w-5" /> Randy
               </TabsTrigger>
               <TabsTrigger
                 value="trigger"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Axe className="h-5 w-5" /> Trigger
               </TabsTrigger>
               <TabsTrigger
                 value="pkm"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Focus className="h-5 w-5" /> PKM
               </TabsTrigger>
               <TabsTrigger
                 value="cookies"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Medal className="h-5 w-5" /> Cookies
               </TabsTrigger>
               <TabsTrigger
                 value="stopwatch"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Target className="h-5 w-5" /> Stopwatch
               </TabsTrigger>
               <TabsTrigger
                 value="breaks"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Clock className="h-5 w-5" /> Timer
               </TabsTrigger>
               <TabsTrigger
                 value="workouts"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <Dumbbell className="h-5 w-5" /> Workouts
               </TabsTrigger>
               <TabsTrigger
                 value="ticker"
-                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900"
+                className="flex items-center gap-2 text-green-300 data-[state=active]:bg-green-900 data-[state=active]:text-green-300"
               >
                 <ClockAlert className="h-5 w-5" /> Ticker
               </TabsTrigger>
