@@ -25,6 +25,14 @@
     previews = {
       enable = true;
       previews = {
+        web = {
+          command = [
+            "sh"
+            "-c"
+            "cd kill-dem && PORT=$PORT npm run dev"
+          ];
+          manager = "web";
+        };
         # web = {
         #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
         #   # and show it in IDX's web preview panel
@@ -42,6 +50,7 @@
     workspace = {
       # Runs when a workspace is first created
       onCreate = {
+        npm-install = "cd kill-dem && npm install";
         # Example: install JS dependencies from NPM
         # npm-install = "npm install";
       };
