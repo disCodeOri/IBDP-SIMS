@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from 'react';
-import { Maximize2, Minimize2, X, XCircle } from 'lucide-react';
+import {
+  Calendar, Code, Database, Image, Music, Video, FileText, User, MapPin,
+  ArrowUp, Maximize2, Minimize2, X, XCircle, FilePlus // Added FilePlus icon
+} from 'lucide-react';
+
+const icons = [
+  Calendar, Code, Database, Image, Music,   Video, FileText, User, MapPin,
+  ArrowUp, Maximize2, Minimize2, X, XCircle // ... add more icons as needed
+];
+
+const getRandomIcon = () => icons[Math.floor(Math.random() * icons.length)];
 
 // Utility function for generating unique IDs
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -10,50 +20,52 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 interface Window {
   id: string;
   name: string;
-  icon: string;
+  icon: typeof Calendar; // or any other Lucide icon type
   content: string;
   isActive: boolean;
   isFullScreen: boolean;
-  position: { x: number; y: number };
+  isMinimized: boolean; // Added isMinimized state
+  position: { x: number, y: number };
   zIndex: number;
-  rotation: number;
 }
 
 const StageManagerInterface: React.FC = () => {
   const [windows, setWindows] = useState<Window[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [hoveredWindowId, setHoveredWindowId] = useState<string | null>(null); // Track hovered window
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Function to create a new window
-  const createNewWindow = () => {
+  const createNewWindow = useCallback(() => {
+    // Create the new window object
     const newWindow: Window = {
       id: generateId(),
       name: `Window ${windows.length + 1}`,
-      icon: `/api/placeholder/40/40`,
+      icon: getRandomIcon(),
       content: `Content for Window ${windows.length + 1}`,
       isActive: true,
       isFullScreen: false,
-      position: { 
-        x: Math.random() * (window.innerWidth - 500), 
-        y: Math.random() * (window.innerHeight - 300) 
+      isMinimized: false, // Initialize as not minimized
+      position: {
+        x: Math.random() * (window.innerWidth - 500),
+        y: Math.random() * (window.innerHeight - 300)
       },
       zIndex: windows.length + 1,
-      rotation: 0,
     };
 
     // Reset active state for other windows
     const updatedWindows = windows.map(w => ({ ...w, isActive: false }));
-    
+
     setWindows([...updatedWindows, newWindow]);
-  };
+  }, [windows]);
 
   // Function to handle window selection
   const handleWindowSelect = (selectedWindow: Window) => {
     const updatedWindows = windows.map(window => ({
       ...window,
       isActive: window.id === selectedWindow.id,
-      zIndex: window.id === selectedWindow.id 
-        ? Math.max(...windows.map(w => w.zIndex)) + 1 
+      zIndex: window.id === selectedWindow.id
+        ? Math.max(...windows.map(w => w.zIndex)) + 1
         : window.zIndex
     }));
     setWindows(updatedWindows);
@@ -67,7 +79,7 @@ const StageManagerInterface: React.FC = () => {
       if (!window || window.isFullScreen) return;
 
       const containerRect = containerRef.current.getBoundingClientRect();
-      
+
       // Calculate initial offset
       const offsetX = e.clientX - window.position.x;
       const offsetY = e.clientY - window.position.y;
@@ -77,30 +89,30 @@ const StageManagerInterface: React.FC = () => {
 
         // Calculate new position with immediate cursor tracking
         const newX = Math.max(
-          0, 
+          0,
           Math.min(
-            moveEvent.clientX - containerRect.left - offsetX, 
+            moveEvent.clientX - containerRect.left - offsetX,
             containerRect.width - 500
           )
         );
-        
+
         const newY = Math.max(
-          0, 
+          0,
           Math.min(
-            moveEvent.clientY - containerRect.top - offsetY, 
+            moveEvent.clientY - containerRect.top - offsetY,
             containerRect.height - 300
           )
         );
 
-        setWindows(prevWindows => 
-          prevWindows.map(w => 
-            w.id === windowId 
-              ? { 
-                  ...w, 
+        setWindows(prevWindows =>
+          prevWindows.map(w =>
+            w.id === windowId
+              ? {
+                  ...w,
                   position: { x: newX, y: newY },
                   isActive: true,
                   zIndex: Math.max(...prevWindows.map(win => win.zIndex)) + 1
-                }
+              }
               : { ...w, isActive: false }
           )
         );
@@ -122,10 +134,9 @@ const StageManagerInterface: React.FC = () => {
         return {
           ...window,
           isFullScreen: !window.isFullScreen,
-          position: window.isFullScreen 
+          position: window.isFullScreen
             ? { x: window.position.x, y: window.position.y }
             : { x: 50, y: 50 },
-            rotation: window.isFullScreen ? 0 : 0,
         };
       }
       return window;
@@ -137,7 +148,7 @@ const StageManagerInterface: React.FC = () => {
     // Function to close a window
     const closeWindow = (windowId: string) => {
       const updatedWindows = windows.filter(window => window.id !== windowId);
-      
+
       // If there are remaining windows, activate the last one
       if (updatedWindows.length > 0) {
         updatedWindows[updatedWindows.length - 1].isActive = true;
@@ -146,28 +157,32 @@ const StageManagerInterface: React.FC = () => {
       setWindows(updatedWindows);
     };
 
-    const calculateRotation = (index: number, windowId: string) => {
-      const activeWindow = windows.find((w) => w.isActive);
-      if (!activeWindow) return 0;
-  
-      // Determine if this card is before or after the active card.
-      const activeIndex = windows.findIndex((w) => w.id === activeWindow.id);
-      const currentIndex = windows.findIndex((w) => w.id === windowId);
-      
-      if (currentIndex === activeIndex) return 0;
-  
-      // Adjust rotation calculation for a more pronounced effect.
-      const rotationScale = 10;
-  
-      if (currentIndex < activeIndex) {
-        return -rotationScale * (activeIndex - currentIndex);
-      } else {
-        return rotationScale * (currentIndex - activeIndex);
-      }
+    // Function to minimize a window
+    const minimizeWindow = (windowId: string) => {
+      setWindows(prevWindows =>
+        prevWindows.map(window =>
+          window.id === windowId ? { ...window, isMinimized: true, isActive: false } : window
+        )
+      );
     };
 
+    // Function to restore a minimized window
+    const restoreWindow = (windowId: string) => {
+      setWindows(prevWindows =>
+        prevWindows.map(window =>
+          window.id === windowId ? { ...window, isMinimized: false, isActive: true, zIndex: Math.max(...prevWindows.map(win => win.zIndex)) + 1 } : { ...window, isActive: false }
+        )
+      );
+    };
+
+    // Custom scrollbar styles
+    const scrollbarStyles: React.CSSProperties = {
+        scrollbarWidth: 'thin', // Use thin scrollbars (if supported)
+        scrollbarColor: 'rgba(128, 128, 128, 0.3) transparent', // Thumb and track color
+      };
+
   return (
-    <div 
+    <div
       ref={containerRef}
       className="flex h-screen bg-gray-100 overflow-hidden"
     >
@@ -175,16 +190,17 @@ const StageManagerInterface: React.FC = () => {
       <div className={`
         transition-all duration-500 ease-in-out
         ${sidebarOpen ? 'w-80' : 'w-16'}
-        bg-white/90 backdrop-blur-lg 
-        border-r border-gray-200 
+        bg-white/90 backdrop-blur-lg
+        border-r border-gray-200
         flex flex-col
         overflow-hidden
         shadow-xl
         z-50
         relative
+        ${!sidebarOpen ? 'overflow-x-hidden' : ''}
       `}>
         {/* Sidebar Toggle */}
-        <button 
+        <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 m-2 hover:bg-gray-100 rounded-full self-start z-50"
         >
@@ -192,103 +208,180 @@ const StageManagerInterface: React.FC = () => {
         </button>
 
         {/* New Window Button */}
-        <button 
+        <button
           onClick={createNewWindow}
           className="m-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          New Window
+          {sidebarOpen ? 'New Window' : <FilePlus size={20} />}
         </button>
 
         {/* Minimized Windows Container */}
-        <div className="flex-grow overflow-y-auto pt-4 space-y-4 px-2">
-          {windows.filter(w => !w.isFullScreen).map((window, index) => (
-              <div 
+        <div className={`py-4 space-y-2 px-1 ${windows.some(w => w.isMinimized) ? 'block' : 'hidden'} max-h-48 overflow-y-auto`} style={scrollbarStyles}>
+            <div className="text-sm font-bold text-gray-600 px-2">Minimized</div>
+            <div className="flex-grow space-y-4">
+                {windows.filter(w => w.isMinimized).map((window, index) => (
+                    <div
+                        key={window.id}
+                        className="
+                            relative
+                            cursor-pointer
+                            transition-all
+                            duration-500
+                            transform
+                            perspective-1000
+                            origin-left
+                            group
+                          "
+                        style={{
+                            transform: `
+                              translateX(${sidebarOpen ? '0' : '0px'})
+                              scale(${sidebarOpen ? '1' : '0.8'})
+                            `,
+                            opacity: sidebarOpen ? 1 : 0.7,
+                            marginLeft: '0px',
+                            marginRight: '0px',
+                            zIndex: windows.length - index
+                        }}
+                        onMouseEnter={() => !sidebarOpen && setHoveredWindowId(window.id)}
+                        onMouseLeave={() => !sidebarOpen && setHoveredWindowId(null)}
+                    >
+                        <div
+                            onClick={() => {
+                                if (!sidebarOpen) {
+                                    closeWindow(window.id);
+                                } else {
+                                    restoreWindow(window.id);
+                                }
+                            }}
+                            className={`
+                              bg-white
+                              shadow-lg
+                              border
+                              border-gray-200
+                              flex
+                              items-center
+                              overflow-hidden
+                              transition-colors
+                              duration-300
+                              ${sidebarOpen ? 'rounded-lg p-2 pr-10' : 'rounded w-full'} /* Adjusted width when closed */
+                              ${!sidebarOpen && hoveredWindowId === window.id ? 'bg-red-100 hover:bg-red-200' : 'hover:bg-gray-100'}
+                            `}
+                            style={{ height: sidebarOpen ? 'auto' : '40px' }} /* Consistent height */
+                        >
+                            {(!sidebarOpen && hoveredWindowId === window.id) ? (
+                                <XCircle size={32} className="text-red-500" />
+                            ) : (
+                                <window.icon
+                                    size={24}
+                                    className={`${sidebarOpen ? 'mr-1' : ''} transition-transform duration-300`}
+                                    strokeWidth={2}
+                                />
+                            )}
+                            {sidebarOpen && (
+                                <div className="flex-grow overflow-hidden">
+                                    <div className="font-medium truncate">{window.name}</div>
+                                    <div className="text-xs text-gray-500 truncate">
+                                        {window.content}
+                                    </div>
+                                </div>
+                            )}
+                            {sidebarOpen && (
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeWindow(window.id);
+                                    }}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 transition-transform duration-200 hover:scale-110 group-hover:bg-red-100 rounded-full p-1" /* Added hover effect */
+                                >
+                                    <XCircle size={18} className="text-red-500" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        {/* Regular Windows Container */}
+        <div className={`flex-grow overflow-y-auto pt-4 space-y-4 px-1`} style={scrollbarStyles}>
+          {windows.filter(w => !w.isFullScreen && !w.isMinimized).map((window, index) => (
+              <div
                 key={window.id}
                 className="
-                    cursor-pointer 
-                    transition-all 
-                    duration-500 
-                    transform 
-                    perspective-1000 
-                    hover:scale-105
-                    origin-left
                     relative
+                    cursor-pointer
+                    transition-all
+                    duration-500
+                    transform
+                    perspective-1000
+                    origin-left
                     group
                   "
                 style={{
-                  transformStyle: 'preserve-3d',
                   transform: `
-                    translateX(${sidebarOpen ? '0' : '20px'}) 
-                    rotateY(${sidebarOpen ? `${calculateRotation(index, window.id)}deg` : '0deg'})
+                    translateX(${sidebarOpen ? '0' : '0px'})
                     scale(${sidebarOpen ? '1' : '0.8'})
                   `,
                   opacity: sidebarOpen ? 1 : 0.7,
-                  transformOrigin: 'left center',
-                  perspective: '1000px',
-                  marginLeft: sidebarOpen ? '0px' : '20px',
-                  marginRight: sidebarOpen ? '0px' : '-40px',
+                  marginLeft: '0px',
+                  marginRight: '0px',
                   zIndex: windows.length - index
                 }}
+                onMouseEnter={() => !sidebarOpen && setHoveredWindowId(window.id)}
+                onMouseLeave={() => !sidebarOpen && setHoveredWindowId(null)}
               >
-                <div 
-                  onClick={() => handleWindowSelect(window)}
-                  className="
-                    bg-white 
-                    rounded-lg 
-                    shadow-lg 
-                    border 
+                <div
+                    onClick={() => {
+                        if (!sidebarOpen) {
+                            closeWindow(window.id);
+                        } else {
+                            handleWindowSelect(window);
+                        }
+                    }}
+                  className={`
+                    bg-white
+                    shadow-lg
+                    border
                     border-gray-200
-                    flex 
-                    items-center 
-                    p-2
+                    flex
+                    items-center
                     overflow-hidden
-                    pr-10
-                    transition-all
-                    duration-500
-                  "
-                  style={{
-                    transform: sidebarOpen 
-                      ? 'perspective(1000px) rotateY(5deg)' 
-                      : 'perspective(1000px) rotateY(0deg)',
-                    transformOrigin: 'left center'
-                  }}
+                    transition-colors
+                    duration-300
+                    ${sidebarOpen ? 'rounded-lg p-2 pr-10' : 'rounded w-full'} /* Adjusted width when closed */
+                    ${!sidebarOpen && hoveredWindowId === window.id ? 'bg-red-100 hover:bg-red-200' : 'hover:bg-gray-100'}
+                  `}
+                  style={{ height: sidebarOpen ? 'auto' : '40px' }} /* Consistent height */
                 >
-                  <img 
-                    src={window.icon} 
-                    alt={window.name} 
-                    className="w-10 h-10 mr-3 rounded"
-                  />
+                  {(!sidebarOpen && hoveredWindowId === window.id) ? (
+                      <XCircle size={32} className="text-red-500" />
+                  ) : (
+                      <window.icon
+                          size={24}
+                          className={`${sidebarOpen ? 'mr-1' : ''} transition-transform duration-300`}
+                          strokeWidth={2}
+                      />
+                  )}
                   {sidebarOpen && (
-                    <div className="flex-grow">
-                      <div className="font-medium">{window.name}</div>
+                    <div className="flex-grow overflow-hidden">
+                      <div className="font-medium truncate">{window.name}</div>
                       <div className="text-xs text-gray-500 truncate">
                         {window.content}
                       </div>
                     </div>
                   )}
+                  {sidebarOpen && (
+                    <div
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            closeWindow(window.id);
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 transition-transform duration-200 hover:scale-110 group-hover:bg-red-100 rounded-full p-1" /* Added hover effect */
+                    >
+                        <XCircle size={18} className="text-red-500" />
+                    </div>
+                )}
                 </div>
-                
-                {/* Close Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent selecting the window
-                    closeWindow(window.id);
-                  }}
-                  className="
-                    absolute 
-                    right-2 
-                    top-1/2 
-                    -translate-y-1/2 
-                    text-red-500 
-                    hover:text-red-700
-                    opacity-0 
-                    group-hover:opacity-100 
-                    transition-opacity 
-                    duration-300
-                  "
-                >
-                  <XCircle size={20} />
-                </button>
               </div>
             ))}
         </div>
@@ -296,14 +389,14 @@ const StageManagerInterface: React.FC = () => {
 
       {/* Main Stage Area */}
       <div className="flex-grow relative overflow-hidden">
-        {windows.map(window => (
+        {windows.filter(window => !window.isMinimized).map(window => (
           <div
             key={window.id}
             className={`
-              absolute 
-              bg-white 
-              rounded-xl 
-              shadow-2xl 
+              absolute
+              bg-white
+              rounded-xl
+              shadow-2xl
               overflow-hidden
               ${window.isActive ? 'border-2 border-blue-500' : ''}
               cursor-move
@@ -319,13 +412,13 @@ const StageManagerInterface: React.FC = () => {
             onMouseDown={() => handleWindowSelect(window)}
           >
             {/* Window Header */}
-            <div 
+            <div
               className="
-                bg-gray-100 
-                p-2 
-                flex 
-                justify-between 
-                items-center 
+                bg-gray-100
+                p-2
+                flex
+                justify-between
+                items-center
                 cursor-move
               "
               onMouseDown={(e) => {
@@ -334,15 +427,15 @@ const StageManagerInterface: React.FC = () => {
               }}
             >
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={() => closeWindow(window.id)}
                   className="bg-red-500 rounded-full w-3 h-3 hover:bg-red-600"
                 ></button>
-                <button 
-                  onClick={() => {}}
+                <button
+                  onClick={() => minimizeWindow(window.id)} // Call minimizeWindow
                   className="bg-yellow-500 rounded-full w-3 h-3 hover:bg-yellow-600"
                 ></button>
-                <button 
+                <button
                   onClick={() => toggleFullScreen(window.id)}
                   className="bg-green-500 rounded-full w-3 h-3 hover:bg-green-600"
                 >
@@ -350,7 +443,7 @@ const StageManagerInterface: React.FC = () => {
                 </button>
               </div>
             </div>
-            
+
             {/* Content Area */}
             <div className="p-4">
               <h2 className="text-xl font-semibold">{window.name}</h2>
