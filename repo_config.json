@@ -1,0 +1,14 @@
+{
+    "repositories": [
+        {
+            "name": "WebDeskFileStorage",
+            "path": "C:/Users/SUN/Desktop/WebDeskFileStorage",
+            "url": "https://github.com/disCodeOri/WebDeskFileStorage"
+        },
+        {
+            "name": "IBDP-SIMS",
+            "path": "C:/Users/SUN/Desktop/programs/IBDP-SIMS",
+            "url": "https://github.com/disCodeOri/IBDP-SIMS"
+        }
+    ]
+}
