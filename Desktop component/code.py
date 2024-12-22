@@ -376,7 +376,7 @@ class GitSyncApp:
         repo_path = active_repo["path"]
         add_output = execute_git_command(repo_path, ["git", "add", "."])
         if "Error:" in add_output:
-            show_fading_notification(f"Git add error: {add_output}", is_error=True)
+           show_fading_notification(f"Git add error: {add_output}", is_error=True)
         else:
             self.log("All changes staged successfully.")
             self.update_staged_changes()  # Update after staging
@@ -392,6 +392,7 @@ class GitSyncApp:
                  self.staged_changes_text.insert(tk.END, status_output)
         else:
              self.staged_changes_text.insert(tk.END, "No active repository selected or path not configured.")
+
 
     def manual_commit_push(self):
         active_repo = self.get_active_repo_config()
