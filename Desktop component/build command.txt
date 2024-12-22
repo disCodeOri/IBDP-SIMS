@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --icon=icon.png git_sync_app.py

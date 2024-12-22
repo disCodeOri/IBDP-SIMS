@@ -2,19 +2,14 @@
 │   ├── .eslintrc.json
 │   ├── README.md
 │   ├── components.json
-│   ├── next.config.ts
+│   ├── next-env.d.ts
+│   ├── next.config.mjs
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── postcss.config.mjs
 │   ├── public
-│   │   ├── file.svg
-│   │   ├── globe.svg
-│   │   ├── next.svg
-│   │   ├── sounds
-│   │   │   ├── digital-clock-alarm.mp3
-│   │   │   ├── red-alert_nuclear_buzzer.mp3
-│   │   ├── vercel.svg
-│   │   ├── window.svg
+│   │   ├── audios
+│   │   │   ├── ticking.mp3
 │   ├── src
 │   │   ├── app
 │   │   │   ├── favicon.ico
@@ -23,25 +18,48 @@
 │   │   │   ├── page.tsx
 │   │   ├── components
 │   │   │   ├── BreakTimer.tsx
-│   │   │   ├── Ebbinghaus.tsx
-│   │   │   ├── FocusBeam.tsx
+│   │   │   ├── CookieJar.tsx
+│   │   │   ├── PKM.tsx
+│   │   │   ├── Randy.tsx
+│   │   │   ├── Stopwatch.tsx
+│   │   │   ├── TagManager.tsx
+│   │   │   ├── Ticker.tsx
+│   │   │   ├── Trigger.tsx
+│   │   │   ├── Workouts.tsx
 │   │   │   ├── contexts
 │   │   │   │   ├── BreakTimerContext.tsx
 │   │   │   ├── ui
+│   │   │   │   ├── badge.tsx
 │   │   │   │   ├── button.tsx
 │   │   │   │   ├── card.tsx
-│   │   │   │   ├── context-menu.tsx
+│   │   │   │   ├── dialog.tsx
 │   │   │   │   ├── input.tsx
-│   │   │   │   ├── label.tsx
-│   │   │   │   ├── progress.tsx
+│   │   │   │   ├── popover.tsx
+│   │   │   │   ├── resizable.tsx
 │   │   │   │   ├── select.tsx
+│   │   │   │   ├── separator.tsx
+│   │   │   │   ├── sheet.tsx
 │   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── textarea.tsx
+│   │   │   │   ├── toast.tsx
+│   │   │   │   ├── toaster.tsx
 │   │   ├── data
-│   │   │   ├── review-dates.json
-│   │   │   ├── subjects copy.json
+│   │   │   ├── cookies.json
+│   │   │   ├── randy.json
 │   │   │   ├── subjects.json
+│   │   │   ├── tags.json
+│   │   │   ├── workouts.json
+│   │   ├── data copy
+│   │   │   ├── achievements.json
+│   │   │   ├── review-dates.json
+│   │   │   ├── subjects.json
+│   │   ├── hooks
+│   │   │   ├── use-toast.ts
 │   │   ├── lib
-│   │   │   ├── ebbinghaus.ts
+│   │   │   ├── cookies-actions.ts
+│   │   │   ├── randy-actions.ts
+│   │   │   ├── tag-actions.ts
 │   │   │   ├── utils.ts
+│   │   │   ├── workouts-actions.ts
 │   ├── tailwind.config.ts
 │   ├── tsconfig.json
