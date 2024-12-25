@@ -40,6 +40,10 @@ interface RepoFileTree {
     [path: string]: RepoContentItem | RepoFileTree;
 }
 
+const isRepoFileTree = (item: RepoContentItem | RepoFileTree): item is RepoFileTree => {
+    return !('type' in item);
+};
+
 const StageManagerInterface: React.FC = () => {
     const [windows, setWindows] = useState<Window[]>([]);
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -74,7 +78,7 @@ const StageManagerInterface: React.FC = () => {
                 `https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/contents/${path}`,
                 {
                     headers: {
-                        Authorization: githubPAT ? `token ${githubPAT}` : undefined,
+                        Authorization: githubPAT ? `token ${githubPAT}` : '',
                         Accept: 'application/vnd.github.v3+json',
                     },
                 }
@@ -86,9 +90,9 @@ const StageManagerInterface: React.FC = () => {
 
             const data: RepoContentItem[] = await response.json();
             return data;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error fetching repository contents:', error);
-            setFetchError(error.message || 'An error occurred while fetching repository contents.');
+            setFetchError(error instanceof Error ? error.message : 'An error occurred while fetching repository contents.');
             return null;
         } finally {
             setIsFetchingFiles(false);
@@ -189,7 +193,7 @@ const StageManagerInterface: React.FC = () => {
                                 <span className="text-sm truncate">{path.split('/').pop()}</span>
                             </div>
                         </div>
-                        {isExpanded && typeof item === 'object' && !Array.isArray(item) && renderFileTree(item, indent + 1)}
+                        {isExpanded && isRepoFileTree(item) && renderFileTree(item, indent + 1)}
                     </div>
                 );
             }
@@ -390,6 +394,7 @@ const StageManagerInterface: React.FC = () => {
                     z-50
                     relative
                     ${!sidebarOpen ? 'w-16 overflow-x-hidden' : `w-[${sidebarWidth}px]`}
+                    ${isResizingSidebar ? 'select-none' : ''}
                 `}
                 style={{ width: sidebarOpen ? sidebarWidth : '4rem' }}
             >
