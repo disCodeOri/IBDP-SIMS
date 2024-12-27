@@ -29,6 +29,7 @@ class FileCheckboxTree(ttk.Frame):
         
         self.checkboxes = {}
         self.vars = {}
+        self.disabled_checkboxes = {}
         
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
@@ -44,25 +45,31 @@ class FileCheckboxTree(ttk.Frame):
             widget.destroy()
         self.checkboxes = {}
         self.vars = {}
+        self.disabled_checkboxes = {}
         
-    def add_item(self, path, indent=0):
+    def add_item(self, path, indent=0, disabled=False):
         var = tk.BooleanVar()
         checkbox = ttk.Checkbutton(
             self.scrollable_frame,
             text=path,
             variable=var,
-            padding=(indent*20, 0, 0, 0)
+            padding=(indent*20, 0, 0, 0),
+            state="disabled" if disabled else "normal"
         )
         checkbox.pack(anchor="w", fill="x")
         self.checkboxes[path] = checkbox
         self.vars[path] = var
+        if disabled:
+            self.disabled_checkboxes[path] = checkbox
         
     def select_all(self):
-        for var in self.vars.values():
+        for path, var in self.vars.items():
+          if path not in self.disabled_checkboxes:
             var.set(True)
             
     def deselect_all(self):
-        for var in self.vars.values():
+        for path, var in self.vars.items():
+          if path not in self.disabled_checkboxes:
             var.set(False)
             
     def get_selected(self):
@@ -79,11 +86,10 @@ class FileProcessorGUI:
         
         # Variables
         self.folder_path = tk.StringVar()
-        self.watch_var = tk.BooleanVar(value=False)
-        self.remove_comments_var = tk.BooleanVar(value=True)  # Set to True by default
-        self.observer = None
+        self.remove_comments_var = tk.BooleanVar(value=False)
         self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__'}
         self.ignore_vars = {}
+        self.files_to_ignore = {"collation-engine.py", "combined_output.txt", "file_structure.txt"}
         
         self.setup_gui()
         
@@ -136,6 +142,11 @@ class FileProcessorGUI:
         ttk.Button(select_frame, text="Select All", command=self.checkbox_tree.select_all).pack(side="left", padx=5)
         ttk.Button(select_frame, text="Deselect All", command=self.checkbox_tree.deselect_all).pack(side="left")
         
+        # Refresh button
+        refresh_frame = ttk.Frame(left_frame)
+        refresh_frame.pack(fill="x", pady=5)
+        ttk.Button(refresh_frame, text="Refresh File Tree", command=self.refresh_file_list).pack(side="left")
+        
         # Right panel
         right_frame = ttk.Frame(main_frame)
         right_frame.grid(row=0, column=1, sticky="nsew")
@@ -143,7 +154,7 @@ class FileProcessorGUI:
         # Options
         options_frame = ttk.LabelFrame(right_frame, text="Options", padding="5")
         options_frame.pack(fill="x", pady=5)
-        ttk.Checkbutton(options_frame, text="Watch for changes", variable=self.watch_var).pack(anchor="w")
+        ttk.Checkbutton(options_frame, text="Remove Comments", variable=self.remove_comments_var).pack(anchor="w") #Added the new checkbox
         
         # Generate buttons
         buttons_frame = ttk.Frame(right_frame)
@@ -185,7 +196,8 @@ class FileProcessorGUI:
                         continue
                         
                     if os.path.isfile(full_path):
-                        self.checkbox_tree.add_item(relative_path, indent)
+                        disabled = os.path.basename(full_path) in self.files_to_ignore
+                        self.checkbox_tree.add_item(relative_path, indent, disabled)
                     else:
                         self.checkbox_tree.add_item(f"[{item}]", indent)
                         add_files(full_path, indent + 1)
@@ -325,6 +337,13 @@ class FileProcessorGUI:
                 # Skip directory entries
                 if relative_path.startswith('[') and relative_path.endswith(']'):
                     continue
+
+                # Construct full file path and add it to output
+                file_path = os.path.join(source_dir, relative_path)
+                
+                # Ignore specific files
+                if os.path.basename(file_path) in self.files_to_ignore:
+                    continue
                 
                 # Get the directory path for the current file
                 dir_path = os.path.dirname(relative_path)
@@ -336,9 +355,8 @@ class FileProcessorGUI:
                         f.write(f"Directory: {dir_path}\n")
                         f.write(f"{'='*80}\n\n")
                     current_dir = dir_path
-                
-                file_path = os.path.join(source_dir, relative_path)
-                f.write(f"File: {os.path.basename(relative_path)}\n")
+
+                f.write(f"File: {relative_path}\n")  # Changed to show relative path
                 f.write(f"{'-'*80}\n\n")
                 
                 try:
@@ -381,10 +399,6 @@ class FileProcessorGUI:
                     content_file = os.path.join(self.script_dir, 'combined_output.txt')
                     self.combine_files(folder, content_file)
                     self.log_message(f"Generated content file: {content_file}")
-                    
-                if self.watch_var.get() and not self.observer:
-                    self.start_watching(folder, mode)
-                    
             except Exception as e:
                 self.log_message(f"Error: {str(e)}")
                 
@@ -392,9 +406,6 @@ class FileProcessorGUI:
         
     def run(self):
         self.root.mainloop()
-        if self.observer:
-            self.observer.stop()
-            self.observer.join()
 
 if __name__ == "__main__":
     app = FileProcessorGUI()
