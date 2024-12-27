@@ -1,8 +1,6 @@
 ├── kill-dem
 │   ├── .eslintrc.json
-│   ├── README.md
 │   ├── components.json
-│   ├── next-env.d.ts
 │   ├── next.config.mjs
 │   ├── package-lock.json
 │   ├── package.json
@@ -15,10 +13,12 @@
 │   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── layout.tsx
+│   │   │   ├── page-old.tsx
 │   │   │   ├── page.tsx
 │   │   ├── components
 │   │   │   ├── BreakTimer.tsx
 │   │   │   ├── CookieJar.tsx
+│   │   │   ├── MilkdownEditor.tsx
 │   │   │   ├── PKM.tsx
 │   │   │   ├── Randy.tsx
 │   │   │   ├── Stopwatch.tsx
@@ -29,13 +29,19 @@
 │   │   │   ├── contexts
 │   │   │   │   ├── BreakTimerContext.tsx
 │   │   │   ├── ui
+│   │   │   │   ├── accordion.tsx
 │   │   │   │   ├── badge.tsx
 │   │   │   │   ├── button.tsx
 │   │   │   │   ├── card.tsx
+│   │   │   │   ├── collapsible.tsx
+│   │   │   │   ├── command.tsx
 │   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── drawer.tsx
 │   │   │   │   ├── input.tsx
+│   │   │   │   ├── label.tsx
 │   │   │   │   ├── popover.tsx
 │   │   │   │   ├── resizable.tsx
+│   │   │   │   ├── scroll-area.tsx
 │   │   │   │   ├── select.tsx
 │   │   │   │   ├── separator.tsx
 │   │   │   │   ├── sheet.tsx
@@ -49,10 +55,6 @@
 │   │   │   ├── subjects.json
 │   │   │   ├── tags.json
 │   │   │   ├── workouts.json
-│   │   ├── data copy
-│   │   │   ├── achievements.json
-│   │   │   ├── review-dates.json
-│   │   │   ├── subjects.json
 │   │   ├── hooks
 │   │   │   ├── use-toast.ts
 │   │   ├── lib
