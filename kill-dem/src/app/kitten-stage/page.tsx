@@ -2,12 +2,14 @@
 "use client";
 
 import React from 'react';
-import KittenApp from './KittenApp';
+import App from '@/kitten/App';
+import '@/kitten/index.css';
+import '@/kitten/App.css';
 
 const KittenPage = () => {
   return (
     <div>
-        <KittenApp />
+        <App />
     </div>
   );
 };
