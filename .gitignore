@@ -1,2 +1,4 @@
 # handover
 combined_output.txt
+**/node_modules/**
+/crac45-discord-bot/.env
