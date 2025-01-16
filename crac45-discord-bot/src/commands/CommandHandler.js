@@ -2,13 +2,12 @@
 
 class CommandHandler {
     constructor() {
-        if(new.target === CommandHandler) {
-            throw new Error('Cannot instantiate abstract class: CommandHandler')
-        }
+        if (new.target === CommandHandler) {
+            throw new TypeError("Cannot construct Abstract instances directly");
+          }
     }
-
-    async handle(message) {
-        throw new Error('handle method must be implemented')
+    async handle(msg, args) {
+        throw new Error("Method handle must be implemented in derived classes");
     }
 }
 

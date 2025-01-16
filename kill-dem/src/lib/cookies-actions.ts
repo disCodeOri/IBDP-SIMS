@@ -79,7 +79,7 @@ export async function writeCookies(cookies: Cookie[]): Promise<void> {
 }
 
 // Add a new cookie
-export async function addCookie(newCookie: Omit<Cookie, "id">): Promise<void> {
+export async function addCookie(newCookie: Omit<Cookie, "id">, gridCols: number = 4): Promise<void> {
   const cookies = await readCookies();
 
   // Generate a unique ID (using UUID is recommended for production)
@@ -89,8 +89,8 @@ export async function addCookie(newCookie: Omit<Cookie, "id">): Promise<void> {
     ...newCookie,
     id,
     position: {
-      x: cookies.length % 4,
-      y: Math.floor(cookies.length / 4),
+      x: cookies.length % gridCols,
+      y: Math.floor(cookies.length / gridCols)
     },
   };
 

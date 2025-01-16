@@ -1,50 +1,34 @@
 // src/database/db.js
-const { Client } = require('pg')
-const { getEnvConfig } = require('../utils/helper')
 
-const { dbUser, dbHost, dbName, dbPassword, dbPort } = getEnvConfig()
+const db = {
+  users: {},
+  tasks: [],
 
-const client = new Client({
-  user: dbUser,
-  host: dbHost,
-  database: dbName,
-  password: dbPassword,
-  port: dbPort,
-})
-
-const connect = async () => {
-    try {
-      await client.connect()
-      console.log('Successfully connected to database.')
+  async createUser(userId) {
+    if (!db.users[userId]) {
+      db.users[userId] = { id: userId, streak: 0, points: 0, last_logged_date: null };
     }
-    catch (err) {
-      console.error('Error during database connection:', err)
-    }
+    return db.users[userId];
+  },
+
+  async logTask(userId, taskName) {
+    const user = await this.createUser(userId);
+    user.streak = user.last_logged_date && new Date().toDateString() === user.last_logged_date ? user.streak + 1 : 1;
+    user.points += 10;
+    user.last_logged_date = new Date().toDateString();
+    db.tasks.push({ userId, taskName, timestamp: new Date() });
+    return user;
+  },
+
+  async getUser(userId) {
+    return db.users[userId]
+  },
+
+  async getLeaderboard() {
+    const users = Object.values(db.users)
+    users.sort((a,b) => b.points - a.points);
+    return users;
   }
+};
 
-  const end = async () => {
-    try {
-      await client.end()
-      console.log('Successfully disconnected from database.')
-    }
-    catch (err) {
-      console.error('Error during database disconnection', err)
-    }
-  }
-
-  const query = async (text, params) => {
-    try {
-        const result = await client.query(text, params)
-        return result
-    }
-    catch (err) {
-        console.error('Error during query to database:', err)
-        return null
-    }
-  }
-
-module.exports = {
-    connect,
-    end,
-    query
-}
+module.exports = db;

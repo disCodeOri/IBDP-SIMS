@@ -1,6 +1,7 @@
 ├── kill-dem
 │   ├── .eslintrc.json
 │   ├── components.json
+│   ├── next-env.d.ts
 │   ├── next.config.mjs
 │   ├── package-lock.json
 │   ├── package.json
@@ -13,54 +14,27 @@
 │   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── layout.tsx
-│   │   │   ├── page-old.tsx
 │   │   │   ├── page.tsx
 │   │   ├── components
 │   │   │   ├── BreakTimer.tsx
 │   │   │   ├── CookieJar.tsx
-│   │   │   ├── MilkdownEditor.tsx
 │   │   │   ├── PKM.tsx
 │   │   │   ├── Randy.tsx
 │   │   │   ├── Stopwatch.tsx
-│   │   │   ├── TagManager.tsx
 │   │   │   ├── Ticker.tsx
 │   │   │   ├── Trigger.tsx
 │   │   │   ├── Workouts.tsx
 │   │   │   ├── contexts
 │   │   │   │   ├── BreakTimerContext.tsx
-│   │   │   ├── ui
-│   │   │   │   ├── accordion.tsx
-│   │   │   │   ├── badge.tsx
-│   │   │   │   ├── button.tsx
-│   │   │   │   ├── card.tsx
-│   │   │   │   ├── collapsible.tsx
-│   │   │   │   ├── command.tsx
-│   │   │   │   ├── dialog.tsx
-│   │   │   │   ├── drawer.tsx
-│   │   │   │   ├── input.tsx
-│   │   │   │   ├── label.tsx
-│   │   │   │   ├── popover.tsx
-│   │   │   │   ├── resizable.tsx
-│   │   │   │   ├── scroll-area.tsx
-│   │   │   │   ├── select.tsx
-│   │   │   │   ├── separator.tsx
-│   │   │   │   ├── sheet.tsx
-│   │   │   │   ├── tabs.tsx
-│   │   │   │   ├── textarea.tsx
-│   │   │   │   ├── toast.tsx
-│   │   │   │   ├── toaster.tsx
+│   │   │   ├── ui (Shadcn UI components only)
 │   │   ├── data
 │   │   │   ├── cookies.json
 │   │   │   ├── randy.json
 │   │   │   ├── subjects.json
-│   │   │   ├── tags.json
 │   │   │   ├── workouts.json
-│   │   ├── hooks
-│   │   │   ├── use-toast.ts
 │   │   ├── lib
 │   │   │   ├── cookies-actions.ts
 │   │   │   ├── randy-actions.ts
-│   │   │   ├── tag-actions.ts
 │   │   │   ├── utils.ts
 │   │   │   ├── workouts-actions.ts
 │   ├── tailwind.config.ts
