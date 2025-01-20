@@ -1,0 +1,32 @@
+"use client";
+
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import CookieJar from '@/components/CookieJar';
+import { ArrowLeft } from 'lucide-react';
+
+const CookieJarPage: React.FC = () => {
+    const router = useRouter();
+
+    return (
+        <div className="flex flex-col h-screen">
+            <header className="flex items-center justify-between p-4 border-b">
+                <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => router.push('/')}
+                    className="flex items-center gap-2"
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                </Button>
+            </header>
+            <main className="flex-1 overflow-auto">
+                <CookieJar />
+            </main>
+        </div>
+    );
+};
+
+export default CookieJarPage;

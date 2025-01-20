@@ -22,7 +22,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
+import { Button } from "@/components/ui/button";
 import {
   readCookies,
   updateCookiePositions,
@@ -128,7 +128,7 @@ function SortableCookieCard({
   );
 }
 
-export default function Cookies({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: CookiesProps) {
+export default function CookieJar({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: CookiesProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cookies, setCookies] = useState<Cookie[]>([]);
   const [newCookie, setNewCookie] = useState<Partial<Cookie>>({
@@ -268,16 +268,19 @@ export default function Cookies({ disableEdit = false, disableAdd = false, disab
   return (
     <div className="p-6">
       {!disableAdd && (
-        <button
+        <Button
           onClick={() => {
             setNewCookie({ name: "", description: "" });
             setIsEditing(false);
             toggleModal();
           }}
-          className="bg-green-400 text-white px-4 py-2 rounded-md font-bold hover:bg-green-500 flex items-center gap-2 mb-4" // Changed text color
+          variant="outline"
+          size="default"
+          className="mb-4"
         >
-          <Plus className="h-5 w-5" /> Add Cookie
-        </button>
+          <Plus className="h-4 w-4" />
+          Add Cookie
+        </Button>
       )}
 
       <DndContext
@@ -307,11 +310,8 @@ export default function Cookies({ disableEdit = false, disableAdd = false, disab
       </DndContext>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white text-gray-800 p-6 rounded-md max-w-md w-full shadow-lg"> {/* Changed background and text color, added shadow */}
-            <h2 className="text-2xl font-bold mb-4">
-              {isEditing ? "Edit Cookie" : "Add Cookie"}
-            </h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-background p-6 rounded-lg w-full max-w-md">
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700"> {/* Changed text color */}
@@ -344,23 +344,25 @@ export default function Cookies({ disableEdit = false, disableAdd = false, disab
               </div>
 
               <div className="flex justify-end gap-4">
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     toggleModal();
                     setIsEditing(false);
                   }}
-                  className="bg-gray-200 px-4 py-2 rounded-md text-gray-800 hover:bg-gray-300" // Changed background and text color
+                  variant="secondary"
+                  size="default"
                 >
                   Cancel
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="submit"
-                  className="bg-green-400 text-white px-4 py-2 rounded-md font-bold hover:bg-green-500" // Changed text color
+                  variant="default"
+                  size="default"
                 >
                   {isEditing ? "Update" : "Submit"}
-                </button>
+                </Button>
               </div>
             </form>
           </div>

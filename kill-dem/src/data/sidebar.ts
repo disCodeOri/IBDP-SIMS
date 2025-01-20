@@ -123,14 +123,19 @@ export const data = {
   ],
   utilities: [
     {
+      name: "Cookie Jar",
+      url: "/CookieJar",
+      icon: PieChart,
+    },
+    {
+      name: "Doubt Tracker",
+      url: "/DoubtTracker",
+      icon: Map,
+    },
+    {
       name: "Break Timer",
       url: "#",
       icon: Frame,
-    },
-    {
-      name: "Cookie Jar",
-      url: "#",
-      icon: PieChart,
     },
     {
       name: "PKM Launch",
@@ -156,11 +161,6 @@ export const data = {
       name: "Trigger",
       url: "#",
       icon: Map,
-    },
-    {
-      name: "Workouts log",
-      url: "#",
-      icon: Map,
-    },
+    }
   ],
 };
