@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useState, useRef, useEffect, useCallback, useContext, HTMLAttributes } from 'react'
 import classNames from 'classnames'
 
@@ -35,7 +37,7 @@ function Spaces({
 }: SpacesProps) {
   const { size, wheelBusy, scaleX, scaleY, wheelSpaceSwitch } = useContext(ManagerContext)
   const [scrollX, setScrollX] = useState(0)
-  const bounceTimeoutRef = useRef<Timer>()
+  const bounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
   const touchStartRef = useRef<{ x: number, y: number }>({ x: 0, y: 0 })
 
   useEffect(() => {

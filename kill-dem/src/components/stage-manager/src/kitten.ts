@@ -1,7 +1,8 @@
 export const version = '0.4.3'
 
 export function isMobileDevice() {
-  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (typeof window === 'undefined') return false // Server-side guard
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
 export function hashKittenIds(ids: string[]): string {

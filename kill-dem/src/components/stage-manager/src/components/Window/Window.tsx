@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useCallback, useContext, useRef, useMemo, HTMLAttributes } from 'react'
 import { createPortal } from 'react-dom'
 import classNames from 'classnames'
@@ -5,7 +7,7 @@ import classNames from 'classnames'
 import { isMobileDevice, nonZeroPosition } from '../../kitten'
 import { usePosition, useKittenId } from '../../hooks'
 import { ManagerContext, SpaceContext } from '../../contexts'
-import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../Space/library'
+import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../../components/Space/library'
 import { ALWAYS_ON_TOP_Z_INDEX, WindowContext } from './library'
 
 import styles from './Window.module.css'
@@ -109,7 +111,7 @@ function Window({
           snapMargin, toSnap, eventDispatcher: spaceEventDispatcher, unmountedWindows: spaceUnmountedWindows, setUnmountedWindows: setSpaceUnmountedWindows
   } = useContext(SpaceContext)
   const [showResizers, setShowResizers] = useState(false)
-  const resizerMouseMoveTimeoutRef = useRef<Timer>()
+  const resizerMouseMoveTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
   const [mayResize, setMayResize] = useState(false)
   const [moving, setMoving] = useState(false)
   const [resizing, setResizing] = useState(false)
@@ -126,7 +128,7 @@ function Window({
   const [movingStartPosition, setMovingStartPosition] = useState<[number, number]>(position)
   const [prevManagerSize, setPrevManagerSize] = useState(managerSize)
   const prevAlwaysOnTopRef = useRef<boolean>(false)
-  const hideResizersTimeoutRef = useRef<Timer>()
+  const hideResizersTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
   const prevResizingRef = useRef(resizing)
   const [lastWindowPosition, setLastWindowPosition] = useState<[number, number]>(position)
   const [stagedBy, setStagedBy] = useState<'instant' | 'move'>('instant')
