@@ -4,7 +4,7 @@ import React, { HTMLAttributes, useCallback, useContext, useEffect, useMemo, use
 import classNames from 'classnames'
 
 import { ManagerContext } from '../../contexts'
-import { hashKittenIds } from '../../kitten'
+import { hashKittenIds } from '../../space'
 import { SpaceContext, SpaceEventDispatcher, SpaceWindow, SpaceWindows, ToSnap, WindowEvent, MoveEvent, ResizeEvent } from './library'
 
 import styles from './Space.module.css'

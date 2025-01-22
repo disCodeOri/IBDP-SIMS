@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useContext, useRef, useMemo, H
 import { createPortal } from 'react-dom'
 import classNames from 'classnames'
 
-import { isMobileDevice, nonZeroPosition } from '../../kitten'
+import { isMobileDevice, nonZeroPosition } from '../../space'
 import { usePosition, useKittenId } from '../../hooks'
 import { ManagerContext, SpaceContext } from '../../contexts'
 import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../../components/Space/library'

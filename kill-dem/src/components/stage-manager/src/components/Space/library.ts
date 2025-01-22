@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import { EventDispatcher } from '../../kitten'
+import { EventDispatcher } from '../../space'
 
 export class SpaceWindow {
   id: string
