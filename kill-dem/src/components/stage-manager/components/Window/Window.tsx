@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import { isMobileDevice, nonZeroPosition } from '../../space'
 import { usePosition, useKittenId } from '../../hooks'
 import { ManagerContext, SpaceContext } from '../../contexts'
-import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../../components/Space/library'
+import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../Space/library'
 import { ALWAYS_ON_TOP_Z_INDEX, WindowContext } from './library'
 
 import styles from './Window.module.css'

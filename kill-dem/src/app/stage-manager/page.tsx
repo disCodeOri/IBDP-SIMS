@@ -1,6 +1,6 @@
 "use client";
 
-import { Manager, Space, BasicWindow } from "@/components/stage-manager/src";
+import { Manager, Space, BasicWindow } from "@/components/stage-manager";
 
 export default function StageDemo() {
   return (
