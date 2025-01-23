@@ -1,41 +1,43 @@
-├── kill-dem
-│   ├── .eslintrc.json
-│   ├── components.json
-│   ├── next-env.d.ts
-│   ├── next.config.mjs
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── postcss.config.mjs
-│   ├── public
-│   │   ├── audios
-│   │   │   ├── ticking.mp3
-│   ├── src
-│   │   ├── app
-│   │   │   ├── favicon.ico
-│   │   │   ├── globals.css
-│   │   │   ├── layout.tsx
+├── src
+│   ├── app
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── stage-manager
 │   │   │   ├── page.tsx
-│   │   ├── components
-│   │   │   ├── BreakTimer.tsx
-│   │   │   ├── CookieJar.tsx
-│   │   │   ├── PKM.tsx
-│   │   │   ├── Randy.tsx
-│   │   │   ├── Stopwatch.tsx
-│   │   │   ├── Ticker.tsx
-│   │   │   ├── Trigger.tsx
-│   │   │   ├── Workouts.tsx
-│   │   │   ├── contexts
-│   │   │   │   ├── BreakTimerContext.tsx
-│   │   │   ├── ui (Shadcn UI components only)
-│   │   ├── data
-│   │   │   ├── cookies.json
-│   │   │   ├── randy.json
-│   │   │   ├── subjects.json
-│   │   │   ├── workouts.json
-│   │   ├── lib
-│   │   │   ├── cookies-actions.ts
-│   │   │   ├── randy-actions.ts
-│   │   │   ├── utils.ts
-│   │   │   ├── workouts-actions.ts
-│   ├── tailwind.config.ts
-│   ├── tsconfig.json
+│   ├── components
+│   │   ├── sidebar-07
+│   │   │   ├── app-sidebar.tsx
+│   │   │   ├── nav-main.tsx
+│   │   │   ├── nav-user.tsx
+│   │   │   ├── nav-utilities.tsx
+│   │   │   ├── space-switcher.tsx
+│   │   ├── stage-manager
+│   │   │   ├── src
+│   │   │   │   ├── components
+│   │   │   │   │   ├── Manager
+│   │   │   │   │   │   ├── Manager.module.css
+│   │   │   │   │   │   ├── Manager.tsx
+│   │   │   │   │   │   ├── index.ts
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── Space
+│   │   │   │   │   │   ├── Space.module.css
+│   │   │   │   │   │   ├── Space.tsx
+│   │   │   │   │   │   ├── Spaces.module.css
+│   │   │   │   │   │   ├── Spaces.tsx
+│   │   │   │   │   │   ├── index.ts
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── Window
+│   │   │   │   │   │   ├── Window.module.css
+│   │   │   │   │   │   ├── Window.tsx
+│   │   │   │   │   │   ├── index.tsx
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   ├── contexts.ts
+│   │   │   │   ├── hooks.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── space.ts
+│   │   ├── ui (shadcn components only)
+│   ├── data
+│   │   ├── sidebar.ts

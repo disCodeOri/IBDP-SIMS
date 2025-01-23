@@ -351,13 +351,13 @@ class FileProcessorGUI:
                 # If we're entering a new directory, add a header
                 if dir_path != current_dir:
                     if dir_path:
-                        f.write(f"\n{'='*80}\n")
+                        f.write(f"\n{'='*11}\n")
                         f.write(f"Directory: {dir_path}\n")
-                        f.write(f"{'='*80}\n\n")
+                        f.write(f"{'='*11}\n\n")
                     current_dir = dir_path
 
                 f.write(f"File: {relative_path}\n")  # Changed to show relative path
-                f.write(f"{'-'*80}\n\n")
+                f.write(f"{'-'*20}\n\n")
                 
                 try:
                     if os.path.getsize(file_path) > 1024 * 1024:  # Skip files larger than 1MB
