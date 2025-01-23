@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const version = '0.4.3'
 
 export function isMobileDevice() {
@@ -23,33 +24,33 @@ export class EventDispatcher<T, E> {
   addListener<C>(type: T, listener: (event: C) => void) {
     const listeners = this.listeners.get(type)
     if (!listeners) {
-      this.listeners.set(type, [listener as any]) // eslint-disable-line @typescript-eslint/no-explicit-any
+      this.listeners.set(type, [listener as any])
       return
     }
-    listeners.push(listener as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    listeners.push(listener as any)
   }
 
   setListener<C>(type: T, listener: (event: C) => void) {
     const listeners = this.listeners.get(type)
     if (!listeners) {
-      this.listeners.set(type, [listener as any]) // eslint-disable-line @typescript-eslint/no-explicit-any
+      this.listeners.set(type, [listener as any])
       return
     }
-    const index = listeners.indexOf(listener as any) // eslint-disable-line @typescript-eslint/no-explicit-any
-    if (index !== -1) listeners[index] = listener as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    else listeners.push(listener as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const index = listeners.indexOf(listener as any)
+    if (index !== -1) listeners[index] = listener as any
+    else listeners.push(listener as any)
   }
 
   dispatch(name: T, event: E) {
-    const listeners = this.listeners.get(name as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const listeners = this.listeners.get(name as any)
     if (!listeners) return
     listeners.forEach(listener => listener(event))
   }
 
   removeListener<C>(type: T, listener: (event: C) => void) {
-    const listeners = this.listeners.get(type as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const listeners = this.listeners.get(type as any)
     if (!listeners) return
-    const index = listeners.indexOf(listener as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const index = listeners.indexOf(listener as any)
     if (index !== -1) listeners.splice(index, 1)
   }
 
