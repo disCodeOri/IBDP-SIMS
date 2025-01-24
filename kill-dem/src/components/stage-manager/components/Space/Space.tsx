@@ -163,7 +163,7 @@ export function Space({
       snapsRef.current = snapsRef.current.filter(snap => !snap.relatedWindows.has(id))
       setSnaps([...snapsRef.current])
 
-      for (const nearbyWindow of nearbyWindows.values()) {
+      for (const nearbyWindow of Array.from(nearbyWindows.values())) {
         const existingSnap = snapsRef.current.find(snap => snap.relatedWindows.has(id) && snap.relatedWindows.has(nearbyWindow.id))
         if (existingSnap) {
           snapsRef.current = snapsRef.current.filter(snap => !snap.equals(existingSnap))
@@ -177,7 +177,7 @@ export function Space({
     if (!((snapWith == 'all' && (moving || resizing)) || (snapWith == 'resize' && resizing) || (snapWith == 'move' && moving)))
       return
 
-    for (const nearbyWindow of nearbyWindows.values()) {
+    for (const nearbyWindow of Array.from(nearbyWindows.values())) {
       const interactedWindow = windowsRef.current.get(id)
       if (!interactedWindow) {
         setToSnap(null)
