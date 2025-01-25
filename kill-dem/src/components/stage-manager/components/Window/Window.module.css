@@ -5,14 +5,14 @@
     width: 500px;
     height: 400px;
     background-color: rgb(255, 255, 255);
-    border-radius: 5px;
-    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.1),
-                0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
-    animation: AppearWindow 0.5s forwards;
+    animation: AppearWindow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
-    transition: transform 0.25s, opacity 0.75s;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 .Window.Window__moving {
 }
@@ -88,7 +88,7 @@
 .TitleBar {
     width: 100%;
     height: 30px;
-    background: linear-gradient(0deg, rgb(0 0 0 / 5%), rgb(0 0 0 / 0%));
+    background: whitesmoke;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     display: flex;
@@ -162,7 +162,8 @@
 }
 
 .CloseButton {
-    background-color: #ff5f56;
+    background-color: #ef4444;
+    color: white !important;
 }
 
 .StageButton {
