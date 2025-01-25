@@ -51,17 +51,6 @@ export default function StageDemo() {
           </BasicWindow>
         </Space>
       </Manager>
-
-      <div style={{ marginTop: '2rem', color: '#666' }}>
-        <p>Try these interactions:</p>
-        <ul>
-          <li>Drag windows by their title bars</li>
-          <li>Resize windows using edges/corners</li>
-          <li>Click the minimize (-) button to stage windows</li>
-          <li>Drag windows to the left edge to stage them</li>
-          <li>Click staged windows to restore them</li>
-        </ul>
-      </div>
     </div>
   );
 }
