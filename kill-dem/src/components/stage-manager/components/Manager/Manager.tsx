@@ -1,9 +1,6 @@
 import React, { useState, useMemo, useCallback, HTMLAttributes, useEffect, useRef } from 'react'
-import classNames from "classnames"
-
 import { ManagerContext } from './library'
-
-import styles from './Manager.module.css'
+import clsx from 'clsx'
 
 const DEFAULT_SIZE: [number, number] = [800, 600]
 const DEFAULT_SCALE: [number, number] = [1, 1]
@@ -82,7 +79,7 @@ export function Manager({
         observer.observe(ref)
         intersectionObserverRef.current = observer
       }}
-      className={`${classNames([styles.Manager])} ${typeof attrs.className !== 'undefined' ? attrs.className : ''}`}
+      className={clsx("relative overflow-hidden touch-none", attrs.className)}
       style={{
         width: size[0], height: size[1],
         transform: `scale(${scale[0]}, ${scale[1]})`,
