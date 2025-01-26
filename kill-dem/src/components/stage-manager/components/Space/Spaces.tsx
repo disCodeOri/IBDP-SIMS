@@ -5,8 +5,6 @@ import classNames from 'classnames'
 
 import { ManagerContext } from '../../contexts'
 
-import styles from './Spaces.module.css'
-
 interface SpacesProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode
   bounceDelay?: number
@@ -116,14 +114,17 @@ function Spaces({
   
   return <div
     {...(attrs as HTMLAttributes<HTMLDivElement>)}
-    className={`${classNames([styles.Spaces])} ${typeof attrs.className !== 'undefined' ? attrs.className : ''}`}
+    className={classNames('overflow-hidden relative', attrs.className)}
     style={{ width: size[0], height: size[1], ...attrs.style }}
     onWheel={onWheel}
     onTouchStart={onTouchStart}
     onTouchMove={onTouchMove}
   >
     <div
-      className={classNames([styles.Spaces_scrolling])}
+      className={classNames(
+        'flex flex-nowrap absolute left-0 top-0 h-full',
+        'transition-transform duration-1000'
+      )}
       style={{ transform: `translateX(${scrollX}px)` }}
     >
       {children}
