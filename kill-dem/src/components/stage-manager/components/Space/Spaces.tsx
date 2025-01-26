@@ -2,7 +2,6 @@
 
 import React, {useEffect, useContext, HTMLAttributes } from 'react'
 import classNames from 'classnames'
-
 import { ManagerContext } from '../../contexts'
 
 interface SpacesProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,16 +13,6 @@ interface SpacesProps extends React.HTMLAttributes<HTMLDivElement> {
   onSpaceChange: (space: number) => void
 }
 
-/**
- * @description Spaces component is a container for Space components.
- * 
- * @param children Accepts only {@link Space} components as children
- * @param bounceDelay Delay for the bounce effect
- * @param scrollThreshold Threshold for the scroll
- * @param swipeThreshold Threshold for the swipe
- * @param space Current space
- * @param onSpaceChange Callback for space change
- */
 function Spaces({
   children = null,
   space = 0,
@@ -31,12 +20,32 @@ function Spaces({
   ...attrs
 }: SpacesProps) {
   const { size } = useContext(ManagerContext)
+  const totalSpaces = React.Children.count(children)
 
-  // Clean simplified version
+  // Keyboard navigation
   useEffect(() => {
-    const total = React.Children.count(children)
-    onSpaceChange(Math.max(0, Math.min(space, total - 1)))
-  }, [space, children, onSpaceChange])
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault()
+        switch (e.key) {
+          case 'ArrowLeft':
+            onSpaceChange(Math.max(0, space - 1))
+            break
+          case 'ArrowRight':
+            onSpaceChange(Math.min(totalSpaces - 1, space + 1))
+            break
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [totalSpaces, space, onSpaceChange])
+
+  // Keep space in valid range
+  useEffect(() => {
+    onSpaceChange(Math.max(0, Math.min(space, totalSpaces - 1)))
+  }, [space, totalSpaces, onSpaceChange])
 
   return <div
     {...(attrs as HTMLAttributes<HTMLDivElement>)}
@@ -46,7 +55,7 @@ function Spaces({
     <div className="flex flex-nowrap absolute left-0 top-0 h-full"
       style={{ 
         transform: `translateX(${space * size[0] * -1}px)`,
-        transition: 'transform 100ms ease-out' // Windows-like animation
+        transition: 'transform 100ms ease-out' // Swish animation speed (change the number)
       }}
     >
       {children}
