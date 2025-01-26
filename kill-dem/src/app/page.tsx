@@ -24,12 +24,12 @@ export default function Page() {
               onClick={() => setShowDashboard(!showDashboard)}
               className="px-3 py-1 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              {showDashboard ? "View Workstage" : "View Dashboard"}
+              {showDashboard ? "View Dashboard" : "View Workstage"}
             </button>
           </div>
         </header>
         <div className="flex flex-1 gap-4 p-4 pt-0">
-          {showDashboard ? <Dashboard /> : <WorkStage />}
+          {showDashboard ? <WorkStage /> : <Dashboard />}
         </div>
       </SidebarInset>
     </SidebarProvider>
