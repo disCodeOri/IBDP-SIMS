@@ -1,8 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Manager, Space, Spaces, BasicWindow } from "@/components/stage-manager";
 
 export default function WorkStage() {
   const [currentSpace, setCurrentSpace] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        switch (e.key) {
+          case 'ArrowLeft':
+            setCurrentSpace(p => Math.max(0, p - 1));
+            break;
+          case 'ArrowRight':
+            setCurrentSpace(p => p + 1);
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="p-4 bg-gray-100">
