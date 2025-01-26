@@ -9,7 +9,6 @@ interface ManagerProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode
   size?: [number, number]
   scale?: [number, number]
-  wheelSpaceSwitch?: boolean
 }
 
 /**
@@ -22,7 +21,6 @@ export function Manager({
   children = null,
   size = DEFAULT_SIZE,
   scale = DEFAULT_SCALE,
-  wheelSpaceSwitch = true,
   ...attrs
 }: ManagerProps) {
   const [position, setPosition] = useState<[number, number]>([0, 0])
@@ -38,8 +36,8 @@ export function Manager({
   const revertScaleX = useCallback((x: number) => x / scale[0], [scale])
   const revertScaleY = useCallback((y: number) => y / scale[1], [scale])
 
-  const contextProps = useMemo(() => ({ position, pointer, setPointer, lmb, size, wheelBusy, setWheelBusy, wheelSpaceSwitch, scale, scaleX, scaleY, revertScaleX, revertScaleY }),
-                                      [ position, pointer, lmb, size, wheelBusy, wheelSpaceSwitch, scale, scaleX, scaleY, revertScaleX, revertScaleY ])
+  const contextProps = useMemo(() => ({ position, pointer, setPointer, lmb, size, wheelBusy, setWheelBusy, scale, scaleX, scaleY, revertScaleX, revertScaleY }),
+                                      [ position, pointer, lmb, size, wheelBusy, scale, scaleX, scaleY, revertScaleX, revertScaleY ])
 
   useEffect(() => {!lmb && setWheelBusy(false)}, [lmb])
 

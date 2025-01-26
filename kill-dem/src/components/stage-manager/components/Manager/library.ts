@@ -9,7 +9,6 @@ export interface ManagerContextProps {
     wheelBusy: boolean
     setWheelBusy: React.Dispatch<React.SetStateAction<boolean>>
     scale: [number, number]
-    wheelSpaceSwitch: boolean
     scaleX: (x: number) => number
     scaleY: (y: number) => number
     revertScaleX: (x: number) => number
@@ -25,7 +24,6 @@ export interface ManagerContextProps {
     wheelBusy: false,
     setWheelBusy: () => {},
     scale: [1, 1],
-    wheelSpaceSwitch: true,
     scaleX: (x: number) => x,
     scaleY: (y: number) => y,
     revertScaleX: (x: number) => x,
