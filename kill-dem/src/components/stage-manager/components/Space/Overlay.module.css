@@ -1,0 +1,38 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.horizontalRow {
+  display: flex;
+  gap: 16px;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 90px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8;
+}
+
+.thumbnail.active {
+  transform: scale(1.1);
+  border: 2px solid #007aff;
+  opacity: 1;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
