@@ -1,11 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Manager, Space, Spaces, BasicWindow } from "@/components/stage-manager";
+import { Button } from "@/components/ui/button"
+import { SpaceDeleteAlertDialog } from './SpaceDeleteAlertDialog';
 
 export default function WorkStage() {
+  const [spaces, setSpaces] = useState([0]); // Start with one space
   const [currentSpace, setCurrentSpace] = useState(0);
+
+  const addSpace = () => {
+    const newSpaceId = spaces.length; // Simple ID generation for new spaces
+    setSpaces([...spaces, newSpaceId]);
+    setCurrentSpace(newSpaceId);
+  };
+
+  const deleteSpace = (spaceIdToDelete: number) => {
+    setSpaces(spaces.filter((id) => id !== spaceIdToDelete));
+    // If the deleted space is the current one, adjust the current space
+    if (currentSpace === spaceIdToDelete) {
+      setCurrentSpace(Math.max(0, spaces.length - 2)); // Go to the previous space or 0
+    }
+  };
 
   return (
     <div className="p-4 bg-gray-100">
+      <div className="mb-4 flex gap-2">
+        <Button onClick={addSpace}>Create New Space</Button>
+        {spaces.length > 1 && (
+          <SpaceDeleteAlertDialog
+            spaceId={currentSpace}
+            onSpaceDelete={deleteSpace}
+          />
+        )}
+      </div>
       <Manager
         size={[1600, 760]}
         style={{
@@ -15,91 +41,45 @@ export default function WorkStage() {
           overflow: "hidden",
         }}
       >
-        <Spaces 
+        <Spaces
           space={currentSpace}
           onSpaceChange={setCurrentSpace}
           className="bg-white"
         >
-          {/* Space 1 */}
-          <Space>
-            <BasicWindow
-              title="Document 1"
-              initialPosition={[100, 100]}
-              initialSize={[400, 300]}
-              style={{ background: "#fff" }}
-            >
-              <div className="p-4">
-                <h2 className="text-xl font-bold mb-2">Space 1 Content</h2>
-                <p>Try scrolling horizontally with mouse wheel</p>
-                <p>Or swipe left/right on touch devices</p>
-              </div>
-            </BasicWindow>
+          {spaces.map((spaceId) => (
+            <Space key={spaceId}>
+              {/* Example windows for each space */}
+              <BasicWindow
+                title={`Document ${spaceId + 1}`}
+                initialPosition={[100, 100]}
+                initialSize={[400, 300]}
+                style={{ background: "#fff" }}
+              >
+                <div className="p-4">
+                  <h2 className="text-xl font-bold mb-2">
+                    Space {spaceId + 1} Content
+                  </h2>
+                  <p>This is a sample document in space {spaceId + 1}.</p>
+                </div>
+              </BasicWindow>
 
-            <BasicWindow
-              title="Browser"
-              initialPosition={[300, 200]}
-              initialSize={[500, 400]}
-              style={{ background: "#fff" }}
-            >
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Space 1 Browser</h3>
-                <p>You should be able to switch spaces using:</p>
-                <ul className="list-disc pl-4 mt-2">
-                  <li>Mouse wheel</li>
-                  <li>Touch gestures</li>
-                  <li>Navigation buttons above</li>
-                </ul>
-              </div>
-            </BasicWindow>
-          </Space>
-
-          {/* Space 2 */}
-          <Space>
-            <BasicWindow
-              title="Settings"
-              initialPosition={[700, 150]}
-              initialSize={[300, 250]}
-              style={{ background: "#fff" }}
-            >
-              <div className="p-4">
-                <h2 className="text-xl font-bold mb-2">Space 2 Settings</h2>
-                <p>Try navigating back to Space 1 using:</p>
-                <ul className="list-disc pl-4 mt-2">
-                  <li>Swipe right gesture</li>
-                  <li>Mouse wheel (scroll left)</li>
-                  <li>"Previous Space" button</li>
-                </ul>
-              </div>
-            </BasicWindow>
-
-            <BasicWindow
-              title="Monitor"
-              initialPosition={[200, 300]}
-              initialSize={[400, 300]}
-              style={{ background: "#fff" }}
-            >
-              <div className="p-4 bg-yellow-50 h-full">
-                <h3 className="text-lg font-semibold">Space 2 Monitor</h3>
-                <p className="mt-2">This is a different space with separate windows</p>
-              </div>
-            </BasicWindow>
-          </Space>
-
-          {/* Space 3 */}
-          <Space>
-            <div className="w-full h-full flex items-center justify-center bg-blue-50">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4">Space 3</h2>
-                <p className="text-lg">Empty space demonstration</p>
-                <p className="mt-2">Try all navigation methods:</p>
-                <ul className="list-disc pl-4 mt-2 inline-block text-left">
-                  <li>Mouse wheel</li>
-                  <li>Touch swipes</li>
-                  <li>Navigation buttons</li>
-                </ul>
-              </div>
-            </div>
-          </Space>
+              <BasicWindow
+                title={`Browser ${spaceId + 1}`}
+                initialPosition={[300, 200]}
+                initialSize={[500, 400]}
+                style={{ background: "#fff" }}
+              >
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold mb-2">
+                    Space {spaceId + 1} Browser
+                  </h3>
+                  <p>
+                    You can browse the web in space {spaceId + 1}.
+                  </p>
+                </div>
+              </BasicWindow>
+            </Space>
+          ))}
         </Spaces>
       </Manager>
     </div>
