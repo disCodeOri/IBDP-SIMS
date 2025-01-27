@@ -3,11 +3,11 @@ import { useState, useContext } from "react"
 import { ManagerContext, SpaceContext } from "./contexts"
 
 /**
- * @description Hook for generating a random Kitten IDs. Always use for {@link Window} components.
- * @returns A random Kitten ID state. No setter function.
- * @example `const id = useKittenId()` and `<Window id={id} ... />`
+ * @description Hook for generating a random Space IDs. Always use for {@link Window} components.
+ * @returns A random Space ID state. No setter function.
+ * @example `const id = useSpaceId()` and `<Window id={id} ... />`
  */
-export function useKittenId(): [string, React.Dispatch<React.SetStateAction<string>>] {
+export function useSpaceId(): [string, React.Dispatch<React.SetStateAction<string>>] {
   const uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
   const [state, setState] = useState<string>(uuid)
   return [state, setState] as const

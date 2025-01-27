@@ -101,13 +101,13 @@ export class ToSnap {
     this.newSize = newSize
   }
 
-  getCurrentAndOthers(kittenId: string): [SpaceWindow, SpaceWindow[]] | undefined {
+  getCurrentAndOthers(spaceId: string): [SpaceWindow, SpaceWindow[]] | undefined {
     if (this.windows === null) return undefined
 
-    const current = this.windows.find(window => window.id === kittenId)
+    const current = this.windows.find(window => window.id === spaceId)
     if (current === undefined) return undefined
 
-    const others = this.windows.filter(window => window.id !== kittenId)
+    const others = this.windows.filter(window => window.id !== spaceId)
     return [current, others]
   }
 }

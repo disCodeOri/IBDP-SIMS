@@ -6,7 +6,7 @@ export function isMobileDevice() {
   return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
-export function hashKittenIds(ids: string[]): string {
+export function hashSpaceIds(ids: string[]): string {
   return ids.toSorted((a, b) => a.localeCompare(b)).join('')
 }
 

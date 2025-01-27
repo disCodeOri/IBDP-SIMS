@@ -4,7 +4,7 @@ import React, { HTMLAttributes, useCallback, useContext, useEffect, useMemo, use
 import classNames from 'classnames'
 
 import { ManagerContext } from '../../contexts'
-import { hashKittenIds } from '../../space'
+import { hashSpaceIds } from '../../space'
 import { SpaceContext, SpaceEventDispatcher, SpaceWindow, SpaceWindows, ToSnap, WindowEvent, MoveEvent, ResizeEvent } from './library'
 
 import styles from './Space.module.css'
@@ -40,7 +40,7 @@ class Snapping {
   }
 
   getRelatedWindowsHash(prefix: string = ''): string {
-    return prefix + (prefix ? '-': '') + hashKittenIds(Array.from(this.relatedWindows.all.keys()))
+    return prefix + (prefix ? '-': '') + hashSpaceIds(Array.from(this.relatedWindows.all.keys()))
   }
 }
 

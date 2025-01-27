@@ -12,7 +12,7 @@ interface ManagerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * @description Manager component is the main component of the React﹤Kitten﹥.
+ * @description Manager component is the main component of the React﹤Space﹥.
  * @param children Accepts only {@link Spaces} component as children
  * @param size Size of the Manager
  * @param scale Scale vector of the whole Manager

@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import classNames from 'classnames'
 
 import { isMobileDevice, nonZeroPosition } from '../../space'
-import { usePosition, useKittenId } from '../../hooks'
+import { usePosition, useSpaceId } from '../../hooks'
 import { ManagerContext, SpaceContext } from '../../contexts'
 import { WindowEvent, MoveEvent, ResizeEvent, SpaceEvent } from '../Space/library'
 import { ALWAYS_ON_TOP_Z_INDEX, WindowContext } from './library'
@@ -30,7 +30,7 @@ const DEFAULT_CALLBACK = () => {}
 
 interface WindowProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode
-  kittenId: string
+  spaceId: string
   size: [number, number]
   position: [number, number]
   minSize?: [number, number] | null
@@ -62,7 +62,7 @@ interface WindowProps extends React.HTMLAttributes<HTMLDivElement> {
  * {@link Manager} -> {@link Spaces} -> {@link Space} -> {@link Window}
  * 
  * @param children Accepts any component as children and also accepts {@link TitleBar} and {@link Content} components inside
- * @param kittenId Unique identifier for the window. Use {@link useKittenId} hook for setting the kittenId.
+ * @param spaceId Unique identifier for the window. Use {@link useSpaceId} hook for setting the spaceId.
  * @param size Size of the window
  * @param position Position of the window, use {@link usePosition} hook for setting the initial position
  * @param minSize Minimum size of the window
@@ -83,7 +83,7 @@ interface WindowProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 function Window({
   children = null,
-  kittenId,
+  spaceId,
   size,
   position,
   minSize = DEFAULT_MIN_SIZE,
@@ -134,8 +134,8 @@ function Window({
   const [stagedBy, setStagedBy] = useState<'instant' | 'move'>('instant')
   const [snapMoving, setSnapMoving] = useState(false)
 
-  const kittenIdRef = useRef(kittenId)
-  useEffect(() => { kittenIdRef.current = kittenId }, [kittenId])
+  const spaceIdRef = useRef(spaceId)
+  useEffect(() => { spaceIdRef.current = spaceId }, [spaceId])
   const spaceUnmountedWindowsRef = useRef(spaceUnmountedWindows)
   const setSpaceUnmountedWindowsRef = useRef(setSpaceUnmountedWindows)
   useEffect(() => { setSpaceUnmountedWindowsRef.current = setSpaceUnmountedWindows }, [setSpaceUnmountedWindows])
@@ -147,7 +147,7 @@ function Window({
   }, [])
 
   const onUnmount = useCallback(() => {
-    setSpaceUnmountedWindowsRef.current([...spaceUnmountedWindowsRef.current, kittenIdRef.current])
+    setSpaceUnmountedWindowsRef.current([...spaceUnmountedWindowsRef.current, spaceIdRef.current])
   }, [])
 
   const onMountRef = useRef(onMount)
@@ -158,8 +158,8 @@ function Window({
     return onUnmountRef.current
   }, [])
   
-  useEffect(() => {focused && setFocusedWindow(kittenId)}, [kittenId, focused, setFocusedWindow])
-  useEffect(() => {focusedWindow === kittenId ? setFocused(true): setFocused(false)}, [focusedWindow, kittenId])
+  useEffect(() => {focused && setFocusedWindow(spaceId)}, [spaceId, focused, setFocusedWindow])
+  useEffect(() => {focusedWindow === spaceId ? setFocused(true): setFocused(false)}, [focusedWindow, spaceId])
   useEffect(() => {focused ? onFocus(): onBlur()}, [focused, onFocus, onBlur])
   useEffect(() => setStaging(moving && (pointer[0] < scaleX(stagingDistance))), [moving, pointer, stagingDistance, scaleX])
   useEffect(() => {!staging && setSpaceLastWindowPosition(nonZeroPosition(position))}, [staging, position, setSpaceLastWindowPosition, managerSize])
@@ -220,8 +220,8 @@ function Window({
   useEffect(() => { if (!staged) setStagedBy('instant') }, [staged])
   
   useEffect(() => {
-    onWindowBoundsChanged(kittenId, position, size, true, resizing, staged)
-    onUserBoundsChangeEnd(kittenId, position, size, false, resizing, staged)
+    onWindowBoundsChanged(spaceId, position, size, true, resizing, staged)
+    onUserBoundsChangeEnd(spaceId, position, size, false, resizing, staged)
   }, [staged]) // eslint-disable-line
 
   useEffect(() => {
@@ -235,7 +235,7 @@ function Window({
   useEffect(() => {
     if (alwaysOnTop == prevAlwaysOnTopRef.current) {
       if (!focused) return
-      if (focusedWindow !== kittenId) return
+      if (focusedWindow !== spaceId) return
       if (zIndex === windowZIndexCounter) return
       if (zIndex === windowZIndexCounter + ALWAYS_ON_TOP_Z_INDEX) return
     }
@@ -243,7 +243,7 @@ function Window({
     const newCounter = windowZIndexCounter + 1
     setZIndex(newCounter + (alwaysOnTop ? ALWAYS_ON_TOP_Z_INDEX: 0))
     setWindowZIndexCounter(newCounter)
-  }, [focused, focusedWindow, windowZIndexCounter, setWindowZIndexCounter, kittenId, zIndex, alwaysOnTop])
+  }, [focused, focusedWindow, windowZIndexCounter, setWindowZIndexCounter, spaceId, zIndex, alwaysOnTop])
   
   useEffect(() => {
     if (!moving) return
@@ -346,40 +346,40 @@ function Window({
   useEffect(() => {
     if ((prevPositionRef.current[0] === position[0]) && (prevPositionRef.current[1] === position[1]) && (prevSizeRef.current[0] === size[0]) && (prevSizeRef.current[1] === size[1]))
       return
-    onWindowBoundsChanged(kittenId, position, size, moving, resizing, staged)
-  }, [kittenId, position, size, moving, resizing, staged, onWindowBoundsChanged])
+    onWindowBoundsChanged(spaceId, position, size, moving, resizing, staged)
+  }, [spaceId, position, size, moving, resizing, staged, onWindowBoundsChanged])
 
   useEffect(() => {
     if (!toSnap?.newPosition || !toSnap?.newSize) return
-    if (toSnap.target.id != kittenId) return
-    const currentAndOthers = toSnap.getCurrentAndOthers(kittenId)
+    if (toSnap.target.id != spaceId) return
+    const currentAndOthers = toSnap.getCurrentAndOthers(spaceId)
     if (!currentAndOthers) return
     const [current, others] = currentAndOthers
     if (!current || !others) return
 
     onPositionChange(toSnap.newPosition, 'system')
     onSizeChange(toSnap.newSize, 'system')
-  }, [toSnap, kittenId, onPositionChange, onSizeChange, snapMargin])
+  }, [toSnap, spaceId, onPositionChange, onSizeChange, snapMargin])
 
   const moveStartEventCallback = useCallback((event: SpaceEvent<WindowEvent>) => {
-    if (event.target.id !== kittenId) return
+    if (event.target.id !== spaceId) return
     setSnapMoving(true)
-  }, [kittenId, setSnapMoving])
+  }, [spaceId, setSnapMoving])
 
   const moveEndEventCallback = useCallback((event: SpaceEvent<WindowEvent>) => {
-    if (event.target.id !== kittenId) return
+    if (event.target.id !== spaceId) return
     setSnapMoving(false)
-  }, [kittenId, setSnapMoving])
+  }, [spaceId, setSnapMoving])
   
   const moveEventCallback = useCallback((event: SpaceEvent<MoveEvent>) => {
-    if (event.target.id !== kittenId) return
+    if (event.target.id !== spaceId) return
     const newPosition: [number, number] = [position[0] + event.positionDelta[0], position[1] + event.positionDelta[1]]
     onPositionChange(newPosition, 'user')
     setSpaceLastWindowPosition(newPosition)
-  }, [kittenId, position, onPositionChange, setSpaceLastWindowPosition])
+  }, [spaceId, position, onPositionChange, setSpaceLastWindowPosition])
   
   const resizeEventCallback = useCallback((event: SpaceEvent<ResizeEvent>) => {
-    if (event.target.id !== kittenId) return
+    if (event.target.id !== spaceId) return
     const newSize: [number, number] = [size[0] + event.sizeDelta[0], size[1] + event.sizeDelta[1]]
     if (minSize) {
       if (newSize[0] < minSize[0]) newSize[0] = minSize[0]
@@ -390,7 +390,7 @@ function Window({
       if (newSize[1] > maxSize[1]) newSize[1] = maxSize[1]
     }
     onSizeChange([newSize[0], newSize[1]], 'user')
-  }, [kittenId, size, onSizeChange, minSize, maxSize])
+  }, [spaceId, size, onSizeChange, minSize, maxSize])
   
   useEffect(() => {
     if (!spaceEventDispatcher) return
@@ -405,7 +405,7 @@ function Window({
     spaceEventDispatcher.setListener('move', moveEventCallback)
     spaceEventDispatcher.setListener('resize', resizeEventCallback)
 
-  }, [kittenId, spaceEventDispatcher, moveEventCallback, resizeEventCallback, moveStartEventCallback, moveEndEventCallback])
+  }, [spaceId, spaceEventDispatcher, moveEventCallback, resizeEventCallback, moveStartEventCallback, moveEndEventCallback])
 
   const onResize = useCallback((size: [number, number], delta: [number, number]) => {
     const new_size: [number, number] = [size[0] + delta[0], size[1] + delta[1]]
@@ -451,19 +451,19 @@ function Window({
 
   const onMoveStartCallback = useCallback(() => {
     setMoving(true)
-    onWindowMoveStart(kittenId, position, size, true, resizing, staged)
-  }, [onWindowMoveStart, kittenId, position, size, resizing, staged])
+    onWindowMoveStart(spaceId, position, size, true, resizing, staged)
+  }, [onWindowMoveStart, spaceId, position, size, resizing, staged])
   const onMoveEndCallback = useCallback(() => {
     setMoving(false)
-    onWindowMoveEnd(kittenId, position, size, false, resizing, staged)
-    onUserBoundsChangeEnd(kittenId, position, size, false, resizing, staged)
-  }, [onWindowMoveEnd, onUserBoundsChangeEnd, kittenId, position, size, resizing, staged])
+    onWindowMoveEnd(spaceId, position, size, false, resizing, staged)
+    onUserBoundsChangeEnd(spaceId, position, size, false, resizing, staged)
+  }, [onWindowMoveEnd, onUserBoundsChangeEnd, spaceId, position, size, resizing, staged])
   
   const onResizeStartCallback = useCallback(() => {}, [])
 
   const onResizeEndCallback = useCallback(() => {
-    onUserBoundsChangeEnd(kittenId, position, size, moving, false, staged)
-  }, [onUserBoundsChangeEnd, kittenId, position, size, moving, staged])
+    onUserBoundsChangeEnd(spaceId, position, size, moving, false, staged)
+  }, [onUserBoundsChangeEnd, spaceId, position, size, moving, staged])
 
   useEffect(() => {
     if (!prevResizingRef.current && resizing)
@@ -936,13 +936,13 @@ function BasicWindow({
   const [size, setSize] = useState(initialSize)
   const [openedState, setOpenedState] = useState(opened)
   const [staged, setStaged] = useState(false)
-  const [kittenId,] = useKittenId()
+  const [spaceId,] = useSpaceId()
 
   useEffect(() => setOpenedState(opened), [opened])
 
   return <>
     {openedState ? <Window
-      kittenId={kittenId}
+      spaceId={spaceId}
       staged={staged}
       position={position}
       size={size}
