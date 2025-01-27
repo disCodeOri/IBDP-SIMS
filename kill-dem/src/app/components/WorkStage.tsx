@@ -7,7 +7,7 @@ export default function WorkStage() {
   return (
     <div className="p-4 bg-gray-100">
       <Manager
-        size={[1280, 700]}
+        size={[1600, 760]}
         style={{
           margin: "0 auto",
           border: "2px solid #333",

@@ -8,7 +8,11 @@ import Cookies from "@/components/CookieJar";
 
 export default function Dashboard() {
   return (
-    <ResizablePanelGroup direction="vertical" className="rounded-lg border">
+    <ResizablePanelGroup
+      direction="vertical"
+      className="rounded-lg border"
+      style={{ width: '1600px' }}
+    >
       <ResizablePanel minSize={30}>
         <ResizablePanelGroup
           direction="horizontal"
