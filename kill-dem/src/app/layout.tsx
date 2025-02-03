@@ -1,6 +1,7 @@
 import {
   ClerkProvider
 } from '@clerk/nextjs'
+import { ThemeProvider } from "next-themes"
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -18,7 +19,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`antialiased`}>
-          {children}
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
