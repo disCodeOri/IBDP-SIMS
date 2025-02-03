@@ -1,30 +1,49 @@
-├── src
-│   ├── app
-│   │   ├── favicon.ico
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   ├── stage-manager
+├── kill-dem
+│   ├── components.json
+│   ├── next.config.mjs
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── public
+│   │   ├── audios
+│   │   │   ├── ticking.mp3
+│   ├── src
+│   │   ├── app
+│   │   │   ├── CookieJar
+│   │   │   │   ├── page.tsx
+│   │   │   ├── DoubtTracker
+│   │   │   │   ├── page.tsx
+│   │   │   ├── components
+│   │   │   │   ├── Dashboard.tsx
+│   │   │   │   ├── WorkStage.tsx
+│   │   │   ├── favicon.ico
+│   │   │   ├── globals.css
+│   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
-│   ├── components
-│   │   ├── sidebar-07
-│   │   │   ├── app-sidebar.tsx
-│   │   │   ├── nav-main.tsx
-│   │   │   ├── nav-user.tsx
-│   │   │   ├── nav-utilities.tsx
-│   │   │   ├── space-switcher.tsx
-│   │   ├── stage-manager
-│   │   │   ├── src
+│   │   ├── components
+│   │   │   ├── CookieJar.tsx
+│   │   │   ├── DoubtTracker.tsx
+│   │   │   ├── doubts-tracker
+│   │   │   │   ├── CommentSection.tsx
+│   │   │   │   ├── DoubtCard.tsx
+│   │   │   │   ├── DoubtList.tsx
+│   │   │   │   ├── NewDoubtForm.tsx
+│   │   │   ├── sidebar-07
+│   │   │   │   ├── app-sidebar.tsx
+│   │   │   │   ├── nav-main.tsx
+│   │   │   │   ├── nav-user.tsx
+│   │   │   │   ├── nav-utilities.tsx
+│   │   │   │   ├── space-switcher.tsx
+│   │   │   ├── stage-manager
 │   │   │   │   ├── components
 │   │   │   │   │   ├── Manager
-│   │   │   │   │   │   ├── Manager.module.css
 │   │   │   │   │   │   ├── Manager.tsx
 │   │   │   │   │   │   ├── index.ts
 │   │   │   │   │   │   ├── library.ts
 │   │   │   │   │   ├── Space
+│   │   │   │   │   │   ├── Overlay.module.css
+│   │   │   │   │   │   ├── Overlay.tsx
 │   │   │   │   │   │   ├── Space.module.css
 │   │   │   │   │   │   ├── Space.tsx
-│   │   │   │   │   │   ├── Spaces.module.css
 │   │   │   │   │   │   ├── Spaces.tsx
 │   │   │   │   │   │   ├── index.ts
 │   │   │   │   │   │   ├── library.ts
@@ -38,6 +57,13 @@
 │   │   │   │   ├── hooks.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── space.ts
-│   │   ├── ui (shadcn components only)
-│   ├── data
-│   │   ├── sidebar.ts
+│   │   │   ├── ui (shadcn components only)
+│   │   ├── data
+│   │   │   ├── cookies.json
+│   │   │   ├── doubts.json
+│   │   │   ├── sidebar.ts
+│   │   ├── lib
+│   │   │   ├── cookies-actions.ts
+│   │   │   ├── utils.ts
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
