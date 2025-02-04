@@ -39,7 +39,7 @@ export default function Page() {
               className="px-3 py-1 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
               style={{ display: viewMode === 'toggle' ? 'block' : 'none' }} // Conditionally show toggle view button - THIS LINE IS KEY
             >
-              {showDashboard ? "View Workstage" : "View Dashboard"}
+              {showDashboard ? "View Dashboard" : "View Workstage"}
             </button>
           </div>
         </header>
