@@ -1,0 +1,18 @@
+1. Undo the commit but keep changes unstaged (default behavior):
+```bash
+git reset HEAD~1
+```
+Your files remain modified but unstaged.
+
+2. Undo the commit and completely discard the changes:
+```bash
+git reset --hard HEAD~1
+```
+⚠️ Warning: This deletes all changes from the last commit permanently.
+
+3.Undo the commit but keep changes staged (for re-committing):
+
+```bash
+git reset --soft HEAD~1
+```
+Your changes stay staged, ready to amend or recommit.
