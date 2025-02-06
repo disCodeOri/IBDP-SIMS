@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import DoubtList from '@/components/doubts-tracker/DoubtList';
 import NewDoubtForm from '@/components/doubts-tracker/NewDoubtForm';
@@ -29,9 +28,10 @@ import {
   doc,
 } from 'firebase/firestore';
 
-interface Comment {
+export interface Comment {
   id: string;
   text: string;
+  parentId?: string | null;
   replies: Comment[];
 }
 
@@ -43,6 +43,7 @@ export interface Doubt {
   downvotes: number;
   resolved: boolean;
   solution?: string;
+  // Comments will be loaded separately from the "comments" subcollection.
   comments: Comment[];
 }
 
@@ -50,7 +51,6 @@ export default function DoubtTracker() {
   const { user } = useUser();
   const [doubts, setDoubts] = useState<Doubt[]>([]);
   
-  // Firestore: Listen to doubts (posts) for the current user.
   useEffect(() => {
     if (!user) return;
     const postsRef = collection(db, "users", user.id, "posts");
@@ -66,7 +66,6 @@ export default function DoubtTracker() {
           downvotes: docSnap.data().downvotes,
           resolved: docSnap.data().resolved,
           solution: docSnap.data().solution,
-          // Comments will be loaded in the DoubtCard (default empty array here)
           comments: [],
         });
       });
@@ -74,8 +73,6 @@ export default function DoubtTracker() {
     });
     return () => unsubscribe();
   }, [user]);
-
-  // Firestore CRUD functions
 
   const addDoubt = async (title: string, description: string) => {
     if (!user) return;
@@ -135,62 +132,35 @@ export default function DoubtTracker() {
     }
   };
 
-  // Comment operations support an optional parentId.
+  // Flattened comment operations: All comments are stored in the same subcollection.
   const addComment = async (doubtId: string, commentText: string, parentId?: string) => {
     if (!user) return;
     try {
-      if (parentId) {
-        const parentCommentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId);
-        const repliesRef = collection(parentCommentRef, "comments");
-        await addDoc(repliesRef, {
-          text: commentText,
-          createdAt: serverTimestamp(),
-        });
-      } else {
-        const commentsRef = collection(db, "users", user.id, "posts", doubtId, "comments");
-        await addDoc(commentsRef, {
-          text: commentText,
-          createdAt: serverTimestamp(),
-        });
-      }
+      const commentsRef = collection(db, "users", user.id, "posts", doubtId, "comments");
+      await addDoc(commentsRef, {
+        text: commentText,
+        parentId: parentId || null,
+        createdAt: serverTimestamp(),
+      });
     } catch (error) {
       console.error("Error adding comment:", error);
     }
   };
 
-  const editComment = async (
-    doubtId: string,
-    commentId: string,
-    newText: string,
-    parentId?: string
-  ) => {
+  const editComment = async (doubtId: string, commentId: string, newText: string) => {
     if (!user) return;
     try {
-      let commentRef;
-      if (parentId) {
-        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId, "comments", commentId);
-      } else {
-        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
-      }
+      const commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
       await updateDoc(commentRef, { text: newText });
     } catch (error) {
       console.error("Error editing comment:", error);
     }
   };
 
-  const deleteComment = async (
-    doubtId: string,
-    commentId: string,
-    parentId?: string
-  ) => {
+  const deleteComment = async (doubtId: string, commentId: string) => {
     if (!user) return;
     try {
-      let commentRef;
-      if (parentId) {
-        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId, "comments", commentId);
-      } else {
-        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
-      }
+      const commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
       await deleteDoc(commentRef);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -254,8 +224,8 @@ export default function DoubtTracker() {
           <TabsTrigger value="resolved">Resolved Doubts</TabsTrigger>
         </TabsList>
         <TabsContent value="open">
-          <DoubtList 
-            doubts={doubts.filter(d => !d.resolved)} 
+          <DoubtList
+            doubts={doubts.filter(d => !d.resolved)}
             onResolve={resolveDoubt}
             onReopen={reopenDoubt}
             onUpvote={upvoteDoubt}
@@ -269,8 +239,8 @@ export default function DoubtTracker() {
           />
         </TabsContent>
         <TabsContent value="resolved">
-          <DoubtList 
-            doubts={doubts.filter(d => d.resolved)} 
+          <DoubtList
+            doubts={doubts.filter(d => d.resolved)}
             onResolve={resolveDoubt}
             onReopen={reopenDoubt}
             onUpvote={upvoteDoubt}

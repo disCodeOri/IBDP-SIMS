@@ -17,16 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  ArrowBigUp,
-  ArrowBigDown,
-  CheckCircle2,
-  Edit,
-  RefreshCw,
-  Save,
-  Trash2,
-} from "lucide-react";
-import CommentSection from "./CommentSection";
+import { ArrowBigUp, ArrowBigDown, CheckCircle2, Edit, RefreshCw, Save, Trash2 } from "lucide-react";
+import CommentSection, { Comment } from "./CommentSection";
 import {
   Dialog,
   DialogContent,
@@ -35,12 +27,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-interface Comment {
-  id: string;
-  text: string;
-  replies: Comment[];
-}
 
 interface Doubt {
   id: string;
@@ -61,8 +47,8 @@ interface DoubtCardProps {
   onDownvote: (id: string) => void;
   onAddComment: (doubtId: string, commentText: string, parentCommentId?: string) => void;
   onEditDoubt: (id: string, title: string, description: string) => void;
-  onEditComment: (doubtId: string, commentId: string, newText: string, parentId?: string) => void;
-  onDeleteComment: (doubtId: string, commentId: string, parentId?: string) => void;
+  onEditComment: (doubtId: string, commentId: string, newText: string) => void;
+  onDeleteComment: (doubtId: string, commentId: string) => void;
   onEditSolution: (id: string, newSolution: string) => void;
   onDeleteDoubt: (id: string) => void;
 }
@@ -90,16 +76,12 @@ export default function DoubtCard({
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [hasEditChanges, setHasEditChanges] = useState(false);
-  
-  // Local state for top-level comments loaded from Firestore
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  // Refs for edit components
+  // This state holds the nested comment tree built from the flat list.
+  const [nestedComments, setNestedComments] = useState<Comment[]>([]);
   const editTitleRef = useRef<HTMLDivElement>(null);
-  const editDescriptionRef = useRef<HTMLDivElement>(null);
   const editSolutionRef = useRef<HTMLDivElement>(null);
 
-  // Load top-level comments for this doubt from Firestore
+  // Load flat comments from Firestore and build the nested structure.
   useEffect(() => {
     if (!user) return;
     const commentsRef = collection(db, "users", user.id, "posts", doubt.id, "comments");
@@ -110,10 +92,29 @@ export default function DoubtCard({
         loadedComments.push({
           id: docSnap.id,
           text: docSnap.data().text,
-          replies: [] // Nested replies will be loaded by CommentSection
+          parentId: docSnap.data().parentId || null,
+          replies: []
         });
       });
-      setComments(loadedComments);
+      // Build nested structure from flat comments
+      const commentMap = new Map<string, Comment>();
+      const topLevelComments: Comment[] = [];
+      loadedComments.forEach(comment => {
+        commentMap.set(comment.id, { ...comment, replies: [] });
+      });
+      commentMap.forEach(comment => {
+        if (comment.parentId) {
+          const parent = commentMap.get(comment.parentId);
+          if (parent) {
+            parent.replies.push(comment);
+          } else {
+            topLevelComments.push(comment);
+          }
+        } else {
+          topLevelComments.push(comment);
+        }
+      });
+      setNestedComments(topLevelComments);
     });
     return () => unsubscribe();
   }, [user, doubt.id]);
@@ -139,7 +140,6 @@ export default function DoubtCard({
         }
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [hasEditChanges]);
@@ -152,11 +152,11 @@ export default function DoubtCard({
   const handleEdit = () => {
     onEditDoubt(doubt.id, editTitle, editDescription);
   };
-
+  
   const handleEditSolution = () => {
     onEditSolution(doubt.id, editedSolution);
     setIsEditingSolution(false);
-  };
+  };  
 
   return (
     <Card className={`${doubt.resolved ? "bg-gray-50" : "bg-white"}`}>
@@ -177,7 +177,7 @@ export default function DoubtCard({
             {doubt.title}
           </CardTitle>
           <p className="text-sm text-gray-500">
-            {doubt.resolved ? "Resolved" : "Open"} • {comments.length} comments
+            {doubt.resolved ? "Resolved" : "Open"} • {nestedComments.reduce((acc, c) => acc + 1 + countReplies(c), 0)} comments
           </p>
         </div>
         <div className="flex space-x-2">
@@ -280,12 +280,17 @@ export default function DoubtCard({
         )}
         <CommentSection
           doubtId={doubt.id}
-          comments={comments}
+          comments={nestedComments}
           onAddComment={(text, parentId) => onAddComment(doubt.id, text, parentId)}
-          onEditComment={(commentId, newText, parentId?) => onEditComment(doubt.id, commentId, newText, parentId)}
-          onDeleteComment={(commentId, parentId?) => onDeleteComment(doubt.id, commentId, parentId)}
+          onEditComment={(commentId, newText) => onEditComment(doubt.id, commentId, newText)}
+          onDeleteComment={(commentId) => onDeleteComment(doubt.id, commentId)}
         />
       </CardFooter>
     </Card>
   );
+}
+
+// Helper function to count nested replies
+function countReplies(comment: Comment): number {
+  return comment.replies.reduce((acc, reply) => acc + 1 + countReplies(reply), 0);
 }
