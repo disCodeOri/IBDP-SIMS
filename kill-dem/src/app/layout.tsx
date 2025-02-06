@@ -19,7 +19,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`antialiased`}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem> {/* change the defaultTheme vlaue to system once you have figured out how to proplerly implement dark mode everywhere.*/}
             {children}
           </ThemeProvider>
         </body>
