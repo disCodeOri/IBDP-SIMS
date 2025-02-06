@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import DoubtList from '@/components/doubts-tracker/DoubtList';
 import NewDoubtForm from '@/components/doubts-tracker/NewDoubtForm';
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +12,31 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Plus } from 'lucide-react'
+} from "@/components/ui/dialog";
+import { Plus } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import { db } from '@/lib/firebase';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  increment,
+  serverTimestamp,
+  doc,
+} from 'firebase/firestore';
 
 interface Comment {
-  id: number;
+  id: string;
   text: string;
   replies: Comment[];
 }
 
-interface Doubt {
-  id: number;
+export interface Doubt {
+  id: string;
   title: string;
   description: string;
   upvotes: number;
@@ -30,172 +46,185 @@ interface Doubt {
   comments: Comment[];
 }
 
-const initialDoubts: Doubt[] = [
-  {
-    id: 1,
-    title: "How does photosynthesis work?",
-    description: "I'm having trouble understanding the light-dependent reactions...",
-    upvotes: 5,
-    downvotes: 1,
-    resolved: false,
-    comments: [
-      { id: 1, text: "I found a great Khan Academy video on this.", replies: [
-        { id: 2, text: "Could you share the link?", replies: [] }
-      ] },
-      { id: 3, text: "Remember the role of chlorophyll!", replies: [] },
-    ],
-  },
-  {
-    id: 2,
-    title: "What is the best way to learn a new programming language?",
-    description: "I'm trying to learn Python, but I'm feeling overwhelmed...",
-    upvotes: 12,
-    downvotes: 2,
-    resolved: true,
-    solution: "Focus on building small projects and practice consistently.",
-    comments: [],
-  },
-];
-
 export default function DoubtTracker() {
-  const [doubts, setDoubts] = useState<Doubt[]>(initialDoubts);
-
-  const addDoubt = (title: string, description: string) => {
-    const newDoubt: Doubt = {
-      id: doubts.length + 1,
-      title,
-      description,
-      upvotes: 0,
-      downvotes: 0,
-      resolved: false,
-      comments: [],
-    };
-    setDoubts([...doubts, newDoubt]);
-  };
-
-  const resolveDoubt = (id: number, solution: string) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, resolved: true, solution } : doubt
-    ));
-  };
-
-  const reopenDoubt = (id: number) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, resolved: false, solution: undefined } : doubt
-    ));
-  };
-
-  const upvoteDoubt = (id: number) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, upvotes: doubt.upvotes + 1 } : doubt
-    ));
-  };
-
-  const downvoteDoubt = (id: number) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, downvotes: doubt.downvotes + 1 } : doubt
-    ));
-  };
-
-  const addComment = (doubtId: number, commentText: string, parentCommentId?: number) => {
-    setDoubts(doubts.map(doubt => {
-      if (doubt.id === doubtId) {
-        const newComment: Comment = { id: Date.now(), text: commentText, replies: [] };
-        if (parentCommentId) {
-          return {
-            ...doubt,
-            comments: addReply(doubt.comments, parentCommentId, newComment)
-          };
-        } else {
-          return {
-            ...doubt,
-            comments: [...doubt.comments, newComment]
-          };
-        }
-      }
-      return doubt;
-    }));
-  };
-
-  const addReply = (comments: Comment[], parentId: number, newReply: Comment): Comment[] => {
-    return comments.map(comment => {
-      if (comment.id === parentId) {
-        return {
-          ...comment,
-          replies: [...comment.replies, newReply]
-        };
-      } else if (comment.replies.length > 0) {
-        return {
-          ...comment,
-          replies: addReply(comment.replies, parentId, newReply)
-        };
-      }
-      return comment;
-    });
-  };
-
-  const editDoubt = (id: number, title: string, description: string) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, title, description } : doubt
-    ));
-  };
-
-  const editComment = (doubtId: number, commentId: number, newText: string) => {
-    setDoubts(doubts.map(doubt => {
-      if (doubt.id === doubtId) {
-        return {
-          ...doubt,
-          comments: updateCommentText(doubt.comments, commentId, newText)
-        };
-      }
-      return doubt;
-    }));
-  };
-
-  const updateCommentText = (comments: Comment[], commentId: number, newText: string): Comment[] => {
-    return comments.map(comment => {
-      if (comment.id === commentId) {
-        return { ...comment, text: newText };
-      } else if (comment.replies.length > 0) {
-        return {
-          ...comment,
-          replies: updateCommentText(comment.replies, commentId, newText)
-        };
-      }
-      return comment;
-    });
-  };
-
-  const deleteComment = (doubtId: number, commentId: number) => {
-    setDoubts(doubts.map(doubt => {
-      if (doubt.id === doubtId) {
-        return {
-          ...doubt,
-          comments: removeComment(doubt.comments, commentId)
-        };
-      }
-      return doubt;
-    }));
-  };
+  const { user } = useUser();
+  const [doubts, setDoubts] = useState<Doubt[]>([]);
   
-  const removeComment = (comments: Comment[], commentId: number): Comment[] => {
-    return comments.filter(comment => {
-      if (comment.id === commentId) {
-        return false;
-      }
-      comment.replies = removeComment(comment.replies, commentId);
-      return true;
+  // Firestore: Listen to doubts (posts) for the current user.
+  useEffect(() => {
+    if (!user) return;
+    const postsRef = collection(db, "users", user.id, "posts");
+    const q = query(postsRef, orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const loadedDoubts: Doubt[] = [];
+      snapshot.forEach(docSnap => {
+        loadedDoubts.push({
+          id: docSnap.id,
+          title: docSnap.data().title,
+          description: docSnap.data().description,
+          upvotes: docSnap.data().upvotes,
+          downvotes: docSnap.data().downvotes,
+          resolved: docSnap.data().resolved,
+          solution: docSnap.data().solution,
+          // Comments will be loaded in the DoubtCard (default empty array here)
+          comments: [],
+        });
+      });
+      setDoubts(loadedDoubts);
     });
-  };
-  
-  const editSolution = (id: number, newSolution: string) => {
-    setDoubts(doubts.map(doubt => 
-      doubt.id === id ? { ...doubt, solution: newSolution } : doubt
-    ));
+    return () => unsubscribe();
+  }, [user]);
+
+  // Firestore CRUD functions
+
+  const addDoubt = async (title: string, description: string) => {
+    if (!user) return;
+    try {
+      const postsRef = collection(db, "users", user.id, "posts");
+      await addDoc(postsRef, {
+        title,
+        description,
+        upvotes: 0,
+        downvotes: 0,
+        resolved: false,
+        solution: "",
+        createdAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error creating doubt:", error);
+    }
   };
 
-  const deleteDoubt = (id: number) => {
-    setDoubts(doubts.filter(doubt => doubt.id !== id));
+  const resolveDoubt = async (id: string, solution: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { resolved: true, solution });
+    } catch (error) {
+      console.error("Error resolving doubt:", error);
+    }
+  };
+
+  const reopenDoubt = async (id: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { resolved: false, solution: "" });
+    } catch (error) {
+      console.error("Error reopening doubt:", error);
+    }
+  };
+
+  const upvoteDoubt = async (id: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { upvotes: increment(1) });
+    } catch (error) {
+      console.error("Error upvoting doubt:", error);
+    }
+  };
+
+  const downvoteDoubt = async (id: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { downvotes: increment(1) });
+    } catch (error) {
+      console.error("Error downvoting doubt:", error);
+    }
+  };
+
+  // Comment operations support an optional parentId.
+  const addComment = async (doubtId: string, commentText: string, parentId?: string) => {
+    if (!user) return;
+    try {
+      if (parentId) {
+        const parentCommentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId);
+        const repliesRef = collection(parentCommentRef, "comments");
+        await addDoc(repliesRef, {
+          text: commentText,
+          createdAt: serverTimestamp(),
+        });
+      } else {
+        const commentsRef = collection(db, "users", user.id, "posts", doubtId, "comments");
+        await addDoc(commentsRef, {
+          text: commentText,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+
+  const editComment = async (
+    doubtId: string,
+    commentId: string,
+    newText: string,
+    parentId?: string
+  ) => {
+    if (!user) return;
+    try {
+      let commentRef;
+      if (parentId) {
+        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId, "comments", commentId);
+      } else {
+        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
+      }
+      await updateDoc(commentRef, { text: newText });
+    } catch (error) {
+      console.error("Error editing comment:", error);
+    }
+  };
+
+  const deleteComment = async (
+    doubtId: string,
+    commentId: string,
+    parentId?: string
+  ) => {
+    if (!user) return;
+    try {
+      let commentRef;
+      if (parentId) {
+        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", parentId, "comments", commentId);
+      } else {
+        commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
+      }
+      await deleteDoc(commentRef);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const editDoubt = async (id: string, title: string, description: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { title, description });
+    } catch (error) {
+      console.error("Error editing doubt:", error);
+    }
+  };
+
+  const editSolution = async (id: string, newSolution: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await updateDoc(doubtRef, { solution: newSolution });
+    } catch (error) {
+      console.error("Error editing solution:", error);
+    }
+  };
+
+  const deleteDoubt = async (id: string) => {
+    if (!user) return;
+    try {
+      const doubtRef = doc(db, "users", user.id, "posts", id);
+      await deleteDoc(doubtRef);
+    } catch (error) {
+      console.error("Error deleting doubt:", error);
+    }
   };
 
   return (
@@ -258,4 +287,3 @@ export default function DoubtTracker() {
     </div>
   );
 }
-
