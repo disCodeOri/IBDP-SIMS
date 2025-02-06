@@ -133,6 +133,11 @@ export const data = {
       icon: Map,
     },
     {
+      name: "Curiosity Space",
+      url: "/CuriositySpace",
+      icon: Map,
+    },
+    {
       name: "Break Timer",
       url: "#",
       icon: Frame,
