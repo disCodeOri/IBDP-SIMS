@@ -66,6 +66,7 @@ export async function readCookies(): Promise<Cookie[]> {
 // Add a new cookie to Firestore
 export async function addCookie(
   newCookie: Omit<Cookie, "id">,
+  gridCols: number = 4,
 ): Promise<void> {
   try {
     const cookieJarCollection = await getCookieJarCollectionRef();
