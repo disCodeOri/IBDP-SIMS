@@ -1,130 +1,124 @@
+// File: src/lib/continuous-info-space-doc-man-actions.ts
 "use server";
 
 import { z } from "zod";
-import { db } from "@/lib/firebase"; // Import your firebase db instance
-import {
-  collection,
-  doc,
-  getDocs,
-  setDoc,
-  deleteDoc,
-  query,
-  orderBy,
-  updateDoc,
-} from "firebase/firestore";
-import { auth } from "@clerk/nextjs/server"; // Import Clerk auth for user ID
+import { db } from "@/lib/firebase";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "@clerk/nextjs/server";
 
-// Document schema (no changes needed here)
-const DocumentSchema = z.object({
+const NotebookSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  position: z
-    .object({
-      x: z.number(),
-      y: z.number(),
-    })
-    .optional(),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  userId: z.string(),
+  sections: z.array(z.any()).optional()
 });
-export type Document = z.infer<typeof DocumentSchema>;
 
-// --- Firestore Interaction Functions ---
+export type notebook = z.infer<typeof NotebookSchema>;
 
-// Function to get the user's documentJar subcollection reference
-async function getDocumentJarCollectionRef() {
-  const authResult = await auth(); // AWAIT the auth() promise
-  const { userId } = authResult;     // Now you can get userId from the resolved object
-
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-  return collection(db, "users", userId, "documentJar");
+async function getNotebooksCollectionRef() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("User not authenticated");
+  return collection(db, "users", userId, "notebooks");
 }
 
-// Read documents from Firestore
-export async function readDocuments(): Promise<Document[]> {
+export async function readNotebooks(): Promise<notebook[]> {
   try {
-    const documentJarCollection = await getDocumentJarCollectionRef();
-    const documentsSnapshot = await getDocs(query(documentJarCollection, orderBy("position.y"), orderBy("position.x"))); // Order by position for consistent display
-    const documentsList = documentsSnapshot.docs.map((doc) => {
+    const notebooksCol = await getNotebooksCollectionRef();
+    const snapshot = await getDocs(notebooksCol);
+    
+    return snapshot.docs.map(doc => {
       const data = doc.data();
-      return {
-        id: doc.id, // Document ID as document ID
-        name: data.name,
+      return NotebookSchema.parse({
+        id: doc.id,
+        title: data.title,
         description: data.description,
-        position: data.position,
-      } as Document; // Type assertion here
+        createdAt: data.createdAt?.toDate(),
+        updatedAt: data.updatedAt?.toDate(),
+        userId: data.userId,
+        sections: data.sections || []
+      });
     });
-    return documentsList;
   } catch (error) {
-    console.error("Error reading documents from Firestore:", error);
-    return []; // Return empty array in case of error
+    console.error("Error reading notebooks:", error);
+    return [];
   }
 }
 
-// Add a new document to Firestore
-export async function addDocument(
-  newDocument: Omit<Document, "id">,
-  gridCols: number = 4,
-): Promise<void> {
+export async function getNotebook(id: string): Promise<notebook | null> {
   try {
-    const documentJarCollection = await getDocumentJarCollectionRef();
-    const id = crypto.randomUUID(); // Generate UUID for Firestore document ID
-    const documentToAdd: Document = {
-      ...newDocument,
-      id,
-      position: {
-        x: 0, // Initial position, you might want to calculate this based on existing documents or default to 0,0 and update later
-        y: 0,
-      },
+    const notebooksCol = await getNotebooksCollectionRef();
+    const notebookDoc = await getDoc(doc(notebooksCol, id));
+    
+    if (!notebookDoc.exists()) return null;
+    
+    const data = notebookDoc.data();
+    return NotebookSchema.parse({
+      id: notebookDoc.id,
+      title: data.title,
+      description: data.description,
+      createdAt: data.createdAt?.toDate(),
+      updatedAt: data.updatedAt?.toDate(),
+      userId: data.userId,
+      sections: data.sections || []
+    });
+  } catch (error) {
+    console.error("Error getting notebook:", error);
+    return null;
+  }
+}
+
+export async function addNotebook(notebook: Omit<notebook, "id" | "createdAt" | "updatedAt" | "userId">) {
+  try {
+    const notebooksCol = await getNotebooksCollectionRef();
+    const { userId } = await auth();
+    
+    const newNotebookRef = doc(notebooksCol);
+    const now = serverTimestamp();
+    
+    await setDoc(newNotebookRef, {
+      ...notebook,
+      userId,
+      sections: [],
+      createdAt: now,
+      updatedAt: now
+    });
+
+    return {
+      id: newNotebookRef.id,
+      ...notebook,
+      sections: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId
     };
-    const documentDocRef = doc(documentJarCollection, id); // Use the generated UUID as document ID
-    await setDoc(documentDocRef, documentToAdd); // setDoc to create or overwrite document
   } catch (error) {
-    console.error("Error adding document to Firestore:", error);
+    console.error("Error adding notebook:", error);
+    throw error;
   }
 }
 
-// Delete a document from Firestore
-export async function deleteDocument(id: string): Promise<void> {
+export async function updateNotebook(id: string, sections: any[]) {
   try {
-    const documentJarCollection = await getDocumentJarCollectionRef();
-    const documentDocRef = doc(documentJarCollection, id);
-    await deleteDoc(documentDocRef);
+    const notebooksCol = await getNotebooksCollectionRef();
+    await setDoc(doc(notebooksCol, id), {
+      sections,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
   } catch (error) {
-    console.error("Error deleting document from Firestore:", error);
+    console.error("Error updating notebook:", error);
+    throw error;
   }
 }
 
-// Update a document in Firestore
-export async function updateDocument(updatedDocument: Document): Promise<void> {
+export async function deleteNotebook(id: string) {
   try {
-    const documentJarCollection = await getDocumentJarCollectionRef();
-    const documentDocRef = doc(documentJarCollection, updatedDocument.id);
-    await updateDoc(documentDocRef, {
-      name: updatedDocument.name,
-      description: updatedDocument.description,
-      position: updatedDocument.position,
-    }); // Update only the fields that might have changed
+    const notebooksCol = await getNotebooksCollectionRef();
+    await deleteDoc(doc(notebooksCol, id));
   } catch (error) {
-    console.error("Error updating document in Firestore:", error);
-  }
-}
-
-// Update document positions in Firestore
-export async function updateDocumentPositions(
-  updatedDocuments: Document[]
-): Promise<void> {
-  try {
-    const documentJarCollection = await getDocumentJarCollectionRef();
-    // Batch updates for efficiency if you have many documents to update at once
-    const batch = [];
-    for (const document of updatedDocuments) {
-      const documentDocRef = doc(documentJarCollection, document.id);
-      batch.push(updateDoc(documentDocRef, { position: document.position })); // Only update position
-    }
-    await Promise.all(batch); // Execute all updates in parallel
-  } catch (error) {
-    console.error("Error updating document positions in Firestore:", error);
+    console.error("Error deleting notebook:", error);
+    throw error;
   }
 }

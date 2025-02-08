@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { getNotebook, updateNotebook } from "@/lib/continuous-info-space-doc-man-actions";
 import { Archive, Plus, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
@@ -161,6 +162,8 @@ const TodoListInterface = () => {
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();
+  const params = useParams();
+  const notebookId = params.notebookId as string;
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [archivedSections, setArchivedSections] = useState<Section[]>([]);
@@ -175,62 +178,37 @@ const TodoListInterface = () => {
 
   // Fetch initial data
   useEffect(() => {
-    if (!user) return;
+    if (!user || !notebookId) return;
 
-    const fetchTodoListData = async () => {
+    const fetchNotebookData = async () => {
       try {
-        const userDocRef = doc(db, "users", user.id);
-        const userDoc = await getDoc(userDocRef);
-
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          if (data.todoList) {
-            setSections(data.todoList);
-          }
-          if (data.archivedSections) {
-            setArchivedSections(data.archivedSections);
-          } else {
-            // Initialize archivedSections if it doesn't exist
-            await updateDoc(userDocRef, { archivedSections: [] });
-          }
-        } else {
-          // Create new user document with both todoList and archivedSections
-          await setDoc(userDocRef, {
-            todoList: sections,
-            archivedSections: [],
-          });
+        const notebook = await getNotebook(notebookId);
+        if (notebook) {
+          setSections(notebook.sections || []);
         }
       } catch (error) {
-        console.error("Error fetching todoList data:", error);
+        console.error("Error fetching notebook data:", error);
       }
     };
 
-    fetchTodoListData();
-  }, [user]);
+    fetchNotebookData();
+  }, [user, notebookId]);
 
   // Sync changes to Firestore with debounce
   useEffect(() => {
-    if (!user) return;
+    if (!user || !notebookId) return;
 
     // Add debounce to prevent too many writes
     const timeoutId = setTimeout(async () => {
       try {
-        const userDocRef = doc(db, "users", user.id);
-        await setDoc(
-          userDocRef,
-          {
-            todoList: sections,
-            archivedSections: archivedSections,
-          },
-          { merge: true }
-        );
+        await updateNotebook(notebookId, sections);
       } catch (error) {
-        console.error("Error updating data:", error);
+        console.error("Error updating notebook:", error);
       }
     }, 1000); // Wait 1 second after last change
 
     return () => clearTimeout(timeoutId);
-  }, [sections, archivedSections, user]);
+  }, [sections, user, notebookId]);
 
   const archiveSection = (sectionId: string) => {
     const sectionToArchive = sections.find((s) => s.id === sectionId);
@@ -612,7 +590,7 @@ const TodoListInterface = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="flex items-center justify-between p-4 border-b">
+      <header className="flex-none flex items-center justify-between p-4 border-b bg-white">
         <Button
           variant="ghost"
           size="sm"

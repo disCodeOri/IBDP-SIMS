@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Edit } from "lucide-react";
+import { Plus, Trash2, Notebook, Eye } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -9,365 +9,247 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragStartEvent,
-  useDraggable,
-  useDroppable,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
   SortableContext,
-  useSortable,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import {
-  readDocuments,
-  updateDocumentPositions,
-  deleteDocument,
-  updateDocument,
-  Document,
-  addDocument,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import {
+  readNotebooks,
+  deleteNotebook,
+  addNotebook,
+  getNotebook,
+  notebook,
 } from "@/lib/continuous-info-space-doc-man-actions";
 
-interface DocumentsProps {
-  disableEdit?: boolean;
-  disableAdd?: boolean;
-  disableDelete?: boolean;
-  gridCols?: number;
-}
-
-function TrashZone({ disabled }: { disabled: boolean }) {
-  const { isOver, setNodeRef } = useDroppable({
-    id: "trash",
-    disabled,
-  });
-
-  if (disabled) return null;
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white p-4 rounded-full
-        transition-all duration-300 ${
-          isOver ? "scale-110 bg-red-600" : "scale-100"
-        }`}
-    >
-      <Trash2 className="h-6 w-6" />
-    </div>
-  );
-}
-
-function SortableDocumentCard({
-  document,
-  onEdit,
-  isDragging,
-  disableEdit,
-}: {
-  document: Document;
-  onEdit: (document: Document) => void;
-  isDragging: boolean;
-  disableEdit: boolean;
+function NotebookCard({ notebook, onDelete, onOpen, onPreview }: {
+  notebook: notebook;
+  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
+  onPreview: (notebook: notebook) => void;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setSortableNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: document.id });
-
-  const {
-    attributes: dragAttributes,
-    listeners: dragListeners,
-    setNodeRef: setDraggableNodeRef,
-    transform: dragTransform,
-  } = useDraggable({
-    id: document.id,
-    data: { type: "document" },
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform || dragTransform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
   return (
-    <div
-      ref={(node) => {
-        setSortableNodeRef(node);
-        setDraggableNodeRef(node);
-      }}
-      style={style}
-      {...attributes}
-      {...listeners}
-      {...dragAttributes}
-      {...dragListeners}
-      className="bg-white p-4 rounded-lg shadow-md cursor-move relative group min-h-[120px] flex flex-col border border-gray-200" // Changed background and added border
-    >
-      <h3 className="text-gray-800 font-bold text-lg mb-2 break-words">{document.name}</h3> {/* Changed text color */}
-      <p className="text-gray-700 text-sm break-words overflow-y-auto max-h-24">{document.description}</p> {/* Changed text color */}
-
-      {!disableEdit && (
-        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(document);
-            }}
-            className="text-gray-600 hover:text-gray-800" // Changed text color
-          >
-            <Edit className="h-4 w-4" />
-          </button>
+    <div className="bg-white p-4 rounded-lg shadow-md relative group min-h-[150px] flex flex-col border border-gray-200 hover:shadow-lg transition-shadow">
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-2">
+          <Notebook className="h-5 w-5 text-blue-600" />
+          <h3 className="text-gray-800 font-semibold text-lg">{notebook.title}</h3>
         </div>
-      )}
+        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+          {notebook.description || "No description"}
+        </p>
+        <div className="text-xs text-gray-500 mt-auto">
+          Last modified: {new Date(notebook.updatedAt).toLocaleDateString()}
+        </div>
+      </div>
+      
+      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onPreview(notebook)}
+          className="text-gray-600 hover:text-gray-800"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onOpen(notebook.id)}
+          className="text-blue-600 hover:text-blue-800"
+        >
+          Open
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete(notebook.id)}
+          className="text-red-600 hover:text-red-800"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }
 
-export default function DocumentJar({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: DocumentsProps) {
+export default function NotebookManager() {
+  const router = useRouter();
+  const [notebooks, setNotebooks] = useState<notebook[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [newDocument, setNewDocument] = useState<Partial<Document>>({
-    name: "",
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedNotebook, setSelectedNotebook] = useState<notebook | null>(null);
+  const [newNotebook, setNewNotebook] = useState({
+    title: "",
     description: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingDocumentId, setEditingDocumentId] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 30,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
   );
 
+  const handlePreview = (notebook: notebook) => {
+    setSelectedNotebook(notebook);
+    setIsPreviewOpen(true);
+  };
+
   useEffect(() => {
-    async function fetchDocuments() {
-      const fetchedDocuments = await readDocuments();
-      setDocuments(fetchedDocuments);
-    }
-    fetchDocuments();
+    loadNotebooks();
   }, []);
 
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setNewDocument((prev) => ({
-      ...prev,
-      [e.target.id]: e.target.value,
-    }));
+  const loadNotebooks = async () => {
+    const fetchedNotebooks = await readNotebooks();
+    setNotebooks(fetchedNotebooks);
   };
 
-  const handleEdit = (document: Document) => {
-    if (disableEdit) return;
-    setNewDocument(document);
-    setIsEditing(true);
-    setEditingDocumentId(document.id);
-    setIsModalOpen(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newNotebook.title) return;
 
-    if (isEditing && editingDocumentId) {
-      if (disableEdit) return;
-
-      const updatedDocument: Document = {
-        ...newDocument,
-        id: editingDocumentId,
-      } as Document;
-
-      try {
-        await updateDocument(updatedDocument);
-        const updatedDocuments = await readDocuments();
-        setDocuments(updatedDocuments);
-      } catch (error) {
-        console.error("Failed to update document:", error);
-      } finally {
-        setIsEditing(false);
-        setEditingDocumentId(null);
-        setNewDocument({ name: "", description: "" });
-        setIsModalOpen(false);
-      }
-    } else {
-      if (disableAdd) return;
-
-      try {
-        if (!newDocument.name || !newDocument.description) {
-          console.error("Name and description are required");
-          return;
-        }
-
-        const documentToAdd = {
-          name: newDocument.name,
-          description: newDocument.description,
-        };
-
-        await addDocument(documentToAdd, gridCols);
-        const updatedDocuments = await readDocuments();
-        setDocuments(updatedDocuments);
-        setNewDocument({ name: "", description: "" });
-        setIsModalOpen(false);
-      } catch (error) {
-        console.error("Failed to add document:", error);
-      }
+    try {
+      const createdNotebook = await addNotebook({
+        title: newNotebook.title,
+        description: newNotebook.description,
+      });
+      
+      setIsModalOpen(false);
+      setNewNotebook({ title: "", description: "" });
+      router.push(`/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${createdNotebook.id}`);
+    } catch (error) {
+      console.error("Failed to create notebook:", error);
     }
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { over, active } = event;
-    setActiveId(null);
-
-    if (!disableDelete && over?.id === "trash" && active.id) {
-      await deleteDocument(String(active.id));
-      const updatedDocuments = await readDocuments();
-      setDocuments(updatedDocuments);
-      return;
+  const handleDeleteNotebook = async (id: string) => {
+    try {
+      await deleteNotebook(id);
+      setNotebooks(prev => prev.filter(n => n.id !== id));
+    } catch (error) {
+      console.error("Failed to delete notebook:", error);
     }
-
-    setDocuments((items) => {
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over?.id);
-
-      if (oldIndex === -1 || newIndex === -1) {
-        return items;
-      }
-
-      const reorderedItems = arrayMove(items, oldIndex, newIndex);
-
-      const updatedItemsWithPositions = reorderedItems.map((item, index) => ({
-        ...item,
-        position: {
-          x: index % gridCols,
-          y: Math.floor(index / gridCols),
-        },
-      }));
-
-      updateDocumentPositions(updatedItemsWithPositions);
-      return updatedItemsWithPositions;
-    });
   };
-
-  const gridClasses = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-${gridCols} gap-4`;
 
   return (
     <div className="p-6">
-      {!disableAdd && (
-        <Button
-          onClick={() => {
-            setNewDocument({ name: "", description: "" });
-            setIsEditing(false);
-            toggleModal();
-          }}
-          variant="outline"
-          size="default"
-          className="mb-4"
-        >
-          <Plus className="h-4 w-4" />
-          Add Document
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">My Notebooks</h1>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Notebook
         </Button>
-      )}
+      </div>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={documents.map((a) => a.id)}
-          strategy={rectSortingStrategy}
-        >
-          <div className={gridClasses}>
-            {documents.map((document) => (
-              <SortableDocumentCard
-                key={document.id}
-                document={document}
-                onEdit={handleEdit}
-                isDragging={activeId === document.id}
-                disableEdit={disableEdit}
+      <DndContext sensors={sensors} collisionDetection={closestCenter}>
+        <SortableContext items={notebooks} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {notebooks.map(notebook => (
+              <NotebookCard
+                key={notebook.id}
+                notebook={notebook}
+                onDelete={handleDeleteNotebook}
+                onOpen={(id) => router.push(`/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${id}`)}
+                onPreview={handlePreview}
               />
             ))}
           </div>
         </SortableContext>
-
-        <TrashZone disabled={disableDelete} />
       </DndContext>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-background p-6 rounded-lg w-full max-w-md">
-            <form onSubmit={handleSubmit}>
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Create New Notebook</h2>
+            <form onSubmit={handleCreateNotebook}>
               <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700"> {/* Changed text color */}
-                  Name
+                <label className="block text-sm font-medium mb-2">
+                  Title
                 </label>
                 <input
-                  type="text"
-                  id="name"
-                  value={newDocument.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 border border-gray-200" // Changed background and text color, added border
-                  placeholder="Enter document name"
                   required
+                  type="text"
+                  value={newNotebook.title}
+                  onChange={(e) => setNewNotebook({...newNotebook, title: e.target.value})}
+                  className="w-full px-4 py-2 rounded-md border focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium mb-2 text-gray-700"> {/* Changed text color */}
+                <label className="block text-sm font-medium mb-2">
                   Description
                 </label>
                 <textarea
-                  id="description"
-                  value={newDocument.description}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 border border-gray-200" // Changed background and text color, added border
+                  value={newNotebook.description}
+                  onChange={(e) => setNewNotebook({...newNotebook, description: e.target.value})}
+                  className="w-full px-4 py-2 rounded-md border focus:ring-2 focus:ring-blue-500"
                   rows={3}
-                  placeholder="Enter document description"
-                  required
                 />
               </div>
-
               <div className="flex justify-end gap-4">
                 <Button
                   type="button"
-                  onClick={() => {
-                    toggleModal();
-                    setIsEditing(false);
-                  }}
                   variant="secondary"
-                  size="default"
+                  onClick={() => setIsModalOpen(false)}
                 >
                   Cancel
                 </Button>
-
-                <Button
-                  type="submit"
-                  variant="default"
-                  size="default"
-                >
-                  {isEditing ? "Update" : "Submit"}
+                <Button type="submit">
+                  Create Notebook
                 </Button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+  <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+    <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+      <DialogHeader className="flex-none border-b pb-4">
+        <DialogTitle>{selectedNotebook?.title}</DialogTitle>
+      </DialogHeader>
+      <div className="flex-1 overflow-auto">
+        <div className="space-y-4 p-6">
+          {selectedNotebook?.sections?.map((section: any, index: number) => (
+            <div key={section.id || index} className="border rounded-lg p-4">
+              <h3 className="font-medium text-lg mb-3">{section.title}</h3>
+              <div className="flex gap-4">
+                {section.columns?.map((column: any, colIndex: number) => (
+                  <div 
+                    key={column.id || colIndex}
+                    className="flex-none w-72 bg-gray-50 rounded-lg p-3"
+                  >
+                    <h4 className="font-medium mb-2">{column.title}</h4>
+                    <div className="space-y-2">
+                      {column.notes?.map((note: any, noteIndex: number) => (
+                        <div 
+                          key={note.id || noteIndex}
+                          className="bg-white p-2 rounded border"
+                        >
+                          {note.content}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          {(!selectedNotebook?.sections || selectedNotebook.sections.length === 0) && (
+            <p className="text-gray-500 text-center py-8">
+              This notebook is empty
+            </p>
+          )}
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
     </div>
   );
 }
