@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { BackButton } from "@/components/custom-ui/back-button";
 import { getNotebook, updateNotebook } from "@/lib/continuous-info-space-doc-man-actions";
 import { Archive, Plus, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -591,15 +592,7 @@ const TodoListInterface = () => {
   return (
     <div className="flex flex-col h-screen">
       <header className="flex-none flex items-center justify-between p-4 border-b bg-white">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push("/")}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+      <BackButton />
 
         {/* Archive Button */}
         <Sheet>
