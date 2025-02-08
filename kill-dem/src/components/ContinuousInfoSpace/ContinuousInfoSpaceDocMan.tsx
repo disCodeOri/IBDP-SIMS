@@ -24,15 +24,15 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import {
-  readCookies,
-  updateCookiePositions,
-  deleteCookie,
-  updateCookie,
-  Cookie,
-  addCookie,
-} from "@/lib/cookies-actions";
+  readDocuments,
+  updateDocumentPositions,
+  deleteDocument,
+  updateDocument,
+  Document,
+  addDocument,
+} from "@/lib/continuous-info-space-doc-man-actions";
 
-interface CookiesProps {
+interface DocumentsProps {
   disableEdit?: boolean;
   disableAdd?: boolean;
   disableDelete?: boolean;
@@ -60,14 +60,14 @@ function TrashZone({ disabled }: { disabled: boolean }) {
   );
 }
 
-function SortableCookieCard({
-  cookie,
+function SortableDocumentCard({
+  document,
   onEdit,
   isDragging,
   disableEdit,
 }: {
-  cookie: Cookie;
-  onEdit: (cookie: Cookie) => void;
+  document: Document;
+  onEdit: (document: Document) => void;
   isDragging: boolean;
   disableEdit: boolean;
 }) {
@@ -77,7 +77,7 @@ function SortableCookieCard({
     setNodeRef: setSortableNodeRef,
     transform,
     transition,
-  } = useSortable({ id: cookie.id });
+  } = useSortable({ id: document.id });
 
   const {
     attributes: dragAttributes,
@@ -85,8 +85,8 @@ function SortableCookieCard({
     setNodeRef: setDraggableNodeRef,
     transform: dragTransform,
   } = useDraggable({
-    id: cookie.id,
-    data: { type: "cookie" },
+    id: document.id,
+    data: { type: "document" },
   });
 
   const style = {
@@ -108,15 +108,15 @@ function SortableCookieCard({
       {...dragListeners}
       className="bg-white p-4 rounded-lg shadow-md cursor-move relative group min-h-[120px] flex flex-col border border-gray-200" // Changed background and added border
     >
-      <h3 className="text-gray-800 font-bold text-lg mb-2 break-words">{cookie.name}</h3> {/* Changed text color */}
-      <p className="text-gray-700 text-sm break-words overflow-y-auto max-h-24">{cookie.description}</p> {/* Changed text color */}
+      <h3 className="text-gray-800 font-bold text-lg mb-2 break-words">{document.name}</h3> {/* Changed text color */}
+      <p className="text-gray-700 text-sm break-words overflow-y-auto max-h-24">{document.description}</p> {/* Changed text color */}
 
       {!disableEdit && (
         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onEdit(cookie);
+              onEdit(document);
             }}
             className="text-gray-600 hover:text-gray-800" // Changed text color
           >
@@ -128,15 +128,15 @@ function SortableCookieCard({
   );
 }
 
-export default function CookieJar({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: CookiesProps) {
+export default function DocumentJar({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: DocumentsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cookies, setCookies] = useState<Cookie[]>([]);
-  const [newCookie, setNewCookie] = useState<Partial<Cookie>>({
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [newDocument, setNewDocument] = useState<Partial<Document>>({
     name: "",
     description: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [editingCookieId, setEditingCookieId] = useState<string | null>(null);
+  const [editingDocumentId, setEditingDocumentId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -151,11 +151,11 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
   );
 
   useEffect(() => {
-    async function fetchCookies() {
-      const fetchedCookies = await readCookies();
-      setCookies(fetchedCookies);
+    async function fetchDocuments() {
+      const fetchedDocuments = await readDocuments();
+      setDocuments(fetchedDocuments);
     }
-    fetchCookies();
+    fetchDocuments();
   }, []);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -163,64 +163,64 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setNewCookie((prev) => ({
+    setNewDocument((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
   };
 
-  const handleEdit = (cookie: Cookie) => {
+  const handleEdit = (document: Document) => {
     if (disableEdit) return;
-    setNewCookie(cookie);
+    setNewDocument(document);
     setIsEditing(true);
-    setEditingCookieId(cookie.id);
+    setEditingDocumentId(document.id);
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isEditing && editingCookieId) {
+    if (isEditing && editingDocumentId) {
       if (disableEdit) return;
 
-      const updatedCookie: Cookie = {
-        ...newCookie,
-        id: editingCookieId,
-      } as Cookie;
+      const updatedDocument: Document = {
+        ...newDocument,
+        id: editingDocumentId,
+      } as Document;
 
       try {
-        await updateCookie(updatedCookie);
-        const updatedCookies = await readCookies();
-        setCookies(updatedCookies);
+        await updateDocument(updatedDocument);
+        const updatedDocuments = await readDocuments();
+        setDocuments(updatedDocuments);
       } catch (error) {
-        console.error("Failed to update cookie:", error);
+        console.error("Failed to update document:", error);
       } finally {
         setIsEditing(false);
-        setEditingCookieId(null);
-        setNewCookie({ name: "", description: "" });
+        setEditingDocumentId(null);
+        setNewDocument({ name: "", description: "" });
         setIsModalOpen(false);
       }
     } else {
       if (disableAdd) return;
 
       try {
-        if (!newCookie.name || !newCookie.description) {
+        if (!newDocument.name || !newDocument.description) {
           console.error("Name and description are required");
           return;
         }
 
-        const cookieToAdd = {
-          name: newCookie.name,
-          description: newCookie.description,
+        const documentToAdd = {
+          name: newDocument.name,
+          description: newDocument.description,
         };
 
-        await addCookie(cookieToAdd, gridCols);
-        const updatedCookies = await readCookies();
-        setCookies(updatedCookies);
-        setNewCookie({ name: "", description: "" });
+        await addDocument(documentToAdd, gridCols);
+        const updatedDocuments = await readDocuments();
+        setDocuments(updatedDocuments);
+        setNewDocument({ name: "", description: "" });
         setIsModalOpen(false);
       } catch (error) {
-        console.error("Failed to add cookie:", error);
+        console.error("Failed to add document:", error);
       }
     }
   };
@@ -234,13 +234,13 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
     setActiveId(null);
 
     if (!disableDelete && over?.id === "trash" && active.id) {
-      await deleteCookie(String(active.id));
-      const updatedCookies = await readCookies();
-      setCookies(updatedCookies);
+      await deleteDocument(String(active.id));
+      const updatedDocuments = await readDocuments();
+      setDocuments(updatedDocuments);
       return;
     }
 
-    setCookies((items) => {
+    setDocuments((items) => {
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over?.id);
 
@@ -258,7 +258,7 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
         },
       }));
 
-      updateCookiePositions(updatedItemsWithPositions);
+      updateDocumentPositions(updatedItemsWithPositions);
       return updatedItemsWithPositions;
     });
   };
@@ -270,7 +270,7 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
       {!disableAdd && (
         <Button
           onClick={() => {
-            setNewCookie({ name: "", description: "" });
+            setNewDocument({ name: "", description: "" });
             setIsEditing(false);
             toggleModal();
           }}
@@ -279,7 +279,7 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
           className="mb-4"
         >
           <Plus className="h-4 w-4" />
-          Add Cookie
+          Add Document
         </Button>
       )}
 
@@ -290,16 +290,16 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={cookies.map((a) => a.id)}
+          items={documents.map((a) => a.id)}
           strategy={rectSortingStrategy}
         >
           <div className={gridClasses}>
-            {cookies.map((cookie) => (
-              <SortableCookieCard
-                key={cookie.id}
-                cookie={cookie}
+            {documents.map((document) => (
+              <SortableDocumentCard
+                key={document.id}
+                document={document}
                 onEdit={handleEdit}
-                isDragging={activeId === cookie.id}
+                isDragging={activeId === document.id}
                 disableEdit={disableEdit}
               />
             ))}
@@ -320,10 +320,10 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
                 <input
                   type="text"
                   id="name"
-                  value={newCookie.name}
+                  value={newDocument.name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 border border-gray-200" // Changed background and text color, added border
-                  placeholder="Enter cookie name"
+                  placeholder="Enter document name"
                   required
                 />
               </div>
@@ -334,11 +334,11 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
                 </label>
                 <textarea
                   id="description"
-                  value={newCookie.description}
+                  value={newDocument.description}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 border border-gray-200" // Changed background and text color, added border
                   rows={3}
-                  placeholder="Enter cookie description"
+                  placeholder="Enter document description"
                   required
                 />
               </div>

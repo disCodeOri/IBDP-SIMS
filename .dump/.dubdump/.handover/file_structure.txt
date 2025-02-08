@@ -1,69 +1,23 @@
 ├── kill-dem
-│   ├── components.json
-│   ├── next.config.mjs
-│   ├── package.json
-│   ├── postcss.config.mjs
-│   ├── public
-│   │   ├── audios
-│   │   │   ├── ticking.mp3
 │   ├── src
 │   │   ├── app
-│   │   │   ├── CookieJar
+│   │   │   ├── ContinuousInfoSpaceDocMan
+│   │   │   │   ├── ContinuousInfoSpace
+│   │   │   │   │   ├── page.tsx
 │   │   │   │   ├── page.tsx
-│   │   │   ├── DoubtTracker
-│   │   │   │   ├── page.tsx
-│   │   │   ├── components
-│   │   │   │   ├── Dashboard.tsx
-│   │   │   │   ├── WorkStage.tsx
 │   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── sign-in
+│   │   │   │   ├── [[...sign-in]]
+│   │   │   │   │   ├── page.tsx
 │   │   ├── components
-│   │   │   ├── CookieJar.tsx
-│   │   │   ├── DoubtTracker.tsx
-│   │   │   ├── doubts-tracker
-│   │   │   │   ├── CommentSection.tsx
-│   │   │   │   ├── DoubtCard.tsx
-│   │   │   │   ├── DoubtList.tsx
-│   │   │   │   ├── NewDoubtForm.tsx
-│   │   │   ├── sidebar-07
-│   │   │   │   ├── app-sidebar.tsx
-│   │   │   │   ├── nav-main.tsx
-│   │   │   │   ├── nav-user.tsx
-│   │   │   │   ├── nav-utilities.tsx
-│   │   │   │   ├── space-switcher.tsx
-│   │   │   ├── stage-manager
-│   │   │   │   ├── components
-│   │   │   │   │   ├── Manager
-│   │   │   │   │   │   ├── Manager.tsx
-│   │   │   │   │   │   ├── index.ts
-│   │   │   │   │   │   ├── library.ts
-│   │   │   │   │   ├── Space
-│   │   │   │   │   │   ├── Overlay.module.css
-│   │   │   │   │   │   ├── Overlay.tsx
-│   │   │   │   │   │   ├── Space.module.css
-│   │   │   │   │   │   ├── Space.tsx
-│   │   │   │   │   │   ├── Spaces.tsx
-│   │   │   │   │   │   ├── index.ts
-│   │   │   │   │   │   ├── library.ts
-│   │   │   │   │   ├── Window
-│   │   │   │   │   │   ├── Window.module.css
-│   │   │   │   │   │   ├── Window.tsx
-│   │   │   │   │   │   ├── index.tsx
-│   │   │   │   │   │   ├── library.ts
-│   │   │   │   │   ├── index.ts
-│   │   │   │   ├── contexts.ts
-│   │   │   │   ├── hooks.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── space.ts
+│   │   │   ├── ContinuousInfoSpace
+│   │   │   │   ├── ContinuousInfoSpaceDocMan.tsx
 │   │   │   ├── ui (shadcn components only)
-│   │   ├── data
-│   │   │   ├── cookies.json
-│   │   │   ├── doubts.json
-│   │   │   ├── sidebar.ts
 │   │   ├── lib
-│   │   │   ├── cookies-actions.ts
+│   │   │   ├── continuous-info-space-doc-man-actions.ts
+│   │   │   ├── firebase.ts
 │   │   │   ├── utils.ts
-│   ├── tailwind.config.ts
-│   ├── tsconfig.json
+│   │   ├── middleware.ts
