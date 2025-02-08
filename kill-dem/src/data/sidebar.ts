@@ -138,8 +138,8 @@ export const data = {
       icon: Map,
     },
     {
-      name: "Break Timer",
-      url: "#",
+      name: "Continuous Information Space",
+      url: "/ContinuousInfoSpaceDocMan",
       icon: Frame,
     },
     {
