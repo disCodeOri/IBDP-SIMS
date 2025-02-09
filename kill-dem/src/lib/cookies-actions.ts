@@ -4,13 +4,9 @@
 import { z } from "zod";
 import { db } from "@/lib/firebase"; // Import your firebase db instance
 import {
-  collection,
   doc,
-  getDocs,
+  getDoc,
   setDoc,
-  deleteDoc,
-  query,
-  orderBy,
   updateDoc,
 } from "firebase/firestore";
 import { auth } from "@clerk/nextjs/server"; // Import Clerk auth for user ID
@@ -29,37 +25,44 @@ const CookieSchema = z.object({
 });
 export type Cookie = z.infer<typeof CookieSchema>;
 
+interface CookieJarDocument {
+  cookies: Record<string, Omit<Cookie, 'id'>>;
+}
+
 // --- Firestore Interaction Functions ---
 
-// Function to get the user's cookieJar subcollection reference
-async function getCookieJarCollectionRef() {
-  const authResult = await auth(); // AWAIT the auth() promise
-  const { userId } = authResult;     // Now you can get userId from the resolved object
-
+// Function to get the user's cookieJar document reference
+async function getCookieJarDocRef() {
+  const { userId } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
-  return collection(db, "users", userId, "cookieJar");
+  return doc(db, "users", userId, "cookieJar", "cookies");
 }
 
 // Read cookies from Firestore
 export async function readCookies(): Promise<Cookie[]> {
   try {
-    const cookieJarCollection = await getCookieJarCollectionRef();
-    const cookiesSnapshot = await getDocs(query(cookieJarCollection, orderBy("position.y"), orderBy("position.x"))); // Order by position for consistent display
-    const cookiesList = cookiesSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id, // Document ID as cookie ID
-        name: data.name,
-        description: data.description,
-        position: data.position,
-      } as Cookie; // Type assertion here
+    const cookieJarDocRef = await getCookieJarDocRef();
+    const docSnap = await getDoc(cookieJarDocRef);
+    
+    if (!docSnap.exists()) {
+      return [];
+    }
+
+    const data = docSnap.data() as CookieJarDocument;
+    return Object.entries(data.cookies).map(([id, cookie]) => ({
+      id,
+      ...cookie
+    })).sort((a, b) => {
+      if (a.position?.y === b.position?.y) {
+        return (a.position?.x || 0) - (b.position?.x || 0);
+      }
+      return (a.position?.y || 0) - (b.position?.y || 0);
     });
-    return cookiesList;
   } catch (error) {
     console.error("Error reading cookies from Firestore:", error);
-    return []; // Return empty array in case of error
+    return [];
   }
 }
 
@@ -69,18 +72,24 @@ export async function addCookie(
   gridCols: number = 4,
 ): Promise<void> {
   try {
-    const cookieJarCollection = await getCookieJarCollectionRef();
-    const id = crypto.randomUUID(); // Generate UUID for Firestore document ID
-    const cookieToAdd: Cookie = {
-      ...newCookie,
-      id,
-      position: {
-        x: 0, // Initial position, you might want to calculate this based on existing cookies or default to 0,0 and update later
-        y: 0,
-      },
-    };
-    const cookieDocRef = doc(cookieJarCollection, id); // Use the generated UUID as document ID
-    await setDoc(cookieDocRef, cookieToAdd); // setDoc to create or overwrite document
+    const cookieJarDocRef = await getCookieJarDocRef();
+    const docSnap = await getDoc(cookieJarDocRef);
+    const id = crypto.randomUUID();
+    
+    const existingData = docSnap.exists() 
+      ? (docSnap.data() as CookieJarDocument) 
+      : { cookies: {} };
+
+    await setDoc(cookieJarDocRef, {
+      cookies: {
+        ...existingData.cookies,
+        [id]: {
+          name: newCookie.name,
+          description: newCookie.description,
+          position: { x: 0, y: 0 }
+        }
+      }
+    });
   } catch (error) {
     console.error("Error adding cookie to Firestore:", error);
   }
@@ -89,9 +98,17 @@ export async function addCookie(
 // Delete a cookie from Firestore
 export async function deleteCookie(id: string): Promise<void> {
   try {
-    const cookieJarCollection = await getCookieJarCollectionRef();
-    const cookieDocRef = doc(cookieJarCollection, id);
-    await deleteDoc(cookieDocRef);
+    const cookieJarDocRef = await getCookieJarDocRef();
+    const docSnap = await getDoc(cookieJarDocRef);
+    
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data() as CookieJarDocument;
+    const { [id]: deletedCookie, ...remainingCookies } = data.cookies;
+
+    await setDoc(cookieJarDocRef, {
+      cookies: remainingCookies
+    });
   } catch (error) {
     console.error("Error deleting cookie from Firestore:", error);
   }
@@ -100,13 +117,23 @@ export async function deleteCookie(id: string): Promise<void> {
 // Update a cookie in Firestore
 export async function updateCookie(updatedCookie: Cookie): Promise<void> {
   try {
-    const cookieJarCollection = await getCookieJarCollectionRef();
-    const cookieDocRef = doc(cookieJarCollection, updatedCookie.id);
-    await updateDoc(cookieDocRef, {
-      name: updatedCookie.name,
-      description: updatedCookie.description,
-      position: updatedCookie.position,
-    }); // Update only the fields that might have changed
+    const cookieJarDocRef = await getCookieJarDocRef();
+    const docSnap = await getDoc(cookieJarDocRef);
+    
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data() as CookieJarDocument;
+    
+    await setDoc(cookieJarDocRef, {
+      cookies: {
+        ...data.cookies,
+        [updatedCookie.id]: {
+          name: updatedCookie.name,
+          description: updatedCookie.description,
+          position: updatedCookie.position
+        }
+      }
+    });
   } catch (error) {
     console.error("Error updating cookie in Firestore:", error);
   }
@@ -117,14 +144,26 @@ export async function updateCookiePositions(
   updatedCookies: Cookie[]
 ): Promise<void> {
   try {
-    const cookieJarCollection = await getCookieJarCollectionRef();
-    // Batch updates for efficiency if you have many cookies to update at once
-    const batch = [];
-    for (const cookie of updatedCookies) {
-      const cookieDocRef = doc(cookieJarCollection, cookie.id);
-      batch.push(updateDoc(cookieDocRef, { position: cookie.position })); // Only update position
-    }
-    await Promise.all(batch); // Execute all updates in parallel
+    const cookieJarDocRef = await getCookieJarDocRef();
+    const docSnap = await getDoc(cookieJarDocRef);
+    
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data() as CookieJarDocument;
+    const updatedData = { ...data.cookies };
+
+    updatedCookies.forEach(cookie => {
+      if (updatedData[cookie.id]) {
+        updatedData[cookie.id] = {
+          ...updatedData[cookie.id],
+          position: cookie.position
+        };
+      }
+    });
+
+    await setDoc(cookieJarDocRef, {
+      cookies: updatedData
+    });
   } catch (error) {
     console.error("Error updating cookie positions in Firestore:", error);
   }
