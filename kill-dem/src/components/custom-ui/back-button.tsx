@@ -1,28 +1,47 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
-interface BackButtonProps {
-  className?: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-}
-
-export function BackButton({ 
-  className = "flex items-center gap-2",
-  variant = "ghost" 
-}: BackButtonProps) {
+export function BackButton() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const getParentPath = (path: string) => {
+    const segments = path.split('/').filter(Boolean);
+    const parentSegments = segments.slice(0, -1);
+    return parentSegments.length ? `/${parentSegments.join('/')}` : '/';
+  };
+
+  const checkPageExists = async (path: string): Promise<boolean> => {
+    try {
+      const response = await fetch(path);
+      return response.status !== 404;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const findValidParentPath = async (currentPath: string): Promise<string> => {
+    if (currentPath === '/') return '/';
+
+    const exists = await checkPageExists(currentPath);
+    if (exists) return currentPath;
+
+    const parentPath = getParentPath(currentPath);
+    return findValidParentPath(parentPath);
+  };
+
+  const handleBack = async () => {
+    const initialParentPath = getParentPath(pathname);
+    const validPath = await findValidParentPath(initialParentPath);
+    router.push(validPath);
+  };
 
   return (
-    <Button
-      variant={variant}
-      size="sm"
-      onClick={() => router.back()}
-      className={className}
-    >
+    <Button variant="ghost" onClick={handleBack}>
       <ArrowLeft className="h-4 w-4" />
       Back
     </Button>
