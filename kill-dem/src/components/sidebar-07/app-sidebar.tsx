@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { useTheme } from "next-themes"
-import { NavMain } from "@/components/sidebar-07/nav-main"
 import { NavUtilities } from "@/components/sidebar-07/nav-utilities"
 import {
   Sidebar,
@@ -54,7 +53,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       {/* Rest of your existing code */}
       <SidebarContent>
-        <NavMain items={data.navMain} />
         <NavUtilities utilities={data.utilities} />
       </SidebarContent>
 
