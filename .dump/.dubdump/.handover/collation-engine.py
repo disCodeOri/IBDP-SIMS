@@ -162,6 +162,7 @@ class FileProcessorGUI:
         ttk.Button(buttons_frame, text="Generate Both", command=lambda: self.generate('both')).pack(side="left", padx=5)
         ttk.Button(buttons_frame, text="Structure Only", command=lambda: self.generate('structure')).pack(side="left", padx=5)
         ttk.Button(buttons_frame, text="Content Only", command=lambda: self.generate('content')).pack(side="left", padx=5)
+        ttk.Button(buttons_frame, text="Line Counts", command=lambda: self.generate('counts')).pack(side="left", padx=5)
         
         # Output log
         log_frame = ttk.LabelFrame(right_frame, text="Output Log", padding="5")
@@ -319,91 +320,113 @@ class FileProcessorGUI:
 
     def combine_files(self, source_dir, output_file):
         """
-        Enhanced version that properly handles files from different folders and removes comments if enabled
+        Enhanced version that properly handles files from different folders, removes comments if enabled,
+        and returns line counts for each processed file.
         """
         selected_files = self.checkbox_tree.get_selected()
-        
+        line_counts = {}  # Dictionary to store line counts for each file
+
         with open(output_file, 'w', encoding='utf-8') as f:
-            #f.write(f"Combined files content generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             if self.remove_comments_var.get():
                 f.write("Comments have been removed from the source files")
             f.write("\n")
-            
-            # Sort files by directory depth to maintain a logical order
+
             selected_files.sort(key=lambda x: x.count(os.sep))
-            
             current_dir = None
+
             for relative_path in selected_files:
-                # Skip directory entries
                 if relative_path.startswith('[') and relative_path.endswith(']'):
                     continue
 
-                # Construct full file path and add it to output
                 file_path = os.path.join(source_dir, relative_path)
-                
-                # Ignore specific files
                 if os.path.basename(file_path) in self.files_to_ignore:
                     continue
-                
-                # Get the directory path for the current file
+
                 dir_path = os.path.dirname(relative_path)
-                
-                # If we're entering a new directory, add a header
                 if dir_path != current_dir:
                     if dir_path:
-                        f.write(f"\n{'='*11}\n")
-                        f.write(f"Directory: {dir_path}\n")
-                        f.write(f"{'='*11}\n\n")
+                        f.write(f"\n{'='*11}\nDirectory: {dir_path}\n{'='*11}\n\n")
                     current_dir = dir_path
 
-                f.write(f"File: {relative_path}\n")  # Changed to show relative path
-                f.write(f"{'-'*20}\n\n")
-                
+                f.write(f"File: {relative_path}\n{'-'*20}\n\n")
+
                 try:
-                    if os.path.getsize(file_path) > 1024 * 1024:  # Skip files larger than 1MB
+                    if os.path.getsize(file_path) > 1024 * 1024:
                         f.write("File too large to include in combined output\n")
+                        line_counts[relative_path] = 0
                     else:
                         try:
                             with open(file_path, 'r', encoding='utf-8') as infile:
                                 content = infile.read()
                                 if self.remove_comments_var.get():
                                     content = self.remove_comments(content, os.path.splitext(file_path)[1])
+                                line_count = len(content.split('\n'))
+                                line_counts[relative_path] = line_count
                                 f.write(content)
                         except UnicodeDecodeError:
-                            # Try with different encoding if UTF-8 fails
                             with open(file_path, 'r', encoding='latin-1') as infile:
                                 content = infile.read()
                                 if self.remove_comments_var.get():
                                     content = self.remove_comments(content, os.path.splitext(file_path)[1])
+                                line_count = len(content.split('\n'))
+                                line_counts[relative_path] = line_count
                                 f.write(content)
+                        except Exception as e:
+                            f.write(f"Error reading file: {str(e)}\n")
+                            line_counts[relative_path] = 0
                 except Exception as e:
                     f.write(f"Error reading file: {str(e)}\n")
+                    line_counts[relative_path] = 0
+
                 f.write("\n\n")
+
+        return line_counts
+
+    def generate_line_counts_file(self, line_counts):
+        """Generates a file with total lines and per-file counts."""
+        total_lines = sum(line_counts.values())
+        counts_file = os.path.join(self.script_dir, 'line_counts.txt')
+        with open(counts_file, 'w', encoding='utf-8') as f:
+            f.write(f"Total lines of code: {total_lines}\n\n")
+            f.write("Line counts per file:\n")
+            for file_path, count in line_counts.items():
+                f.write(f"{file_path}: {count}\n")
+        self.log_message(f"Generated line counts file: {counts_file}")
 
     def generate(self, mode='both'):
         folder = self.folder_path.get()
         if not folder:
             self.log_message("Please select a folder first!")
             return
-            
+
         ignore_patterns = self.get_ignore_patterns()
-        
+
         def process():
             try:
-                if mode in ['both', 'structure']:
-                    structure_file = os.path.join(self.script_dir, 'file_structure.txt')
-                    self.generate_tree(folder, structure_file, ignore_patterns)
-                    self.log_message(f"Generated structure file: {structure_file}")
-                    
-                if mode in ['both', 'content']:
-                    content_file = os.path.join(self.script_dir, 'combined_output.txt')
-                    self.combine_files(folder, content_file)
-                    self.log_message(f"Generated content file: {content_file}")
+                if mode == 'counts':
+                    # Only generate line counts
+                    content_file = os.path.join(self.script_dir, 'combined_output_temp.txt')
+                    line_counts = self.combine_files(folder, content_file)
+                    self.generate_line_counts_file(line_counts)
+                    # Remove temporary file
+                    if os.path.exists(content_file):
+                        os.remove(content_file)
+                else:
+                    if mode in ['both', 'structure']:
+                        structure_file = os.path.join(self.script_dir, 'file_structure.txt')
+                        self.generate_tree(folder, structure_file, ignore_patterns)
+                        self.log_message(f"Generated structure file: {structure_file}")
+
+                    if mode in ['both', 'content']:
+                        content_file = os.path.join(self.script_dir, 'combined_output.txt')
+                        line_counts = self.combine_files(folder, content_file)
+                        self.log_message(f"Generated content file: {content_file}")
+                        self.generate_line_counts_file(line_counts)
             except Exception as e:
                 self.log_message(f"Error: {str(e)}")
-                
+
         threading.Thread(target=process, daemon=True).start()
-        
+
     def run(self):
         self.root.mainloop()
 

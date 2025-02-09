@@ -1,10 +1,29 @@
-├── kill-dem
+├── ibdp-sims-app
+│   ├── .env.local
+│   ├── components.json
+│   ├── next-env.d.ts
+│   ├── next.config.mjs
+│   ├── package.json
+│   ├── postcss.config.mjs
 │   ├── src
 │   │   ├── app
 │   │   │   ├── ContinuousInfoSpaceDocMan
 │   │   │   │   ├── ContinuousInfoSpace
-│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   ├── [notebookId]
+│   │   │   │   │   │   ├── page.tsx
 │   │   │   │   ├── page.tsx
+│   │   │   ├── CookieJar
+│   │   │   │   ├── page.tsx
+│   │   │   ├── CuriositySpace
+│   │   │   │   ├── page.tsx
+│   │   │   ├── DoubtTracker
+│   │   │   │   ├── page.tsx
+│   │   │   ├── ToDoList
+│   │   │   │   ├── page.tsx
+│   │   │   ├── components
+│   │   │   │   ├── Dashboard.tsx
+│   │   │   │   ├── SpaceDeleteAlertDialog.tsx
+│   │   │   │   ├── WorkStage.tsx
 │   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── layout.tsx
@@ -12,12 +31,65 @@
 │   │   │   ├── sign-in
 │   │   │   │   ├── [[...sign-in]]
 │   │   │   │   │   ├── page.tsx
+│   │   │   ├── stage-manager
+│   │   │   │   ├── page.tsx
 │   │   ├── components
 │   │   │   ├── ContinuousInfoSpace
 │   │   │   │   ├── ContinuousInfoSpaceDocMan.tsx
+│   │   │   ├── CookieJar.tsx
+│   │   │   ├── DoubtTracker.tsx
+│   │   │   ├── IdeaTracker.tsx
+│   │   │   ├── ToDoList.tsx
+│   │   │   ├── curiosity-space
+│   │   │   │   ├── CommentSection.tsx
+│   │   │   │   ├── IdeaCard.tsx
+│   │   │   │   ├── IdeaList.tsx
+│   │   │   │   ├── NewIdeaForm.tsx
+│   │   │   ├── custom-ui
+│   │   │   │   ├── back-button.tsx
+│   │   │   ├── doubts-tracker
+│   │   │   │   ├── CommentSection.tsx
+│   │   │   │   ├── DoubtCard.tsx
+│   │   │   │   ├── DoubtList.tsx
+│   │   │   │   ├── NewDoubtForm.tsx
+│   │   │   ├── sidebar-07
+│   │   │   │   ├── app-sidebar.tsx
+│   │   │   │   ├── nav-utilities.tsx
+│   │   │   ├── stage-manager
+│   │   │   │   ├── components
+│   │   │   │   │   ├── Manager
+│   │   │   │   │   │   ├── Manager.tsx
+│   │   │   │   │   │   ├── index.ts
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── Space
+│   │   │   │   │   │   ├── Overlay.module.css
+│   │   │   │   │   │   ├── Overlay.tsx
+│   │   │   │   │   │   ├── Space.module.css
+│   │   │   │   │   │   ├── Space.tsx
+│   │   │   │   │   │   ├── Spaces.tsx
+│   │   │   │   │   │   ├── index.ts
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── Window
+│   │   │   │   │   │   ├── Window.module.css
+│   │   │   │   │   │   ├── Window.tsx
+│   │   │   │   │   │   ├── index.tsx
+│   │   │   │   │   │   ├── library.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   ├── contexts.ts
+│   │   │   │   ├── hooks.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── space.ts
 │   │   │   ├── ui (shadcn components only)
+│   │   ├── data
+│   │   │   ├── sidebar.ts
+│   │   ├── hooks
+│   │   │   ├── use-mobile.tsx
+│   │   │   ├── use-toast.ts
 │   │   ├── lib
 │   │   │   ├── continuous-info-space-doc-man-actions.ts
+│   │   │   ├── cookies-actions.ts
 │   │   │   ├── firebase.ts
 │   │   │   ├── utils.ts
 │   │   ├── middleware.ts
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
