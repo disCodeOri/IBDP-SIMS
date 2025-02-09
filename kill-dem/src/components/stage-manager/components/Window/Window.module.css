@@ -178,6 +178,15 @@
     justify-content: center;
 }
 
+/* Add this near the Content styles */
+.Content [contenteditable].empty-content:before {
+    content: attr(data-placeholder);
+    color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
+    cursor: text;
+    position: absolute;
+}
+
 .Content_fluid {
     position: absolute;
     left: 0px;

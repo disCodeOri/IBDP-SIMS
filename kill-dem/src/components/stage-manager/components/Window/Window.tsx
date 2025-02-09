@@ -916,6 +916,9 @@ interface BasicWindowProps extends React.HTMLAttributes<HTMLDivElement> {
   initialPosition?: [number, number] | 'random' | 'auto',
   opened?: boolean,
   onClose?: () => void | undefined
+  onTitleChange?: (newTitle: string) => void
+  content?: string;
+  onContentChange?: (content: string) => void;
 }
 
 /**
@@ -924,49 +927,89 @@ interface BasicWindowProps extends React.HTMLAttributes<HTMLDivElement> {
  * You can use this component for simpler things, but if you need to have your own states for size and position, you should use Window component.
  */
 function BasicWindow({
-  children = null,
   title = 'Window',
+  content = '',  // Changed to empty string by default
   initialSize = [500, 400],
   initialPosition = 'auto',
-  opened = true,
+  onTitleChange,
+  onContentChange,
   onClose,
   ...attrs
 }: BasicWindowProps) {
-  const [position, setPosition] = usePosition(initialPosition)
-  const [size, setSize] = useState(initialSize)
-  const [openedState, setOpenedState] = useState(opened)
-  const [staged, setStaged] = useState(false)
-  const [spaceId,] = useSpaceId()
+  const [position, setPosition] = usePosition(initialPosition);
+  const [size, setSize] = useState(initialSize);
+  const [spaceId] = useSpaceId();
+  const [currentTitle, setCurrentTitle] = useState(title);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(!content);
 
-  useEffect(() => setOpenedState(opened), [opened])
+  // Handle title changes
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setCurrentTitle(newTitle);
+    onTitleChange?.(newTitle);
+  };
 
-  return <>
-    {openedState ? <Window
+  // Handle content changes
+  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
+    if (!contentRef.current) return;
+    const newContent = contentRef.current.innerText;
+    setIsEmpty(!newContent.trim());
+    onContentChange?.(newContent);
+  };
+
+  // Sync props with state
+  useEffect(() => {
+    setCurrentTitle(title);
+  }, [title]);
+
+  // Only update content from props when not editing
+  useEffect(() => {
+    if (contentRef.current && !isEditing) {
+      contentRef.current.innerText = content;
+      setIsEmpty(!content.trim());
+    }
+  }, [content, isEditing]);
+
+  return (
+    <Window
       spaceId={spaceId}
-      staged={staged}
       position={position}
       size={size}
       onPositionChange={setPosition}
       onSizeChange={setSize}
-      onStagedChange={setStaged}
-      className={typeof attrs.className !== 'undefined' ? attrs.className : ''}
       style={attrs.style}
+      onStagedChange={() => {}}
     >
       <TitleBar onMove={setPosition}>
         <Buttons>
-          <CloseButton onClick={() => {
-            setOpenedState(false)
-            onClose && onClose()
-          }} />
-          <StageButton onClick={() => setStaged(true)} />
+          <CloseButton onClick={onClose} />
+          <StageButton onClick={() => {}} />
         </Buttons>
-        <Title>{title}</Title>
+        <Title>
+          <input
+            type="text"
+            value={currentTitle}
+            onChange={handleTitleChange}
+            className="outline-none bg-transparent font-bold w-full"
+          />
+        </Title>
       </TitleBar>
       <Content>
-        {children}
+      <div
+        ref={contentRef}
+        contentEditable
+        className={`p-4 min-h-full outline-none ${isEmpty ? styles['empty-content'] : ''}`}
+        onInput={handleContentChange}
+        onFocus={() => setIsEditing(true)}
+        onBlur={() => setIsEditing(false)}
+        suppressContentEditableWarning={true}
+        data-placeholder="Start typing..."
+      />
       </Content>
-    </Window>: null}
-  </>
+    </Window>
+  );
 }
 
 export { Window, BasicWindow, TitleBar, Title, Buttons, CloseButton, StageButton, Content }
