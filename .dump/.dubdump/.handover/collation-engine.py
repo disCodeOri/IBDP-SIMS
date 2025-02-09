@@ -318,13 +318,98 @@ class FileProcessorGUI:
         lines = [line.rstrip() for line in lines if line.strip()]
         return '\n'.join(lines)
 
+    def count_non_comment_lines(self, content, file_extension):
+        """
+        Count lines of code excluding comments and empty lines
+        """
+        # Define comment patterns for different languages
+        patterns = {
+            '.py': {
+                'single': r'#.*$',
+                'multi_start': r'("""|\'\'\').*$',
+                'multi_end': r'^.*?("""|\'\'\').*$',
+                'inline_multi': True
+            },
+            '.js': {
+                'single': r'//.*$',
+                'multi_start': r'/\*.*$',
+                'multi_end': r'^.*?\*/.*$',
+                'inline_multi': True
+            },
+            '.ts': {
+                'single': r'//.*$',
+                'multi_start': r'/\*.*$',
+                'multi_end': r'^.*?\*/.*$',
+                'inline_multi': True
+            },
+            '.tsx': {
+                'single': r'//.*$',
+                'multi_start': r'/\*.*$',
+                'multi_end': r'^.*?\*/.*$',
+                'inline_multi': True
+            },
+            '.jsx': {
+                'single': r'//.*$',
+                'multi_start': r'/\*.*$',
+                'multi_end': r'^.*?\*/.*$',
+                'inline_multi': True
+            },
+            '.html': {
+                'single': None,
+                'multi_start': r'<!--.*$',
+                'multi_end': r'^.*?-->.*$',
+                'inline_multi': True
+            },
+            '.css': {
+                'single': None,
+                'multi_start': r'/\*.*$',
+                'multi_end': r'^.*?\*/.*$',
+                'inline_multi': True
+            }
+        }
+
+        ext = os.path.splitext(file_extension.lower())[0] + os.path.splitext(file_extension.lower())[1]
+        pattern = patterns.get(ext, patterns['.js'])  # Default to JavaScript patterns
+
+        lines = content.split('\n')
+        non_comment_lines = 0
+        in_multi_comment = False
+
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines
+            if not line:
+                continue
+
+            # Handle multi-line comments
+            if pattern['multi_start'] and re.search(pattern['multi_start'], line):
+                in_multi_comment = True
+                # Check if multi-line comment ends on the same line
+                if pattern['multi_end'] and re.search(pattern['multi_end'], line):
+                    in_multi_comment = False
+                continue
+
+            if in_multi_comment:
+                if pattern['multi_end'] and re.search(pattern['multi_end'], line):
+                    in_multi_comment = False
+                continue
+
+            # Handle single-line comments
+            if pattern['single'] and re.match(pattern['single'], line.lstrip()):
+                continue
+
+            # If we get here, it's a line of code
+            non_comment_lines += 1
+
+        return non_comment_lines
+
     def combine_files(self, source_dir, output_file):
         """
-        Enhanced version that properly handles files from different folders, removes comments if enabled,
-        and returns line counts for each processed file.
+        Modified version that counts non-comment lines
         """
         selected_files = self.checkbox_tree.get_selected()
-        line_counts = {}  # Dictionary to store line counts for each file
+        line_counts = {}
 
         with open(output_file, 'w', encoding='utf-8') as f:
             if self.remove_comments_var.get():
@@ -358,22 +443,18 @@ class FileProcessorGUI:
                         try:
                             with open(file_path, 'r', encoding='utf-8') as infile:
                                 content = infile.read()
+                                # Count non-comment lines before potentially removing comments
+                                line_counts[relative_path] = self.count_non_comment_lines(content, os.path.splitext(file_path)[1])
                                 if self.remove_comments_var.get():
                                     content = self.remove_comments(content, os.path.splitext(file_path)[1])
-                                line_count = len(content.split('\n'))
-                                line_counts[relative_path] = line_count
                                 f.write(content)
                         except UnicodeDecodeError:
                             with open(file_path, 'r', encoding='latin-1') as infile:
                                 content = infile.read()
+                                line_counts[relative_path] = self.count_non_comment_lines(content, os.path.splitext(file_path)[1])
                                 if self.remove_comments_var.get():
                                     content = self.remove_comments(content, os.path.splitext(file_path)[1])
-                                line_count = len(content.split('\n'))
-                                line_counts[relative_path] = line_count
                                 f.write(content)
-                        except Exception as e:
-                            f.write(f"Error reading file: {str(e)}\n")
-                            line_counts[relative_path] = 0
                 except Exception as e:
                     f.write(f"Error reading file: {str(e)}\n")
                     line_counts[relative_path] = 0
