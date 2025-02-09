@@ -4,11 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { BackButton } from "@/components/custom-ui/back-button";
 import { getNotebook, updateNotebook } from "@/lib/continuous-info-space-doc-man-actions";
-import { Archive, Plus, X, ArrowLeft } from "lucide-react";
+import { Archive, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import {
   Sheet,
   SheetContent,
