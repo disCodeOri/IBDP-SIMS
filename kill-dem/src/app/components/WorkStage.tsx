@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Manager, Space, Spaces, BasicWindow } from "@/components/stage-manager";
 import { Button } from "@/components/ui/button"
-import { SpaceDeleteAlertDialog } from './SpaceDeleteAlertDialog';
+import { SpaceDeleteToast } from './SpaceDeleteAlertToast';
 
 export default function WorkStage() {
   const [spaces, setSpaces] = useState([0]); // Start with one space
@@ -26,7 +26,7 @@ export default function WorkStage() {
       <div className="mb-4 flex gap-2">
         <Button onClick={addSpace}>Create New Space</Button>
         {spaces.length > 1 && (
-          <SpaceDeleteAlertDialog
+          <SpaceDeleteToast
             spaceId={currentSpace}
             onSpaceDelete={deleteSpace}
           />
