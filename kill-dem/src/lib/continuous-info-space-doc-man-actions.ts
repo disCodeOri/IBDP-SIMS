@@ -31,16 +31,22 @@ export async function readNotebooks(): Promise<notebook[]> {
     
     return snapshot.docs.map(doc => {
       const data = doc.data();
+      // Add null checks and default values
+      if (!data.title || !data.createdAt || !data.userId) {
+        console.warn(`Notebook ${doc.id} is missing required fields:`, data);
+        return null;
+      }
+      
       return NotebookSchema.parse({
         id: doc.id,
         title: data.title,
-        description: data.description,
-        createdAt: data.createdAt?.toDate(),
-        updatedAt: data.updatedAt?.toDate(),
+        description: data.description || '',  // Provide default empty string
+        createdAt: data.createdAt?.toDate() || new Date(),  // Provide current date as fallback
+        updatedAt: data.updatedAt?.toDate() || new Date(),  // Provide current date as fallback
         userId: data.userId,
         sections: data.sections || []
       });
-    });
+    }).filter(notebook => notebook !== null) as notebook[]; // Filter out invalid notebooks
   } catch (error) {
     console.error("Error reading notebooks:", error);
     return [];
