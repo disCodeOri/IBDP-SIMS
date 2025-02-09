@@ -27,7 +27,9 @@ export default function Dashboard() {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel>
-            <ToDoList hideBackButton={true} isDashboard={true} />
+            <ScrollArea className="h-full w-full rounded-xl bg-muted/50">
+              <ToDoList hideBackButton={true} isDashboard={true} />
+            </ScrollArea>
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
