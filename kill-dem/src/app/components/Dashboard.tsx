@@ -5,6 +5,8 @@ import {
 } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Cookies from "@/components/CookieJar";
+import DocumentJar from "@/components/ContinuousInfoSpace/ContinuousInfoSpaceDocMan";
+import ToDoList from "@/components/ToDoList";
 
 export default function Dashboard() {
   return (
@@ -24,9 +26,9 @@ export default function Dashboard() {
             </ScrollArea>
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel>Two</ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel>Three</ResizablePanel>
+          <ResizablePanel>
+            <ToDoList hideBackButton={true} isDashboard={true} />
+          </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
       <ResizableHandle />
@@ -35,7 +37,7 @@ export default function Dashboard() {
           direction="horizontal"
           className="rounded-lg border"
         >
-          <ResizablePanel>Four</ResizablePanel>
+          <ResizablePanel><DocumentJar /></ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
     </ResizablePanelGroup>

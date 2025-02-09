@@ -67,6 +67,12 @@ interface DragData {
   subtaskId?: string;
 }
 
+// Add a new prop to control back button visibility
+interface ToDoListProps {
+  hideBackButton?: boolean;
+  isDashboard?: boolean;  // Add this new prop
+}
+
 // ─── DRAGGABLE / DROPPABLE COMPONENTS ──────────────────────────────────────────
 
 // Columns
@@ -228,7 +234,8 @@ const DroppableSubtaskContainer = ({
 
 // ─── THE MAIN COMPONENT ─────────────────────────────────────────────────────────
 
-const ToDoList = () => {
+// Update the component definition to accept props
+const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps) => {
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();
@@ -998,9 +1005,9 @@ const ToDoList = () => {
   // ─── RENDERING ─────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full"> {/* Changed from h-screen to h-full */}
       <header className="flex items-center justify-between p-4 border-b">
-        <BackButton />
+        {!hideBackButton && <BackButton />}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -1022,7 +1029,7 @@ const ToDoList = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="max-w-none bg-white min-h-screen pb-20">
+        <div className={`max-w-none bg-white flex-1 relative ${isDashboard ? 'pb-24' : 'pb-20'}`}>
           {sections.map((section) => (
             <div
               key={section.id}
@@ -1263,10 +1270,15 @@ const ToDoList = () => {
               </div>
             ) : null}
           </DragOverlay>
+          
           <Button
             variant="outline"
             size="lg"
-            className="fixed bottom-8 left-1/2 transform -translate-x-1/2"
+            className={`${
+              isDashboard 
+                ? 'absolute bottom-4 left-1/2 transform -translate-x-1/2' 
+                : 'fixed bottom-8 left-1/2 transform -translate-x-1/2'
+            }`}
             onClick={addSection}
           >
             <Plus className="h-4 w-4 mr-2" />
