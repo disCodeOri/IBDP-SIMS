@@ -10,10 +10,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,7 +27,12 @@ import {
   notebook,
 } from "@/lib/continuous-info-space-doc-man-actions";
 
-function NotebookCard({ notebook, onDelete, onOpen, onPreview }: {
+function NotebookCard({
+  notebook,
+  onDelete,
+  onOpen,
+  onPreview,
+}: {
   notebook: notebook;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
@@ -41,7 +43,9 @@ function NotebookCard({ notebook, onDelete, onOpen, onPreview }: {
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-2">
           <Notebook className="h-5 w-5 text-blue-600" />
-          <h3 className="text-gray-800 font-semibold text-lg">{notebook.title}</h3>
+          <h3 className="text-gray-800 font-semibold text-lg">
+            {notebook.title}
+          </h3>
         </div>
         <p className="text-gray-600 text-sm line-clamp-3 mb-4">
           {notebook.description || "No description"}
@@ -50,7 +54,7 @@ function NotebookCard({ notebook, onDelete, onOpen, onPreview }: {
           Last modified: {new Date(notebook.updatedAt).toLocaleDateString()}
         </div>
       </div>
-      
+
       <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
           variant="ghost"
@@ -86,7 +90,9 @@ export default function NotebookManager() {
   const [notebooks, setNotebooks] = useState<notebook[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [selectedNotebook, setSelectedNotebook] = useState<notebook | null>(null);
+  const [selectedNotebook, setSelectedNotebook] = useState<notebook | null>(
+    null
+  );
   const [newNotebook, setNewNotebook] = useState({
     title: "",
     description: "",
@@ -120,10 +126,12 @@ export default function NotebookManager() {
         title: newNotebook.title,
         description: newNotebook.description,
       });
-      
+
       setIsModalOpen(false);
       setNewNotebook({ title: "", description: "" });
-      router.push(`/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${createdNotebook.id}`);
+      router.push(
+        `/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${createdNotebook.id}`
+      );
     } catch (error) {
       console.error("Failed to create notebook:", error);
     }
@@ -132,7 +140,7 @@ export default function NotebookManager() {
   const handleDeleteNotebook = async (id: string) => {
     try {
       await deleteNotebook(id);
-      setNotebooks(prev => prev.filter(n => n.id !== id));
+      setNotebooks((prev) => prev.filter((n) => n.id !== id));
     } catch (error) {
       console.error("Failed to delete notebook:", error);
     }
@@ -151,12 +159,16 @@ export default function NotebookManager() {
       <DndContext sensors={sensors} collisionDetection={closestCenter}>
         <SortableContext items={notebooks} strategy={rectSortingStrategy}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {notebooks.map(notebook => (
+            {notebooks.map((notebook) => (
               <NotebookCard
                 key={notebook.id}
                 notebook={notebook}
                 onDelete={handleDeleteNotebook}
-                onOpen={(id) => router.push(`/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${id}`)}
+                onOpen={(id) =>
+                  router.push(
+                    `/ContinuousInfoSpaceDocMan/ContinuousInfoSpace/${id}`
+                  )
+                }
                 onPreview={handlePreview}
               />
             ))}
@@ -170,14 +182,14 @@ export default function NotebookManager() {
             <h2 className="text-xl font-semibold mb-4">Create New Notebook</h2>
             <form onSubmit={handleCreateNotebook}>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Title
-                </label>
+                <label className="block text-sm font-medium mb-2">Title</label>
                 <input
                   required
                   type="text"
                   value={newNotebook.title}
-                  onChange={(e) => setNewNotebook({...newNotebook, title: e.target.value})}
+                  onChange={(e) =>
+                    setNewNotebook({ ...newNotebook, title: e.target.value })
+                  }
                   className="w-full px-4 py-2 rounded-md border focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -187,7 +199,12 @@ export default function NotebookManager() {
                 </label>
                 <textarea
                   value={newNotebook.description}
-                  onChange={(e) => setNewNotebook({...newNotebook, description: e.target.value})}
+                  onChange={(e) =>
+                    setNewNotebook({
+                      ...newNotebook,
+                      description: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 rounded-md border focus:ring-2 focus:ring-blue-500"
                   rows={3}
                 />
@@ -200,56 +217,64 @@ export default function NotebookManager() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
-                  Create Notebook
-                </Button>
+                <Button type="submit">Create Notebook</Button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-  <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-    <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
-      <DialogHeader className="flex-none border-b pb-4">
-        <DialogTitle>{selectedNotebook?.title}</DialogTitle>
-      </DialogHeader>
-      <div className="flex-1 overflow-auto">
-        <div className="space-y-4 p-6">
-          {selectedNotebook?.sections?.map((section: any, index: number) => (
-            <div key={section.id || index} className="border rounded-lg p-4">
-              <h3 className="font-medium text-lg mb-3">{section.title}</h3>
-              <div className="flex gap-4">
-                {section.columns?.map((column: any, colIndex: number) => (
-                  <div 
-                    key={column.id || colIndex}
-                    className="flex-none w-72 bg-gray-50 rounded-lg p-3"
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+          <DialogHeader className="flex-none border-b pb-4">
+            <DialogTitle>{selectedNotebook?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto">
+            <div className="space-y-4 p-6">
+              {selectedNotebook?.sections?.map(
+                (section: any, index: number) => (
+                  <div
+                    key={section.id || index}
+                    className="border rounded-lg p-4"
                   >
-                    <h4 className="font-medium mb-2">{column.title}</h4>
-                    <div className="space-y-2">
-                      {column.notes?.map((note: any, noteIndex: number) => (
-                        <div 
-                          key={note.id || noteIndex}
-                          className="bg-white p-2 rounded border"
+                    <h3 className="font-medium text-lg mb-3">
+                      {section.title}
+                    </h3>
+                    <div className="flex gap-4">
+                      {section.columns?.map((column: any, colIndex: number) => (
+                        <div
+                          key={column.id || colIndex}
+                          className="flex-none w-72 bg-gray-50 rounded-lg p-3"
                         >
-                          {note.content}
+                          <h4 className="font-medium mb-2">{column.title}</h4>
+                          <div className="space-y-2">
+                            {column.notes?.map(
+                              (note: any, noteIndex: number) => (
+                                <div
+                                  key={note.id || noteIndex}
+                                  className="bg-white p-2 rounded border"
+                                >
+                                  {note.content}
+                                </div>
+                              )
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                )
+              )}
+              {(!selectedNotebook?.sections ||
+                selectedNotebook.sections.length === 0) && (
+                <p className="text-gray-500 text-center py-8">
+                  This notebook is empty
+                </p>
+              )}
             </div>
-          ))}
-          {(!selectedNotebook?.sections || selectedNotebook.sections.length === 0) && (
-            <p className="text-gray-500 text-center py-8">
-              This notebook is empty
-            </p>
-          )}
-        </div>
-      </div>
-    </DialogContent>
-  </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

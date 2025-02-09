@@ -10,9 +10,9 @@ export function BackButton() {
   const pathname = usePathname();
 
   const getParentPath = (path: string) => {
-    const segments = path.split('/').filter(Boolean);
+    const segments = path.split("/").filter(Boolean);
     const parentSegments = segments.slice(0, -1);
-    return parentSegments.length ? `/${parentSegments.join('/')}` : '/';
+    return parentSegments.length ? `/${parentSegments.join("/")}` : "/";
   };
 
   const checkPageExists = async (path: string): Promise<boolean> => {
@@ -25,7 +25,7 @@ export function BackButton() {
   };
 
   const findValidParentPath = async (currentPath: string): Promise<string> => {
-    if (currentPath === '/') return '/';
+    if (currentPath === "/") return "/";
 
     const exists = await checkPageExists(currentPath);
     if (exists) return currentPath;

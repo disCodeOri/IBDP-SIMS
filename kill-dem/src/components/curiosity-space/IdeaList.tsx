@@ -1,5 +1,5 @@
-import React from 'react';
-import IdeaCard from './IdeaCard';
+import React from "react";
+import IdeaCard from "./IdeaCard";
 
 interface Comment {
   id: string;
@@ -24,7 +24,11 @@ interface IdeaListProps {
   onReopen: (id: string) => void;
   onUpvote: (id: string) => void;
   onDownvote: (id: string) => void;
-  onAddComment: (ideaId: string, commentText: string, parentCommentId?: string) => void;
+  onAddComment: (
+    ideaId: string,
+    commentText: string,
+    parentCommentId?: string
+  ) => void;
   onEditIdea: (id: string, title: string, description: string) => void;
   onEditComment: (ideaId: string, commentId: string, newText: string) => void;
   onDeleteComment: (ideaId: string, commentId: string) => void;
@@ -43,11 +47,12 @@ export default function IdeaList({
   onEditComment,
   onDeleteComment,
   onEditSolution,
-  onDeleteIdea
+  onDeleteIdea,
 }: IdeaListProps) {
   const sortedIdeas = [...ideas].sort(
     (a, b) =>
-      (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes) || Number(b.id) - Number(a.id)
+      b.upvotes - b.downvotes - (a.upvotes - a.downvotes) ||
+      Number(b.id) - Number(a.id)
   );
 
   return (

@@ -13,7 +13,7 @@ export default function Dashboard() {
     <ResizablePanelGroup
       direction="vertical"
       className="rounded-lg border"
-      style={{ width: '1600px' }}
+      style={{ width: "1600px" }}
     >
       <ResizablePanel minSize={30}>
         <ResizablePanelGroup
@@ -39,7 +39,9 @@ export default function Dashboard() {
           direction="horizontal"
           className="rounded-lg border"
         >
-          <ResizablePanel><DocumentJar /></ResizablePanel>
+          <ResizablePanel>
+            <DocumentJar />
+          </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
     </ResizablePanelGroup>

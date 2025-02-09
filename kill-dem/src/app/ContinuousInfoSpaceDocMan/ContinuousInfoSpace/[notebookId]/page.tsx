@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { BackButton } from "@/components/custom-ui/back-button";
-import { getNotebook, updateNotebook } from "@/lib/continuous-info-space-doc-man-actions";
+import {
+  getNotebook,
+  updateNotebook,
+} from "@/lib/continuous-info-space-doc-man-actions";
 import { Archive, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
@@ -134,7 +137,7 @@ const DraggableNote = ({
     id: note.id,
     data: {
       type: "note",
-      noteId: note.id
+      noteId: note.id,
     },
   });
 
@@ -150,7 +153,7 @@ const DraggableNote = ({
       style={style}
       {...listeners}
       {...attributes}
-      className="bg-[#fff9e6] rounded-lg p-4 cursor-move group" // Added group for hover effects
+      className="bg-[#fff9e6] rounded-lg p-4 cursor-move group"
     >
       {children}
     </div>
@@ -309,7 +312,7 @@ const TodoListInterface = () => {
     );
   };
 
-    const moveNote = (
+  const moveNote = (
     fromSectionId: string,
     fromColumnId: string,
     toSectionId: string,
@@ -321,16 +324,16 @@ const TodoListInterface = () => {
       .find((s) => s.id === fromSectionId)
       ?.columns.find((c) => c.id === fromColumnId)
       ?.notes.find((n) => n.id === noteId);
-  
+
     if (!noteToMove) return; // Exit if note not found
-  
+
     setSections(
       sections.map((section) => {
         // If this is not the source or target section, return unchanged
         if (section.id !== fromSectionId && section.id !== toSectionId) {
           return section;
         }
-  
+
         // Handle source section
         if (section.id === fromSectionId) {
           return {
@@ -354,7 +357,7 @@ const TodoListInterface = () => {
             }),
           };
         }
-  
+
         // Handle target section (when different from source)
         if (section.id === toSectionId) {
           return {
@@ -370,7 +373,7 @@ const TodoListInterface = () => {
             }),
           };
         }
-  
+
         return section;
       })
     );
@@ -412,52 +415,52 @@ const TodoListInterface = () => {
     }
   };
 
-    const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-  
+
     // Reset activeNote regardless of outcome
     setActiveNote(null);
-  
+
     // If there's no over target, return early - note will stay in original position
     if (!over) {
       return;
     }
-  
+
     const activeId = active.id as string;
     const activeData = active.data.current as DragData;
     const overData = over.data.current as DragData;
-  
+
     // Handle column dragging
     if (activeData.type === "column" && overData.type === "column") {
       const sectionId = activeData.sectionId;
       const section = sections.find((s) => s.id === sectionId);
       if (!section) return;
-  
+
       const fromIndex = section.columns.findIndex(
         (c) => c.id === activeData.columnId
       );
       const toIndex = section.columns.findIndex(
         (c) => c.id === overData.columnId
       );
-  
+
       if (fromIndex !== toIndex) {
         moveColumn(sectionId, fromIndex, toIndex);
       }
       return;
     }
-  
+
     // Handle note dragging
     if (activeData.type === "note" || !activeData.type) {
       // Only proceed if we're dropping onto a column
       if (!overData?.type || !overData.columnId) {
         return; // Note will stay in original position
       }
-  
+
       // Find the source section and column
       let fromSectionId, fromColumnId;
-      sections.some(section => {
-        return section.columns.some(column => {
-          const found = column.notes.some(note => note.id === activeId);
+      sections.some((section) => {
+        return section.columns.some((column) => {
+          const found = column.notes.some((note) => note.id === activeId);
           if (found) {
             fromSectionId = section.id;
             fromColumnId = column.id;
@@ -466,14 +469,20 @@ const TodoListInterface = () => {
           return false;
         });
       });
-  
+
       // Get destination details from the over data
       const toSectionId = overData.sectionId;
       const toColumnId = overData.columnId;
-  
+
       // Only move the note if we have valid source and destination
       if (fromSectionId && fromColumnId && toSectionId && toColumnId) {
-        moveNote(fromSectionId, fromColumnId, toSectionId, toColumnId, activeId);
+        moveNote(
+          fromSectionId,
+          fromColumnId,
+          toSectionId,
+          toColumnId,
+          activeId
+        );
       }
     }
   };
@@ -590,7 +599,7 @@ const TodoListInterface = () => {
   return (
     <div className="flex flex-col h-screen">
       <header className="flex-none flex items-center justify-between p-4 border-b bg-white">
-      <BackButton />
+        <BackButton />
 
         {/* Archive Button */}
         <Sheet>
@@ -698,7 +707,7 @@ const TodoListInterface = () => {
               key={section.id}
               className="border-b border-gray-100 mb-8 overflow-x-auto"
             >
-              {/* Section Header - remove sticky positioning */}
+              {/* Section Header */}
               <div className="flex justify-between items-center px-4 py-2 bg-white group">
                 <div className="flex items-center space-x-2">
                   <h2

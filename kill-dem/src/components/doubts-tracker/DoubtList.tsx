@@ -1,5 +1,5 @@
-import React from 'react';
-import DoubtCard from './DoubtCard';
+import React from "react";
+import DoubtCard from "./DoubtCard";
 
 interface Comment {
   id: string;
@@ -24,7 +24,11 @@ interface DoubtListProps {
   onReopen: (id: string) => void;
   onUpvote: (id: string) => void;
   onDownvote: (id: string) => void;
-  onAddComment: (doubtId: string, commentText: string, parentCommentId?: string) => void;
+  onAddComment: (
+    doubtId: string,
+    commentText: string,
+    parentCommentId?: string
+  ) => void;
   onEditDoubt: (id: string, title: string, description: string) => void;
   onEditComment: (doubtId: string, commentId: string, newText: string) => void;
   onDeleteComment: (doubtId: string, commentId: string) => void;
@@ -43,11 +47,12 @@ export default function DoubtList({
   onEditComment,
   onDeleteComment,
   onEditSolution,
-  onDeleteDoubt
+  onDeleteDoubt,
 }: DoubtListProps) {
   const sortedDoubts = [...doubts].sort(
     (a, b) =>
-      (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes) || Number(b.id) - Number(a.id)
+      b.upvotes - b.downvotes - (a.upvotes - a.downvotes) ||
+      Number(b.id) - Number(a.id)
   );
 
   return (

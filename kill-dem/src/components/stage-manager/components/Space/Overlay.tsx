@@ -20,7 +20,7 @@ export function Overlay({
             className={classNames(styles.thumbnail, {
               [styles.active]: index === activeSpace,
             })}
-            onMouseEnter={() => onSpaceHover(index)} // Hovering changes the highlight
+            onMouseEnter={() => onSpaceHover(index)}
           >
             <div className={styles.label}>Space {index + 1}</div>
           </div>

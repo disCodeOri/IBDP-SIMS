@@ -1,44 +1,43 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useTheme } from "next-themes"
-import { NavUtilities } from "@/components/sidebar-07/nav-utilities"
+import * as React from "react";
+import { useTheme } from "next-themes";
+import { NavUtilities } from "@/components/sidebar-07/nav-utilities";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { data } from "@/data/sidebar"
-import { UserButton } from "@clerk/nextjs"
-import { Button } from "@/components/ui/button" // Assuming you have a Button component
-import { Moon, Sun } from "lucide-react" // Or any other icons you prefer
+} from "@/components/ui/sidebar";
+import { data } from "@/data/sidebar";
+import { UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
 
 function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
+  const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return (
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
-      {theme === 'light' ? (
+      {theme === "light" ? (
         <Moon className="h-4 w-4" />
       ) : (
         <Sun className="h-4 w-4" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -47,18 +46,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <UserButton />
-          <ThemeToggle />
+          {/*<ThemeToggle />*/}
         </div>
       </SidebarHeader>
 
-      {/* Rest of your existing code */}
       <SidebarContent>
         <NavUtilities utilities={data.utilities} />
       </SidebarContent>
-
-      <SidebarFooter>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

@@ -2,9 +2,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Manager, Space, Spaces, BasicWindow } from "@/components/stage-manager";
+import {
+  Manager,
+  Space,
+  Spaces,
+  BasicWindow,
+} from "@/components/stage-manager";
 import { Button } from "@/components/ui/button";
-import { SpaceDeleteToast, WindowDeleteToast } from './SpaceDeleteAlertToast';
+import { SpaceDeleteToast, WindowDeleteToast } from "./SpaceDeleteAlertToast";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
@@ -41,10 +46,10 @@ export default function WorkStage() {
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;
-      
+
       const docRef = doc(db, "users", user.id, "stageManager", "data");
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         const data = docSnap.data();
         const formattedSpaces = data.spaces.map((space: any) => ({
@@ -53,8 +58,8 @@ export default function WorkStage() {
             ...window,
             position: window.position as [number, number],
             size: window.size as [number, number],
-            content: window.content
-          }))
+            content: window.content,
+          })),
         }));
         setSpaces(formattedSpaces);
       }
@@ -66,16 +71,18 @@ export default function WorkStage() {
   const addSpace = () => {
     const newSpace: SpaceData = {
       id: spaces.length,
-      windows: [{
-        id: Date.now().toString(),
-        title: "New Document",
-        content: "",
-        position: [100, 100],
-        size: [400, 300]
-      }]
+      windows: [
+        {
+          id: Date.now().toString(),
+          title: "New Document",
+          content: "",
+          position: [100, 100],
+          size: [400, 300],
+        },
+      ],
     };
-    
-    setSpaces(prev => {
+
+    setSpaces((prev) => {
       const newSpaces = [...prev, newSpace];
       saveData(newSpaces);
       return newSpaces;
@@ -84,27 +91,33 @@ export default function WorkStage() {
   };
 
   const deleteSpace = (spaceId: number) => {
-    setSpaces(prev => {
-      const newSpaces = prev.filter(space => space.id !== spaceId);
+    setSpaces((prev) => {
+      const newSpaces = prev.filter((space) => space.id !== spaceId);
       saveData(newSpaces);
       return newSpaces;
     });
-    setCurrentSpace(prev => Math.max(0, prev === spaceId ? prev - 1 : prev));
+    setCurrentSpace((prev) => Math.max(0, prev === spaceId ? prev - 1 : prev));
   };
 
-  const updateWindow = (spaceId: number, windowId: string, newData: Partial<WindowData>) => {
-    setSpaces(prev => {
-      const newSpaces = prev.map(space => {
+  const updateWindow = (
+    spaceId: number,
+    windowId: string,
+    newData: Partial<WindowData>
+  ) => {
+    setSpaces((prev) => {
+      const newSpaces = prev.map((space) => {
         if (space.id === spaceId) {
           return {
             ...space,
-            windows: space.windows.map(window => 
-              window.id === windowId ? { 
-                ...window, 
-                ...newData,
-                content: newData.content || window.content // Ensure content exists
-              } : window
-            )
+            windows: space.windows.map((window) =>
+              window.id === windowId
+                ? {
+                    ...window,
+                    ...newData,
+                    content: newData.content || window.content, // Ensure content exists
+                  }
+                : window
+            ),
           };
         }
         return space;
@@ -115,19 +128,22 @@ export default function WorkStage() {
   };
 
   const addWindow = (spaceId: number) => {
-    setSpaces(prev => {
-      const newSpaces = prev.map(space => {
+    setSpaces((prev) => {
+      const newSpaces = prev.map((space) => {
         if (space.id === spaceId) {
           const newWindow = {
             id: Date.now().toString(),
             title: "New Document",
             content: "",
-            position: [100 + space.windows.length * 20, 100 + space.windows.length * 20] as [number, number],
-            size: [400, 300] as [number, number]
+            position: [
+              100 + space.windows.length * 20,
+              100 + space.windows.length * 20,
+            ] as [number, number],
+            size: [400, 300] as [number, number],
           };
           return {
             ...space,
-            windows: [...space.windows, newWindow]
+            windows: [...space.windows, newWindow],
           };
         }
         return space;
@@ -138,12 +154,12 @@ export default function WorkStage() {
   };
 
   const deleteWindow = (spaceId: number, windowId: string) => {
-    setSpaces(prev => {
-      const newSpaces = prev.map(space => {
+    setSpaces((prev) => {
+      const newSpaces = prev.map((space) => {
         if (space.id === spaceId) {
           return {
             ...space,
-            windows: space.windows.filter(window => window.id !== windowId)
+            windows: space.windows.filter((window) => window.id !== windowId),
           };
         }
         return space;
@@ -167,9 +183,18 @@ export default function WorkStage() {
       </div>
       <Manager
         size={[1600, 760]}
-        style={{ margin: "0 auto", border: "2px solid #333", borderRadius: "8px", overflow: "hidden" }}
+        style={{
+          margin: "0 auto",
+          border: "2px solid #333",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
       >
-        <Spaces space={currentSpace} onSpaceChange={setCurrentSpace} className="bg-white">
+        <Spaces
+          space={currentSpace}
+          onSpaceChange={setCurrentSpace}
+          className="bg-white"
+        >
           {spaces.map((space) => (
             <Space key={space.id}>
               {space.windows.map((window) => (
@@ -180,8 +205,12 @@ export default function WorkStage() {
                   initialPosition={window.position}
                   initialSize={window.size}
                   style={{ background: "#fff" }}
-                  onTitleChange={(newTitle) => updateWindow(space.id, window.id, { title: newTitle })}
-                  onContentChange={(newContent) => updateWindow(space.id, window.id, { content: newContent })}
+                  onTitleChange={(newTitle) =>
+                    updateWindow(space.id, window.id, { title: newTitle })
+                  }
+                  onContentChange={(newContent) =>
+                    updateWindow(space.id, window.id, { content: newContent })
+                  }
                   onClose={() => {
                     const triggerToast = () => {
                       toast({
@@ -195,7 +224,7 @@ export default function WorkStage() {
                               deleteWindow(space.id, window.id);
                               toast({
                                 title: "Window deleted",
-                                description: `"${window.title}" has been deleted successfully.`
+                                description: `"${window.title}" has been deleted successfully.`,
                               });
                             }}
                           >

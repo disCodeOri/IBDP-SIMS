@@ -31,7 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { BackButton } from "@/components/custom-ui/back-button";
 
-// ─── DATA STRUCTURES ────────────────────────────────────────────────────────────
+// ─── DATA STRUCTURES───
 
 interface Note {
   id: string;
@@ -67,13 +67,12 @@ interface DragData {
   subtaskId?: string;
 }
 
-// Add a new prop to control back button visibility
 interface ToDoListProps {
   hideBackButton?: boolean;
-  isDashboard?: boolean;  // Add this new prop
+  isDashboard?: boolean;
 }
 
-// ─── DRAGGABLE / DROPPABLE COMPONENTS ──────────────────────────────────────────
+// DRAGGABLE/DROPPABLECOMPONENTS
 
 // Columns
 const DraggableColumn = ({
@@ -207,7 +206,6 @@ const DraggableSubtask = ({
   );
 };
 
-// Droppable container for subtasks – note that we now pass the columnId as well.
 const DroppableSubtaskContainer = ({
   parentNoteId,
   columnId,
@@ -232,10 +230,13 @@ const DroppableSubtaskContainer = ({
   );
 };
 
-// ─── THE MAIN COMPONENT ─────────────────────────────────────────────────────────
+// ─── THE MAIN COMPONENT
 
 // Update the component definition to accept props
-const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps) => {
+const ToDoList = ({
+  hideBackButton = false,
+  isDashboard = false,
+}: ToDoListProps) => {
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();
@@ -459,10 +460,7 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                   notes: column.notes.filter((note) => note.id !== noteId),
                 };
               }
-              if (
-                column.id === toColumnId &&
-                fromSectionId === toSectionId
-              ) {
+              if (column.id === toColumnId && fromSectionId === toSectionId) {
                 return { ...column, notes: [...column.notes, noteToMove] };
               }
               return column;
@@ -594,24 +592,27 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
   };
 
   const deleteSection = (sectionId: string) => {
-    const section = sections.find(s => s.id === sectionId);
+    const section = sections.find((s) => s.id === sectionId);
     setSections(sections.filter((section) => section.id !== sectionId));
     toast({
       title: "Section deleted",
-      description: `${section?.title || 'Section'} has been deleted.`,
+      description: `${section?.title || "Section"} has been deleted.`,
       action: (
-        <ToastAction altText="Undo" onClick={() => {
-          if (section) setSections(prev => [...prev, section]);
-        }}>
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (section) setSections((prev) => [...prev, section]);
+          }}
+        >
           Undo
         </ToastAction>
       ),
     });
-  };  
+  };
 
   const deleteColumn = (sectionId: string, columnId: string) => {
-    const section = sections.find(s => s.id === sectionId);
-    const column = section?.columns.find(c => c.id === columnId);
+    const section = sections.find((s) => s.id === sectionId);
+    const column = section?.columns.find((c) => c.id === columnId);
     setSections(
       sections.map((section) =>
         section.id === sectionId
@@ -624,19 +625,22 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
     );
     toast({
       title: "Column deleted",
-      description: `${column?.title || 'Column'} has been deleted.`,
+      description: `${column?.title || "Column"} has been deleted.`,
       action: (
-        <ToastAction altText="Undo" onClick={() => {
-          if (column) {
-            setSections(prev => 
-              prev.map(s => 
-                s.id === sectionId 
-                  ? { ...s, columns: [...s.columns, column] }
-                  : s
-              )
-            );
-          }
-        }}>
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (column) {
+              setSections((prev) =>
+                prev.map((s) =>
+                  s.id === sectionId
+                    ? { ...s, columns: [...s.columns, column] }
+                    : s
+                )
+              );
+            }
+          }}
+        >
           Undo
         </ToastAction>
       ),
@@ -644,8 +648,10 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
   };
 
   const deleteNote = (sectionId: string, columnId: string, noteId: string) => {
-    const section = sections.find(s => s.id === sectionId);
-    const note = section?.columns.find(c => c.id === columnId)?.notes.find(n => n.id === noteId);
+    const section = sections.find((s) => s.id === sectionId);
+    const note = section?.columns
+      .find((c) => c.id === columnId)
+      ?.notes.find((n) => n.id === noteId);
     setSections(
       sections.map((section) =>
         section.id === sectionId
@@ -653,7 +659,10 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
               ...section,
               columns: section.columns.map((col) =>
                 col.id === columnId
-                  ? { ...col, notes: col.notes.filter((note) => note.id !== noteId) }
+                  ? {
+                      ...col,
+                      notes: col.notes.filter((note) => note.id !== noteId),
+                    }
                   : col
               ),
             }
@@ -662,26 +671,29 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
     );
     toast({
       title: "Note deleted",
-      description: `${note?.content || 'Note'} has been deleted.`,
+      description: `${note?.content || "Note"} has been deleted.`,
       action: (
-        <ToastAction altText="Undo" onClick={() => {
-          if (note) {
-            setSections(prev => 
-              prev.map(s => 
-                s.id === sectionId 
-                  ? {
-                      ...s,
-                      columns: s.columns.map(c => 
-                        c.id === columnId 
-                          ? { ...c, notes: [...c.notes, note] }
-                          : c
-                      )
-                    }
-                  : s
-              )
-            );
-          }
-        }}>
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (note) {
+              setSections((prev) =>
+                prev.map((s) =>
+                  s.id === sectionId
+                    ? {
+                        ...s,
+                        columns: s.columns.map((c) =>
+                          c.id === columnId
+                            ? { ...c, notes: [...c.notes, note] }
+                            : c
+                        ),
+                      }
+                    : s
+                )
+              );
+            }
+          }}
+        >
           Undo
         </ToastAction>
       ),
@@ -723,36 +735,45 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
         };
       })
     );
-  
+
     toast({
       title: "Subtask deleted",
-      description: `${deletedSubtask?.content || 'Subtask'} has been deleted.`,
+      description: `${deletedSubtask?.content || "Subtask"} has been deleted.`,
       action: (
-        <ToastAction altText="Undo" onClick={() => {
-          if (deletedSubtask) {
-            setSections(prev => 
-              prev.map(s => 
-                s.id === sectionId 
-                  ? {
-                      ...s,
-                      columns: s.columns.map(c => 
-                        c.id === columnId 
-                          ? {
-                              ...c,
-                              notes: c.notes.map(n => 
-                                n.id === parentNoteId 
-                                  ? { ...n, subtasks: [...(n.subtasks || []), deletedSubtask!] }
-                                  : n
-                              )
-                            }
-                          : c
-                      )
-                    }
-                  : s
-              )
-            );
-          }
-        }}>
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (deletedSubtask) {
+              setSections((prev) =>
+                prev.map((s) =>
+                  s.id === sectionId
+                    ? {
+                        ...s,
+                        columns: s.columns.map((c) =>
+                          c.id === columnId
+                            ? {
+                                ...c,
+                                notes: c.notes.map((n) =>
+                                  n.id === parentNoteId
+                                    ? {
+                                        ...n,
+                                        subtasks: [
+                                          ...(n.subtasks || []),
+                                          deletedSubtask!,
+                                        ],
+                                      }
+                                    : n
+                                ),
+                              }
+                            : c
+                        ),
+                      }
+                    : s
+                )
+              );
+            }
+          }}
+        >
           Undo
         </ToastAction>
       ),
@@ -854,7 +875,7 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
     );
   };
 
-  // ─── DRAG & DROP HANDLERS ───────────────────────────────────────────────
+  // DRAG & DROP HANDLERS
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -868,8 +889,7 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
           )
         )
         .find(Boolean);
-      if (draggedNote)
-        setActiveDragItem({ type: "note", item: draggedNote });
+      if (draggedNote) setActiveDragItem({ type: "note", item: draggedNote });
     } else if (activeData.type === "subtask") {
       const subtaskId = activeData.subtaskId;
       let draggedSubtask: Note | undefined;
@@ -890,7 +910,6 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
           extraData: { parentNoteId: activeData.parentNoteId },
         });
     }
-    // (You can add column drag state if desired.)
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -952,7 +971,13 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
         const toParentNoteId = overData.parentNoteId;
         const toColumnId = overData.columnId;
         const { sectionId, columnId, parentNoteId, subtaskId } = activeData;
-        if (!sectionId || !columnId || !parentNoteId || !subtaskId || !toColumnId)
+        if (
+          !sectionId ||
+          !columnId ||
+          !parentNoteId ||
+          !subtaskId ||
+          !toColumnId
+        )
           return;
 
         if (parentNoteId === toParentNoteId && columnId === toColumnId) {
@@ -985,27 +1010,34 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
             }
           });
           if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-            moveSubtaskWithinParent(sectionId, columnId, parentNoteId, fromIndex, toIndex);
+            moveSubtaskWithinParent(
+              sectionId,
+              columnId,
+              parentNoteId,
+              fromIndex,
+              toIndex
+            );
           }
         } else {
-          // Moving to a different parent note (and possibly a different column).
           moveSubtaskToAnotherParent(
             sectionId,
-            columnId, // source column
+            columnId,
             parentNoteId,
             subtaskId,
             toParentNoteId,
-            toColumnId // target column
+            toColumnId
           );
         }
       }
     }
   };
 
-  // ─── RENDERING ─────────────────────────────────────────────────────────────
+  // RENDERING
 
   return (
-    <div className="flex flex-col h-full"> {/* Changed from h-screen to h-full */}
+    <div className="flex flex-col h-full">
+      {" "}
+      {/* Changed from h-screen to h-full */}
       <header className="flex items-center justify-between p-4 border-b">
         {!hideBackButton && <BackButton />}
         <Sheet>
@@ -1022,14 +1054,17 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
           </SheetContent>
         </Sheet>
       </header>
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className={`max-w-none bg-white flex-1 relative ${isDashboard ? 'pb-24' : 'pb-20'}`}>
+        <div
+          className={`max-w-none bg-white flex-1 relative ${
+            isDashboard ? "pb-24" : "pb-20"
+          }`}
+        >
           {sections.map((section) => (
             <div
               key={section.id}
@@ -1044,7 +1079,10 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                     setSections(
                       sections.map((s) =>
                         s.id === section.id
-                          ? { ...s, title: e.currentTarget.textContent || s.title }
+                          ? {
+                              ...s,
+                              title: e.currentTarget.textContent || s.title,
+                            }
                           : s
                       )
                     );
@@ -1072,8 +1110,16 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
               <div className="px-4 py-2">
                 <div className="flex space-x-4 min-h-[200px] pb-4">
                   {section.columns.map((column) => (
-                    <DraggableColumn key={column.id} column={column} section={section}>
-                      <DroppableColumn key={column.id} column={column} section={section}>
+                    <DraggableColumn
+                      key={column.id}
+                      column={column}
+                      section={section}
+                    >
+                      <DroppableColumn
+                        key={column.id}
+                        column={column}
+                        section={section}
+                      >
                         <div className="flex justify-between items-center mb-4 group">
                           <h3
                             className="font-medium text-gray-700 outline-none focus:outline-none"
@@ -1087,7 +1133,12 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                         ...s,
                                         columns: s.columns.map((c) =>
                                           c.id === column.id
-                                            ? { ...c, title: e.currentTarget.textContent || c.title }
+                                            ? {
+                                                ...c,
+                                                title:
+                                                  e.currentTarget.textContent ||
+                                                  c.title,
+                                              }
                                             : c
                                         ),
                                       }
@@ -1102,7 +1153,9 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => deleteColumn(section.id, column.id)}
+                              onClick={() =>
+                                deleteColumn(section.id, column.id)
+                              }
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -1118,7 +1171,11 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                       type="checkbox"
                                       checked={note.checked}
                                       onChange={() =>
-                                        toggleNoteChecked(section.id, column.id, note.id)
+                                        toggleNoteChecked(
+                                          section.id,
+                                          column.id,
+                                          note.id
+                                        )
                                       }
                                       className="mt-1 h-4 w-4"
                                     />
@@ -1126,7 +1183,9 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                       contentEditable
                                       suppressContentEditableWarning
                                       className={`text-gray-800 outline-none focus:outline-none flex-1 ${
-                                        note.checked ? "line-through opacity-75" : ""
+                                        note.checked
+                                          ? "line-through opacity-75"
+                                          : ""
                                       }`}
                                       onBlur={(e) => {
                                         setSections(
@@ -1138,14 +1197,18 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                                     c.id === column.id
                                                       ? {
                                                           ...c,
-                                                          notes: c.notes.map((n) =>
-                                                            n.id === note.id
-                                                              ? {
-                                                                  ...n,
-                                                                  content:
-                                                                    e.currentTarget.textContent || "",
-                                                                }
-                                                              : n
+                                                          notes: c.notes.map(
+                                                            (n) =>
+                                                              n.id === note.id
+                                                                ? {
+                                                                    ...n,
+                                                                    content:
+                                                                      e
+                                                                        .currentTarget
+                                                                        .textContent ||
+                                                                      "",
+                                                                  }
+                                                                : n
                                                           ),
                                                         }
                                                       : c
@@ -1163,14 +1226,23 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => deleteNote(section.id, column.id, note.id)}
+                                      onClick={() =>
+                                        deleteNote(
+                                          section.id,
+                                          column.id,
+                                          note.id
+                                        )
+                                      }
                                     >
                                       <X className="h-4 w-4" />
                                     </Button>
                                   </div>
                                 </div>
                                 {/* ─── SUBTASKS RENDERING ─── */}
-                                <DroppableSubtaskContainer parentNoteId={note.id} columnId={column.id}>
+                                <DroppableSubtaskContainer
+                                  parentNoteId={note.id}
+                                  columnId={column.id}
+                                >
                                   {note.subtasks &&
                                     note.subtasks.map((subtask) => (
                                       <DraggableSubtask
@@ -1186,7 +1258,12 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                               type="checkbox"
                                               checked={subtask.checked}
                                               onChange={() =>
-                                                toggleSubtaskChecked(section.id, column.id, note.id, subtask.id)
+                                                toggleSubtaskChecked(
+                                                  section.id,
+                                                  column.id,
+                                                  note.id,
+                                                  subtask.id
+                                                )
                                               }
                                               className="mt-1 h-4 w-4"
                                             />
@@ -1194,7 +1271,9 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                               contentEditable
                                               suppressContentEditableWarning
                                               className={`text-gray-800 outline-none focus:outline-none flex-1 ${
-                                                subtask.checked ? "line-through opacity-75" : ""
+                                                subtask.checked
+                                                  ? "line-through opacity-75"
+                                                  : ""
                                               }`}
                                               onBlur={(e) => {
                                                 updateSubtaskContent(
@@ -1202,7 +1281,8 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                                   column.id,
                                                   note.id,
                                                   subtask.id,
-                                                  e.currentTarget.textContent || ""
+                                                  e.currentTarget.textContent ||
+                                                    ""
                                                 );
                                               }}
                                             >
@@ -1213,7 +1293,12 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                             variant="ghost"
                                             size="sm"
                                             onClick={() =>
-                                              deleteSubtask(section.id, column.id, note.id, subtask.id)
+                                              deleteSubtask(
+                                                section.id,
+                                                column.id,
+                                                note.id,
+                                                subtask.id
+                                              )
                                             }
                                           >
                                             <X className="h-4 w-4" />
@@ -1225,7 +1310,9 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
                                     variant="ghost"
                                     size="sm"
                                     className="mt-2"
-                                    onClick={() => addSubtask(section.id, column.id, note.id)}
+                                    onClick={() =>
+                                      addSubtask(section.id, column.id, note.id)
+                                    }
                                   >
                                     <Plus className="h-4 w-4 mr-1" />
                                     Add Subtask
@@ -1264,20 +1351,22 @@ const ToDoList = ({ hideBackButton = false, isDashboard = false }: ToDoListProps
               <div className="bg-[#fff9e6] rounded-lg p-4 w-72 shadow-lg">
                 <div className="flex justify-between items-start">
                   <p className="text-gray-800">
-                    {"content" in activeDragItem.item ? activeDragItem.item.content : ""}
+                    {"content" in activeDragItem.item
+                      ? activeDragItem.item.content
+                      : ""}
                   </p>
                 </div>
               </div>
             ) : null}
           </DragOverlay>
-          
+
           <Button
             variant="outline"
             size="lg"
             className={`${
-              isDashboard 
-                ? 'absolute bottom-4 left-1/2 transform -translate-x-1/2' 
-                : 'fixed bottom-8 left-1/2 transform -translate-x-1/2'
+              isDashboard
+                ? "absolute bottom-4 left-1/2 transform -translate-x-1/2"
+                : "fixed bottom-8 left-1/2 transform -translate-x-1/2"
             }`}
             onClick={addSection}
           >

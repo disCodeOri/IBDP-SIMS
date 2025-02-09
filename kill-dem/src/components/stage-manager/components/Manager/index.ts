@@ -1,2 +1,2 @@
-export { Manager } from './Manager'
-export { ManagerContext } from './library'
+export { Manager } from "./Manager";
+export { ManagerContext } from "./library";

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface SpaceDeleteButtonProps {
   spaceId: number;
@@ -13,8 +13,11 @@ interface WindowDeleteButtonProps {
   onWindowDelete: (spaceId: number, windowId: string) => void;
 }
 
-export function SpaceDeleteToast({ spaceId, onSpaceDelete }: SpaceDeleteButtonProps) {
-  const { toast } = useToast()
+export function SpaceDeleteToast({
+  spaceId,
+  onSpaceDelete,
+}: SpaceDeleteButtonProps) {
+  const { toast } = useToast();
 
   const handleDeleteClick = () => {
     toast({
@@ -25,28 +28,35 @@ export function SpaceDeleteToast({ spaceId, onSpaceDelete }: SpaceDeleteButtonPr
           variant="outline"
           size="sm"
           onClick={() => {
-            onSpaceDelete(spaceId)
+            onSpaceDelete(spaceId);
             toast({
               title: "Space deleted",
-              description: `Space ${spaceId + 1} has been deleted successfully.`
-            })
+              description: `Space ${
+                spaceId + 1
+              } has been deleted successfully.`,
+            });
           }}
         >
           Delete
         </Button>
       ),
-    })
-  }
+    });
+  };
 
   return (
     <Button variant="destructive" onClick={handleDeleteClick}>
       Delete Space {spaceId + 1}
     </Button>
-  )
+  );
 }
 
-export function WindowDeleteToast({ spaceId, windowId, windowTitle, onWindowDelete }: WindowDeleteButtonProps) {
-  const { toast } = useToast()
+export function WindowDeleteToast({
+  spaceId,
+  windowId,
+  windowTitle,
+  onWindowDelete,
+}: WindowDeleteButtonProps) {
+  const { toast } = useToast();
 
   const handleDeleteClick = () => {
     toast({
@@ -57,22 +67,22 @@ export function WindowDeleteToast({ spaceId, windowId, windowTitle, onWindowDele
           variant="outline"
           size="sm"
           onClick={() => {
-            onWindowDelete(spaceId, windowId)
+            onWindowDelete(spaceId, windowId);
             toast({
               title: "Window deleted",
-              description: `"${windowTitle}" has been deleted successfully.`
-            })
+              description: `"${windowTitle}" has been deleted successfully.`,
+            });
           }}
         >
           Delete
         </Button>
       ),
-    })
-  }
+    });
+  };
 
   return (
     <div onClick={handleDeleteClick} className="cursor-pointer">
       ✖︎
     </div>
-  )
+  );
 }

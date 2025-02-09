@@ -1,64 +1,66 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const version = '0.4.3'
+export const version = "0.4.3";
 
 export function isMobileDevice() {
-  if (typeof window === 'undefined') return false // Server-side guard
-  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  if (typeof window === "undefined") return false; // Server-side guard
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 }
 
 export function hashSpaceIds(ids: string[]): string {
-  return ids.toSorted((a, b) => a.localeCompare(b)).join('')
+  return ids.toSorted((a, b) => a.localeCompare(b)).join("");
 }
 
 export function nonZeroPosition(position: [number, number]): [number, number] {
   const compensated: [number, number] = [
-    (position[0] < 0) ? 0 : position[0],
-    (position[1] < 0) ? 0 : position[1]
-  ]
-  return compensated
+    position[0] < 0 ? 0 : position[0],
+    position[1] < 0 ? 0 : position[1],
+  ];
+  return compensated;
 }
 
 export class EventDispatcher<T, E> {
-  private listeners: Map<T, ((event: E) => void)[]> = new Map()
+  private listeners: Map<T, ((event: E) => void)[]> = new Map();
 
   addListener<C>(type: T, listener: (event: C) => void) {
-    const listeners = this.listeners.get(type)
+    const listeners = this.listeners.get(type);
     if (!listeners) {
-      this.listeners.set(type, [listener as any])
-      return
+      this.listeners.set(type, [listener as any]);
+      return;
     }
-    listeners.push(listener as any)
+    listeners.push(listener as any);
   }
 
   setListener<C>(type: T, listener: (event: C) => void) {
-    const listeners = this.listeners.get(type)
+    const listeners = this.listeners.get(type);
     if (!listeners) {
-      this.listeners.set(type, [listener as any])
-      return
+      this.listeners.set(type, [listener as any]);
+      return;
     }
-    const index = listeners.indexOf(listener as any)
-    if (index !== -1) listeners[index] = listener as any
-    else listeners.push(listener as any)
+    const index = listeners.indexOf(listener as any);
+    if (index !== -1) listeners[index] = listener as any;
+    else listeners.push(listener as any);
   }
 
   dispatch(name: T, event: E) {
-    const listeners = this.listeners.get(name as any)
-    if (!listeners) return
-    listeners.forEach(listener => listener(event))
+    const listeners = this.listeners.get(name as any);
+    if (!listeners) return;
+    listeners.forEach((listener) => listener(event));
   }
 
   removeListener<C>(type: T, listener: (event: C) => void) {
-    const listeners = this.listeners.get(type as any)
-    if (!listeners) return
-    const index = listeners.indexOf(listener as any)
-    if (index !== -1) listeners.splice(index, 1)
+    const listeners = this.listeners.get(type as any);
+    if (!listeners) return;
+    const index = listeners.indexOf(listener as any);
+    if (index !== -1) listeners.splice(index, 1);
   }
 
   removeListeners(type: T) {
-    this.listeners.delete(type)
+    this.listeners.delete(type);
   }
 
   removeAllListeners() {
-    this.listeners.clear()
+    this.listeners.clear();
   }
 }

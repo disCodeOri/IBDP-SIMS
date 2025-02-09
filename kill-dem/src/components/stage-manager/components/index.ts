@@ -1,3 +1,3 @@
-export * from './Manager'
-export * from './Space'
-export * from './Window'
+export * from "./Manager";
+export * from "./Space";
+export * from "./Window";

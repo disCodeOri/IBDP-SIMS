@@ -108,9 +108,14 @@ function SortableCookieCard({
       {...dragListeners}
       className="bg-white p-4 rounded-lg shadow-md cursor-move relative group min-h-[120px] flex flex-col border border-gray-200" // Changed background and added border
     >
-      <h3 className="text-gray-800 font-bold text-lg mb-2 break-words">{cookie.name}</h3> {/* Changed text color */}
-      <p className="text-gray-700 text-sm break-words overflow-y-auto max-h-24">{cookie.description}</p> {/* Changed text color */}
-
+      <h3 className="text-gray-800 font-bold text-lg mb-2 break-words">
+        {cookie.name}
+      </h3>{" "}
+      {/* Changed text color */}
+      <p className="text-gray-700 text-sm break-words overflow-y-auto max-h-24">
+        {cookie.description}
+      </p>{" "}
+      {/* Changed text color */}
       {!disableEdit && (
         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
@@ -128,7 +133,12 @@ function SortableCookieCard({
   );
 }
 
-export default function CookieJar({ disableEdit = false, disableAdd = false, disableDelete = false, gridCols = 4 }: CookiesProps) {
+export default function CookieJar({
+  disableEdit = false,
+  disableAdd = false,
+  disableDelete = false,
+  gridCols = 4,
+}: CookiesProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cookies, setCookies] = useState<Cookie[]>([]);
   const [newCookie, setNewCookie] = useState<Partial<Cookie>>({
@@ -314,7 +324,12 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
           <div className="bg-background p-6 rounded-lg w-full max-w-md">
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700"> {/* Changed text color */}
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                >
+                  {" "}
+                  {/* Changed text color */}
                   Name
                 </label>
                 <input
@@ -329,7 +344,12 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
               </div>
 
               <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium mb-2 text-gray-700"> {/* Changed text color */}
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                >
+                  {" "}
+                  {/* Changed text color */}
                   Description
                 </label>
                 <textarea
@@ -356,11 +376,7 @@ export default function CookieJar({ disableEdit = false, disableAdd = false, dis
                   Cancel
                 </Button>
 
-                <Button
-                  type="submit"
-                  variant="default"
-                  size="default"
-                >
+                <Button type="submit" variant="default" size="default">
                   {isEditing ? "Update" : "Submit"}
                 </Button>
               </div>

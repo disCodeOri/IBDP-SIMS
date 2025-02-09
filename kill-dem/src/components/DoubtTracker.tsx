@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import DoubtList from '@/components/doubts-tracker/DoubtList';
-import NewDoubtForm from '@/components/doubts-tracker/NewDoubtForm';
+import React, { useState, useEffect } from "react";
+import DoubtList from "@/components/doubts-tracker/DoubtList";
+import NewDoubtForm from "@/components/doubts-tracker/NewDoubtForm";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -12,9 +12,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
-import { db } from '@/lib/firebase';
+import { Plus } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { db } from "@/lib/firebase";
 import {
   collection,
   addDoc,
@@ -26,7 +26,7 @@ import {
   increment,
   serverTimestamp,
   doc,
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 export interface Comment {
   id: string;
@@ -43,21 +43,20 @@ export interface Doubt {
   downvotes: number;
   resolved: boolean;
   solution?: string;
-  // Comments will be loaded separately from the "comments" subcollection.
   comments: Comment[];
 }
 
 export default function DoubtTracker() {
   const { user } = useUser();
   const [doubts, setDoubts] = useState<Doubt[]>([]);
-  
+
   useEffect(() => {
     if (!user) return;
     const postsRef = collection(db, "users", user.id, "posts");
     const q = query(postsRef, orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const loadedDoubts: Doubt[] = [];
-      snapshot.forEach(docSnap => {
+      snapshot.forEach((docSnap) => {
         loadedDoubts.push({
           id: docSnap.id,
           title: docSnap.data().title,
@@ -133,10 +132,21 @@ export default function DoubtTracker() {
   };
 
   // Flattened comment operations: All comments are stored in the same subcollection.
-  const addComment = async (doubtId: string, commentText: string, parentId?: string) => {
+  const addComment = async (
+    doubtId: string,
+    commentText: string,
+    parentId?: string
+  ) => {
     if (!user) return;
     try {
-      const commentsRef = collection(db, "users", user.id, "posts", doubtId, "comments");
+      const commentsRef = collection(
+        db,
+        "users",
+        user.id,
+        "posts",
+        doubtId,
+        "comments"
+      );
       await addDoc(commentsRef, {
         text: commentText,
         parentId: parentId || null,
@@ -147,10 +157,22 @@ export default function DoubtTracker() {
     }
   };
 
-  const editComment = async (doubtId: string, commentId: string, newText: string) => {
+  const editComment = async (
+    doubtId: string,
+    commentId: string,
+    newText: string
+  ) => {
     if (!user) return;
     try {
-      const commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
+      const commentRef = doc(
+        db,
+        "users",
+        user.id,
+        "posts",
+        doubtId,
+        "comments",
+        commentId
+      );
       await updateDoc(commentRef, { text: newText });
     } catch (error) {
       console.error("Error editing comment:", error);
@@ -160,7 +182,15 @@ export default function DoubtTracker() {
   const deleteComment = async (doubtId: string, commentId: string) => {
     if (!user) return;
     try {
-      const commentRef = doc(db, "users", user.id, "posts", doubtId, "comments", commentId);
+      const commentRef = doc(
+        db,
+        "users",
+        user.id,
+        "posts",
+        doubtId,
+        "comments",
+        commentId
+      );
       await deleteDoc(commentRef);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -225,7 +255,7 @@ export default function DoubtTracker() {
         </TabsList>
         <TabsContent value="open">
           <DoubtList
-            doubts={doubts.filter(d => !d.resolved)}
+            doubts={doubts.filter((d) => !d.resolved)}
             onResolve={resolveDoubt}
             onReopen={reopenDoubt}
             onUpvote={upvoteDoubt}
@@ -240,7 +270,7 @@ export default function DoubtTracker() {
         </TabsContent>
         <TabsContent value="resolved">
           <DoubtList
-            doubts={doubts.filter(d => d.resolved)}
+            doubts={doubts.filter((d) => d.resolved)}
             onResolve={resolveDoubt}
             onReopen={reopenDoubt}
             onUpvote={upvoteDoubt}

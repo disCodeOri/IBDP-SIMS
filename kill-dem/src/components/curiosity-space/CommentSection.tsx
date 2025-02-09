@@ -1,14 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Edit, Save, Reply, Trash2, MoreVertical, X } from 'lucide-react';
+import {
+  MessageSquare,
+  Edit,
+  Save,
+  Reply,
+  Trash2,
+  MoreVertical,
+  X,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUser } from '@clerk/nextjs';
+import { useUser } from "@clerk/nextjs";
 
 export interface Comment {
   id: string;
@@ -44,7 +52,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.text);
   const [isReplying, setIsReplying] = useState(false);
-  const [replyText, setReplyText] = useState('');
+  const [replyText, setReplyText] = useState("");
   const replyRef = useRef<HTMLDivElement>(null);
   const editRef = useRef<HTMLDivElement>(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -65,7 +73,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     if (replyText) {
       onAddComment(replyText, comment.id);
       setIsReplying(false);
-      setReplyText('');
+      setReplyText("");
     }
   };
 
@@ -77,23 +85,32 @@ const CommentItem: React.FC<CommentItemProps> = ({
   // Hide reply box when clicking outside
   useEffect(() => {
     const handleClickOutsideReply = (event: MouseEvent) => {
-      if (replyRef.current && !replyRef.current.contains(event.target as Node)) {
+      if (
+        replyRef.current &&
+        !replyRef.current.contains(event.target as Node)
+      ) {
         if (!replyText) setIsReplying(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutsideReply);
-    return () => document.removeEventListener('mousedown', handleClickOutsideReply);
+    document.addEventListener("mousedown", handleClickOutsideReply);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutsideReply);
   }, [replyText]);
 
   // Hide edit mode when clicking outside (if no unsaved changes)
   useEffect(() => {
     const handleClickOutsideEdit = (event: MouseEvent) => {
-      if (!hasChanges && editRef.current && !editRef.current.contains(event.target as Node)) {
+      if (
+        !hasChanges &&
+        editRef.current &&
+        !editRef.current.contains(event.target as Node)
+      ) {
         setIsEditing(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutsideEdit);
-    return () => document.removeEventListener('mousedown', handleClickOutsideEdit);
+    document.addEventListener("mousedown", handleClickOutsideEdit);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutsideEdit);
   }, [hasChanges]);
 
   return (
@@ -108,17 +125,29 @@ const CommentItem: React.FC<CommentItemProps> = ({
           <Button size="sm" onClick={handleSaveEdit} title="Save">
             <Save className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={handleCancelEdit} title="Cancel">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleCancelEdit}
+            title="Cancel"
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>
       ) : (
         <div className="flex items-center justify-between">
-          <p className="text-sm whitespace-pre-wrap break-words max-w-[90%]">{comment.text}</p>
+          <p className="text-sm whitespace-pre-wrap break-words max-w-[90%]">
+            {comment.text}
+          </p>
           {/* Buttons container: hidden by default and shown on hover */}
           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
             {/* Reply button */}
-            <Button size="sm" variant="ghost" onClick={() => setIsReplying(true)} title="Reply">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setIsReplying(true)}
+              title="Reply"
+            >
               <Reply className="h-4 w-4" />
             </Button>
             {/* Three dot menu for Edit and Delete */}
@@ -133,7 +162,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600" onClick={() => onDeleteComment(comment.id)}>
+                <DropdownMenuItem
+                  className="text-red-600"
+                  onClick={() => onDeleteComment(comment.id)}
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete
                 </DropdownMenuItem>
@@ -150,48 +182,64 @@ const CommentItem: React.FC<CommentItemProps> = ({
             placeholder="Write a reply..."
             className="flex-grow"
           />
-          <Button size="sm" onClick={handleAddReply}>Reply</Button>
+          <Button size="sm" onClick={handleAddReply}>
+            Reply
+          </Button>
         </div>
       )}
       {/* Render nested replies recursively */}
-      {comment.replies && comment.replies.map(reply => (
-        <CommentItem
-          key={reply.id}
-          ideaId={ideaId}
-          comment={reply}
-          onAddComment={onAddComment}
-          onEditComment={onEditComment}
-          onDeleteComment={onDeleteComment}
-        />
-      ))}
+      {comment.replies &&
+        comment.replies.map((reply) => (
+          <CommentItem
+            key={reply.id}
+            ideaId={ideaId}
+            comment={reply}
+            onAddComment={onAddComment}
+            onEditComment={onEditComment}
+            onDeleteComment={onDeleteComment}
+          />
+        ))}
     </div>
   );
 };
 
-export default function CommentSection({ ideaId, comments, onAddComment, onEditComment, onDeleteComment }: CommentSectionProps) {
-  const [newComment, setNewComment] = useState('');
+export default function CommentSection({
+  ideaId,
+  comments,
+  onAddComment,
+  onEditComment,
+  onDeleteComment,
+}: CommentSectionProps) {
+  const [newComment, setNewComment] = useState("");
   const [expanded, setExpanded] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment) {
       onAddComment(newComment);
-      setNewComment('');
+      setNewComment("");
     }
   };
 
   // Calculate total comment count (including nested replies)
-  const totalCommentCount = comments.reduce((acc, c) => acc + 1 + countReplies(c), 0);
+  const totalCommentCount = comments.reduce(
+    (acc, c) => acc + 1 + countReplies(c),
+    0
+  );
 
   return (
     <div className="w-full">
-      <Button variant="ghost" className="p-0 h-auto text-gray-500 hover:text-gray-700" onClick={() => setExpanded(!expanded)}>
+      <Button
+        variant="ghost"
+        className="p-0 h-auto text-gray-500 hover:text-gray-700"
+        onClick={() => setExpanded(!expanded)}
+      >
         <MessageSquare className="h-4 w-4 mr-2" />
-        {expanded ? 'Hide Comments' : `${totalCommentCount} Comments`}
+        {expanded ? "Hide Comments" : `${totalCommentCount} Comments`}
       </Button>
       {expanded && (
         <div className="mt-4 space-y-4">
-          {comments.map(comment => (
+          {comments.map((comment) => (
             <CommentItem
               key={comment.id}
               ideaId={ideaId}
@@ -218,5 +266,8 @@ export default function CommentSection({ ideaId, comments, onAddComment, onEditC
 
 // Helper function to count nested replies for a comment
 function countReplies(comment: Comment): number {
-  return comment.replies.reduce((acc, reply) => acc + 1 + countReplies(reply), 0);
+  return comment.replies.reduce(
+    (acc, reply) => acc + 1 + countReplies(reply),
+    0
+  );
 }

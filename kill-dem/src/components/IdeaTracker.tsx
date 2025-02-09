@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import IdeaList from '@/components/curiosity-space/IdeaList';
-import NewIdeaForm from '@/components/curiosity-space/NewIdeaForm';
+import React, { useState, useEffect } from "react";
+import IdeaList from "@/components/curiosity-space/IdeaList";
+import NewIdeaForm from "@/components/curiosity-space/NewIdeaForm";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -12,9 +12,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
-import { db } from '@/lib/firebase';
+import { Plus } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { db } from "@/lib/firebase";
 import {
   collection,
   addDoc,
@@ -26,7 +26,7 @@ import {
   increment,
   serverTimestamp,
   doc,
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 export interface Comment {
   id: string;
@@ -43,21 +43,20 @@ export interface Idea {
   downvotes: number;
   resolved: boolean;
   solution?: string;
-  // Comments will be loaded separately from the "comments" subcollection.
   comments: Comment[];
 }
 
 export default function IdeaTracker() {
   const { user } = useUser();
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  
+
   useEffect(() => {
     if (!user) return;
     const nuggetRef = collection(db, "users", user.id, "nugget");
     const q = query(nuggetRef, orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const loadedIdeas: Idea[] = [];
-      snapshot.forEach(docSnap => {
+      snapshot.forEach((docSnap) => {
         loadedIdeas.push({
           id: docSnap.id,
           title: docSnap.data().title,
@@ -133,10 +132,21 @@ export default function IdeaTracker() {
   };
 
   // Flattened comment operations: All comments are stored in the same subcollection.
-  const addComment = async (ideaId: string, commentText: string, parentId?: string) => {
+  const addComment = async (
+    ideaId: string,
+    commentText: string,
+    parentId?: string
+  ) => {
     if (!user) return;
     try {
-      const commentsRef = collection(db, "users", user.id, "nugget", ideaId, "comments");
+      const commentsRef = collection(
+        db,
+        "users",
+        user.id,
+        "nugget",
+        ideaId,
+        "comments"
+      );
       await addDoc(commentsRef, {
         text: commentText,
         parentId: parentId || null,
@@ -147,10 +157,22 @@ export default function IdeaTracker() {
     }
   };
 
-  const editComment = async (ideaId: string, commentId: string, newText: string) => {
+  const editComment = async (
+    ideaId: string,
+    commentId: string,
+    newText: string
+  ) => {
     if (!user) return;
     try {
-      const commentRef = doc(db, "users", user.id, "nugget", ideaId, "comments", commentId);
+      const commentRef = doc(
+        db,
+        "users",
+        user.id,
+        "nugget",
+        ideaId,
+        "comments",
+        commentId
+      );
       await updateDoc(commentRef, { text: newText });
     } catch (error) {
       console.error("Error editing comment:", error);
@@ -160,7 +182,15 @@ export default function IdeaTracker() {
   const deleteComment = async (ideaId: string, commentId: string) => {
     if (!user) return;
     try {
-      const commentRef = doc(db, "users", user.id, "nugget", ideaId, "comments", commentId);
+      const commentRef = doc(
+        db,
+        "users",
+        user.id,
+        "nugget",
+        ideaId,
+        "comments",
+        commentId
+      );
       await deleteDoc(commentRef);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -225,7 +255,7 @@ export default function IdeaTracker() {
         </TabsList>
         <TabsContent value="open">
           <IdeaList
-            ideas={ideas.filter(d => !d.resolved)}
+            ideas={ideas.filter((d) => !d.resolved)}
             onResolve={resolveIdea}
             onReopen={reopenIdea}
             onUpvote={upvoteIdea}
@@ -240,7 +270,7 @@ export default function IdeaTracker() {
         </TabsContent>
         <TabsContent value="resolved">
           <IdeaList
-            ideas={ideas.filter(d => d.resolved)}
+            ideas={ideas.filter((d) => d.resolved)}
             onResolve={resolveIdea}
             onReopen={reopenIdea}
             onUpvote={upvoteIdea}
