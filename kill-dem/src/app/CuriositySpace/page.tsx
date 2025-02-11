@@ -2,7 +2,7 @@
 
 import React from "react";
 import IdeaTracker from "@/components/IdeaTracker";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 
 const IdeaTrackerPage: React.FC = () => {
   return (

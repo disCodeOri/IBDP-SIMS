@@ -2,7 +2,7 @@
 
 import React from "react";
 import DocumentJar from "@/components/ContinuousInfoSpace/ContinuousInfoSpaceDocMan";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 
 const DocumentJarPage: React.FC = () => {
   return (

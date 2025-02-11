@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 import {
   getNotebook,
   updateNotebook,

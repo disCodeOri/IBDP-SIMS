@@ -2,7 +2,7 @@
 
 import React from "react";
 import CookieJar from "@/components/CookieJar";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 
 const CookieJarPage: React.FC = () => {
   return (

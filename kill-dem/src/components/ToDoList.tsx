@@ -29,7 +29,7 @@ import {
 } from "@dnd-kit/core";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 
 // ─── DATA STRUCTURES───
 

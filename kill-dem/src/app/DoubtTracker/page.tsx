@@ -2,7 +2,7 @@
 
 import React from "react";
 import DoubtTracker from "@/components/DoubtTracker";
-import { BackButton } from "@/components/custom-ui/back-button";
+import { BackButton } from "@/components/ui/custom-ui/back-button";
 
 const DoubtTrackerPage: React.FC = () => {
   return (
