@@ -414,7 +414,7 @@ class FileProcessorGUI:
         with open(output_file, 'w', encoding='utf-8') as f:
             if self.remove_comments_var.get():
                 f.write("Comments have been removed from the source files")
-            f.write("\n")
+                f.write("\n")
 
             selected_files.sort(key=lambda x: x.count(os.sep))
             current_dir = None
@@ -430,7 +430,7 @@ class FileProcessorGUI:
                 dir_path = os.path.dirname(relative_path)
                 if dir_path != current_dir:
                     if dir_path:
-                        f.write(f"\n{'='*11}\nDirectory: {dir_path}\n{'='*11}\n\n")
+                        f.write(f"{'='*11}\nDirectory: {dir_path}\n{'='*11}\n\n")
                     current_dir = dir_path
 
                 f.write(f"File: {relative_path}\n{'-'*20}\n\n")
