@@ -237,6 +237,7 @@ const ToDoList = ({
   hideBackButton = false,
   isDashboard = false,
 }: ToDoListProps) => {
+  // User authentication state
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();

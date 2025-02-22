@@ -2,19 +2,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Manager,
-  Space,
-  Spaces,
-  BasicWindow,
-} from "@/components/stage-manager";
+import { Manager, Space, Spaces, BasicWindow } from "@/components/stage-manager";
 import { Button } from "@/components/ui/button";
-import { SpaceDeleteToast, WindowDeleteToast } from "./SpaceDeleteAlertToast";
+import { SpaceDeleteToast } from "./SpaceDeleteAlertToast";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 
+// Interface defining the structure of a draggable/resizable window
 interface WindowData {
   id: string;
   title: string;
@@ -23,26 +19,32 @@ interface WindowData {
   size: [number, number];
 }
 
+// Interface defining a workspace containing multiple windows
 interface SpaceData {
   id: number;
   windows: WindowData[];
 }
 
 export default function WorkStage() {
+  // User authentication state
   const { user } = useUser();
+  // State management for workspaces and current active space
   const [spaces, setSpaces] = useState<SpaceData[]>([]);
   const [currentSpace, setCurrentSpace] = useState(0);
-
+  // Toast notification system
   const { toast } = useToast();
 
-  // Immediate save function
+  /**
+   * Persists current workspace state to Firestore
+   * @param spacesToSave - Array of SpaceData to save
+   */
   const saveData = async (spacesToSave: SpaceData[]) => {
     if (!user) return;
     const docRef = doc(db, "users", user.id, "stageManager", "data");
     await setDoc(docRef, { spaces: spacesToSave });
   };
 
-  // Load data on mount
+  // Load user's workspace data on component mount or user change
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;
@@ -52,6 +54,7 @@ export default function WorkStage() {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
+        // Convert Firestore data to properly typed format
         const formattedSpaces = data.spaces.map((space: any) => ({
           ...space,
           windows: space.windows.map((window: any) => ({
@@ -68,6 +71,9 @@ export default function WorkStage() {
     loadData();
   }, [user]);
 
+  /**
+   * Creates a new workspace with a default window
+   */
   const addSpace = () => {
     const newSpace: SpaceData = {
       id: spaces.length,
@@ -87,18 +93,30 @@ export default function WorkStage() {
       saveData(newSpaces);
       return newSpaces;
     });
+    // Switch to the new space after creation
     setCurrentSpace(newSpace.id);
   };
 
+  /**
+   * Removes a workspace and adjusts current space selection
+   * @param spaceId - ID of the space to remove
+   */
   const deleteSpace = (spaceId: number) => {
     setSpaces((prev) => {
       const newSpaces = prev.filter((space) => space.id !== spaceId);
       saveData(newSpaces);
       return newSpaces;
     });
+    // Ensure current space stays valid after deletion
     setCurrentSpace((prev) => Math.max(0, prev === spaceId ? prev - 1 : prev));
   };
 
+  /**
+   * Updates properties of a specific window
+   * @param spaceId - Parent workspace ID
+   * @param windowId - Target window ID
+   * @param newData - Partial window data to update
+   */
   const updateWindow = (
     spaceId: number,
     windowId: string,
@@ -114,7 +132,8 @@ export default function WorkStage() {
                 ? {
                     ...window,
                     ...newData,
-                    content: newData.content || window.content, // Ensure content exists
+                    // Ensure content remains if not provided in update
+                    content: newData.content || window.content,
                   }
                 : window
             ),
@@ -127,6 +146,10 @@ export default function WorkStage() {
     });
   };
 
+  /**
+   * Adds a new window to the specified workspace
+   * @param spaceId - Target workspace ID
+   */
   const addWindow = (spaceId: number) => {
     setSpaces((prev) => {
       const newSpaces = prev.map((space) => {
@@ -135,6 +158,7 @@ export default function WorkStage() {
             id: Date.now().toString(),
             title: "New Document",
             content: "",
+            // Stagger window positions for visibility
             position: [
               100 + space.windows.length * 20,
               100 + space.windows.length * 20,
@@ -153,6 +177,11 @@ export default function WorkStage() {
     });
   };
 
+  /**
+   * Removes a window from its parent workspace
+   * @param spaceId - Parent workspace ID
+   * @param windowId - Target window ID to remove
+   */
   const deleteWindow = (spaceId: number, windowId: string) => {
     setSpaces((prev) => {
       const newSpaces = prev.map((space) => {
@@ -171,9 +200,12 @@ export default function WorkStage() {
 
   return (
     <div className="p-4 bg-gray-100">
+      {/* Workspace control buttons */}
       <div className="mb-4 flex gap-2">
         <Button onClick={addSpace}>Create New Space</Button>
         <Button onClick={() => addWindow(currentSpace)}>Add Window</Button>
+        
+        {/* Conditional delete space button with confirmation toast */}
         {spaces.length > 1 && (
           <SpaceDeleteToast
             spaceId={currentSpace}
@@ -181,6 +213,8 @@ export default function WorkStage() {
           />
         )}
       </div>
+
+      {/* Main workspace visualization component */}
       <Manager
         size={[1600, 760]}
         style={{
@@ -212,6 +246,7 @@ export default function WorkStage() {
                     updateWindow(space.id, window.id, { content: newContent })
                   }
                   onClose={() => {
+                    // Toast confirmation flow for window deletion
                     const triggerToast = () => {
                       toast({
                         title: "Delete Window",

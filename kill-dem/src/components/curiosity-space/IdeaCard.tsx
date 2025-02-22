@@ -73,6 +73,7 @@ export default function IdeaCard({
   onEditSolution,
   onDeleteIdea,
 }: IdeaCardProps) {
+  // User authentication state
   const { user } = useUser();
   const [expanded, setExpanded] = useState(false);
   const [solution, setSolution] = useState("");

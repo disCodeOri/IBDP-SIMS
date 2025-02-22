@@ -47,6 +47,7 @@ export interface Doubt {
 }
 
 export default function DoubtTracker() {
+  // User authentication state
   const { user } = useUser();
   const [doubts, setDoubts] = useState<Doubt[]>([]);
 

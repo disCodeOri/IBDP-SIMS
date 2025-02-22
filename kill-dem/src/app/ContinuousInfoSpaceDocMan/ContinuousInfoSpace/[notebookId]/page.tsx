@@ -161,6 +161,7 @@ const DraggableNote = ({
 };
 
 const TodoListInterface = () => {
+  // User authentication state
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();

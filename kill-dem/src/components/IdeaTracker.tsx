@@ -47,6 +47,7 @@ export interface Idea {
 }
 
 export default function IdeaTracker() {
+  // User authentication state
   const { user } = useUser();
   const [ideas, setIdeas] = useState<Idea[]>([]);
 

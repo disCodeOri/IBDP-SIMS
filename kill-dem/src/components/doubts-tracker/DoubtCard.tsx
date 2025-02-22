@@ -73,6 +73,7 @@ export default function DoubtCard({
   onEditSolution,
   onDeleteDoubt,
 }: DoubtCardProps) {
+  // User authentication state
   const { user } = useUser();
   const [expanded, setExpanded] = useState(false);
   const [solution, setSolution] = useState("");

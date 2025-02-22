@@ -48,6 +48,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onEditComment,
   onDeleteComment,
 }) => {
+  // User authentication state
   const { user } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.text);
