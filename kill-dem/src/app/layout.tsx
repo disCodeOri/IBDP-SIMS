@@ -1,5 +1,4 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,9 +17,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`antialiased`}>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>{/* change the defaultTheme vlaue to system once you have figured out how to proplerly implement dark mode everywhere.*/}
             {children}
-          </ThemeProvider>
           <Toaster />
         </body>
       </html>
