@@ -1246,6 +1246,7 @@ function BasicWindow({
   const [size, setSize] = useState(initialSize);
   const [spaceId] = useSpaceId();
   const [currentTitle, setCurrentTitle] = useState(title);
+  const [staged, setStaged] = useState(false); // Added staged state
   const contentRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isEmpty, setIsEmpty] = useState(!content);
@@ -1283,15 +1284,16 @@ function BasicWindow({
       spaceId={spaceId}
       position={position}
       size={size}
+      staged={staged} // Pass staged state
+      onStagedChange={setStaged} // Connect state updater
       onPositionChange={setPosition}
       onSizeChange={setSize}
       style={attrs.style}
-      onStagedChange={() => {}}
     >
       <TitleBar onMove={setPosition}>
         <Buttons>
           <CloseButton onClick={onClose} />
-          <StageButton onClick={() => {}} />
+          <StageButton onClick={() => setStaged(!staged)} />
         </Buttons>
         <Title>
           <input
