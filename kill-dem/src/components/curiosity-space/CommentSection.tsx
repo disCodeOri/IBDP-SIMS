@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useUser } from "@clerk/nextjs";
 
+// Define the Comment interface to structure comment data
 export interface Comment {
   id: string;
   text: string;
@@ -25,22 +26,28 @@ export interface Comment {
   replies: Comment[];
 }
 
+// Define the props for the CommentSection component
 interface CommentSectionProps {
-  ideaId: string;
-  comments: Comment[];
-  onAddComment: (text: string, parentId?: string) => void;
-  onEditComment: (commentId: string, newText: string) => void;
-  onDeleteComment: (commentId: string) => void;
+  ideaId: string; // ID of the idea to which the comments belong
+  comments: Comment[]; // Array of comments to display
+  onAddComment: (text: string, parentId?: string) => void; // Function to handle adding a new comment
+  onEditComment: (commentId: string, newText: string) => void; // Function to handle editing an existing comment
+  onDeleteComment: (commentId: string) => void; // Function to handle deleting a comment
 }
 
+// Define the props for the CommentItem component, which represents a single comment
 interface CommentItemProps {
-  ideaId: string;
-  comment: Comment;
-  onAddComment: (text: string, parentId: string) => void;
-  onEditComment: (commentId: string, newText: string) => void;
-  onDeleteComment: (commentId: string) => void;
+  ideaId: string; // ID of the idea, passed down for comment actions
+  comment: Comment; // The comment object to render
+  onAddComment: (text: string, parentId: string) => void; // Function to add a reply to a comment
+  onEditComment: (commentId: string, newText: string) => void; // Function to edit a comment (passed down)
+  onDeleteComment: (commentId: string) => void; // Function to delete a comment (passed down)
 }
 
+/**
+ * CommentItem Component: Represents a single comment and its replies.
+ * Handles rendering comment text, edit/delete options, and reply functionality.
+ */
 const CommentItem: React.FC<CommentItemProps> = ({
   ideaId,
   comment,
@@ -48,28 +55,46 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onEditComment,
   onDeleteComment,
 }) => {
-  // User authentication state
+  // User authentication state from Clerk
   const { user } = useUser();
+  // State to manage whether the comment is in edit mode
   const [isEditing, setIsEditing] = useState(false);
+  // State to hold the text being edited in the comment
   const [editedText, setEditedText] = useState(comment.text);
+  // State to manage whether the reply input is shown for this comment
   const [isReplying, setIsReplying] = useState(false);
+  // State to hold the text for a new reply
   const [replyText, setReplyText] = useState("");
+  // useRef to manage focus outside of the reply input to close it
   const replyRef = useRef<HTMLDivElement>(null);
+  // useRef to manage focus outside of the edit input to exit edit mode
   const editRef = useRef<HTMLDivElement>(null);
+  // State to track if there are unsaved changes in the edit input
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Handler for saving the edit
+  /**
+   * Handler for saving the edited comment text.
+   * Calls the onEditComment prop function to update the comment and exits edit mode.
+   */
   const handleSaveEdit = () => {
     onEditComment(comment.id, editedText);
     setIsEditing(false);
   };
 
-  // Handler for cancelling editing
+  /**
+   * Handler for cancelling comment editing.
+   * Resets the edited text to the original comment text and exits edit mode.
+   */
   const handleCancelEdit = () => {
     setEditedText(comment.text);
     setIsEditing(false);
   };
 
+  /**
+   * Handler for adding a reply to the comment.
+   * Calls the onAddComment prop function with the reply text and the current comment's ID as the parent.
+   * Resets the reply input and closes the reply input area.
+   */
   const handleAddReply = () => {
     if (replyText) {
       onAddComment(replyText, comment.id);
@@ -78,12 +103,20 @@ const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
+  /**
+   * Handler for input changes in the edit comment input.
+   * Updates the editedText state and checks if changes have been made compared to the original text.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const handleEditTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedText(e.target.value);
     setHasChanges(e.target.value !== comment.text);
   };
 
-  // Hide reply box when clicking outside
+  /**
+   * useEffect hook to handle closing the reply input when clicking outside.
+   * Adds a mousedown event listener to the document to detect clicks outside the reply input area.
+   */
   useEffect(() => {
     const handleClickOutsideReply = (event: MouseEvent) => {
       if (
@@ -96,9 +129,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
     document.addEventListener("mousedown", handleClickOutsideReply);
     return () =>
       document.removeEventListener("mousedown", handleClickOutsideReply);
-  }, [replyText]);
+  }, [replyText]); // Dependency array includes replyText to re-run effect when reply text changes.
 
-  // Hide edit mode when clicking outside (if no unsaved changes)
+  /**
+   * useEffect hook to handle exiting edit mode when clicking outside the edit input area, if no changes are made.
+   * Adds a mousedown event listener to the document to detect clicks outside the edit input area.
+   */
   useEffect(() => {
     const handleClickOutsideEdit = (event: MouseEvent) => {
       if (
@@ -112,10 +148,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
     document.addEventListener("mousedown", handleClickOutsideEdit);
     return () =>
       document.removeEventListener("mousedown", handleClickOutsideEdit);
-  }, [hasChanges]);
+  }, [hasChanges]); // Dependency array includes hasChanges to re-run effect when changes status is updated.
 
   return (
     <div className="mt-2 pl-4 border-l-2 border-gray-200 group">
+      {/* Conditional rendering: Edit mode input or comment text display */}
       {isEditing ? (
         <div ref={editRef} className="flex items-center space-x-2">
           <Input
@@ -140,9 +177,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
           <p className="text-sm whitespace-pre-wrap break-words max-w-[90%]">
             {comment.text}
           </p>
-          {/* Buttons container: hidden by default and shown on hover */}
+          {/* Conditional rendering: Action buttons (Reply, Edit, Delete) - Shown on group hover */}
           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {/* Reply button */}
+            {/* Reply button to toggle reply input */}
             <Button
               size="sm"
               variant="ghost"
@@ -151,7 +188,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             >
               <Reply className="h-4 w-4" />
             </Button>
-            {/* Three dot menu for Edit and Delete */}
+            {/* Dropdown menu for Edit and Delete actions */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="sm" variant="ghost" title="More options">
@@ -175,6 +212,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           </div>
         </div>
       )}
+      {/* Conditional rendering: Reply input area */}
       {isReplying && (
         <div ref={replyRef} className="mt-2 flex items-center space-x-2">
           <Input
@@ -188,7 +226,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           </Button>
         </div>
       )}
-      {/* Render nested replies recursively */}
+      {/* Recursive rendering of replies */}
       {comment.replies &&
         comment.replies.map((reply) => (
           <CommentItem
@@ -204,6 +242,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
   );
 };
 
+/**
+ * CommentSection Component: Renders the comment section, including the list of comments and the new comment input form.
+ * Manages the overall display of comments and handles adding new top-level comments.
+ */
 export default function CommentSection({
   ideaId,
   comments,
@@ -211,9 +253,17 @@ export default function CommentSection({
   onEditComment,
   onDeleteComment,
 }: CommentSectionProps) {
+  // State to hold the text for a new top-level comment
   const [newComment, setNewComment] = useState("");
+  // State to manage the expanded/collapsed state of the comment section
   const [expanded, setExpanded] = useState(false);
 
+  /**
+   * Handler for submitting a new top-level comment.
+   * Prevents default form submission and calls the onAddComment prop function to add the new comment.
+   * Resets the new comment input area after submission.
+   * @param {React.FormEvent} e - The form submit event.
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment) {
@@ -222,7 +272,19 @@ export default function CommentSection({
     }
   };
 
-  // Calculate total comment count (including nested replies)
+  /**
+   * Helper function to recursively count all replies for a given comment and its nested replies.
+   * @param {Comment} comment - The comment object to start counting replies from.
+   * @returns {number} - The total count of replies for the comment and all its nested replies.
+   */
+  const countReplies = (comment: Comment): number => {
+    return comment.replies.reduce(
+      (acc, reply) => acc + 1 + countReplies(reply),
+      0
+    );
+  };
+
+  // Calculate total comment count (including nested replies) for display purposes
   const totalCommentCount = comments.reduce(
     (acc, c) => acc + 1 + countReplies(c),
     0
@@ -230,6 +292,7 @@ export default function CommentSection({
 
   return (
     <div className="w-full">
+      {/* Button to toggle the comment section's expanded state */}
       <Button
         variant="ghost"
         className="p-0 h-auto text-gray-500 hover:text-gray-700"
@@ -238,8 +301,10 @@ export default function CommentSection({
         <MessageSquare className="h-4 w-4 mr-2" />
         {expanded ? "Hide Comments" : `${totalCommentCount} Comments`}
       </Button>
+      {/* Conditional rendering: Comment list and new comment form - Shown when expanded is true */}
       {expanded && (
         <div className="mt-4 space-y-4">
+          {/* Map through comments and render each as a CommentItem */}
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}
@@ -250,6 +315,7 @@ export default function CommentSection({
               onDeleteComment={onDeleteComment}
             />
           ))}
+          {/* Form for adding a new top-level comment */}
           <form onSubmit={handleSubmit} className="flex space-x-2">
             <Input
               value={newComment}

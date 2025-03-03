@@ -31,8 +31,9 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { BackButton } from "@/components/ui/custom-ui/back-button";
 
-// ─── DATA STRUCTURES───
+// ─── DATA STRUCTURES ───
 
+// Core data structures for managing todo list state
 interface Note {
   id: string;
   content: string;
@@ -74,6 +75,8 @@ interface ToDoListProps {
 
 // DRAGGABLE/DROPPABLECOMPONENTS
 
+// Core drag and drop components
+
 // Columns
 const DraggableColumn = ({
   column,
@@ -84,6 +87,8 @@ const DraggableColumn = ({
   section: Section;
   children: React.ReactNode;
 }) => {
+  // Enables column reordering through drag and drop
+  // Maintains column position state and handles drag events
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `column-${column.id}`,
     data: {
@@ -119,6 +124,8 @@ const DroppableColumn = ({
   section: Section;
   children: React.ReactNode;
 }) => {
+  // Defines drop zone for notes and other columns
+  // Visual feedback during drag operations
   const { setNodeRef, isOver } = useDroppable({
     id: `droppable-${column.id}`,
     data: { type: "column", sectionId: section.id, columnId: column.id },
@@ -142,6 +149,8 @@ const DraggableNote = ({
   note: Note;
   children: React.ReactNode;
 }) => {
+  // Enables notes to be dragged between columns
+  // Maintains position state during drag operations
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: note.id,
     data: { type: "note", noteId: note.id },
@@ -178,6 +187,8 @@ const DraggableSubtask = ({
   parentNoteId: string;
   children: React.ReactNode;
 }) => {
+  // Enables subtasks to be reordered within a parent note
+  // Can also be moved between different parent notes
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `subtask-${subtask.id}`,
     data: {
@@ -215,6 +226,8 @@ const DroppableSubtaskContainer = ({
   columnId: string;
   children: React.ReactNode;
 }) => {
+  // Defines drop zone for subtasks within a parent note
+  // Handles subtask reordering and moving between parents
   const { setNodeRef, isOver } = useDroppable({
     id: `droppable-subtasks-${parentNoteId}`,
     data: { type: "subtask-container", parentNoteId, columnId },
@@ -230,9 +243,9 @@ const DroppableSubtaskContainer = ({
   );
 };
 
-// ─── THE MAIN COMPONENT
+// ─── THE MAIN COMPONENT ───
 
-// Update the component definition to accept props
+// Main ToDo list component that orchestrates all functionality
 const ToDoList = ({
   hideBackButton = false,
   isDashboard = false,
@@ -252,8 +265,9 @@ const ToDoList = ({
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
 
-  // ─── FETCH / SYNC DATA ───────────────────────────────────────────────
+  // ─── FETCH / SYNC DATA ───
 
+  // Synchronizes local state with Firestore database
   useEffect(() => {
     if (!user) return;
     const fetchTodoListData = async () => {
@@ -302,6 +316,7 @@ const ToDoList = ({
     fetchTodoListData();
   }, [user]);
 
+  // Debounced save of changes to Firestore
   useEffect(() => {
     if (!user) return;
     const timeoutId = setTimeout(async () => {
@@ -316,13 +331,15 @@ const ToDoList = ({
     return () => clearTimeout(timeoutId);
   }, [sections, user]);
 
-  // ─── SECTION / COLUMN / NOTE / SUBTASK FUNCTIONS ───────────────────────
+  // ─── SECTION / COLUMN / NOTE / SUBTASK FUNCTIONS ───
 
   const archiveSection = (sectionId: string) => {
     setSections(sections.filter((s) => s.id !== sectionId));
   };
 
+  // Core state modification functions
   const addSection = () => {
+    // Creates new section with default column
     const newSection: Section = {
       id: Date.now().toString(),
       title: "New Section",
@@ -444,6 +461,8 @@ const ToDoList = ({
     toColumnId: string,
     noteId: string
   ) => {
+    // Handles moving notes between columns and sections
+    // Maintains note data integrity during moves
     const noteToMove = sections
       .find((s) => s.id === fromSectionId)
       ?.columns.find((c) => c.id === fromColumnId)
@@ -542,6 +561,8 @@ const ToDoList = ({
     toParentNoteId: string,
     toColumnId: string
   ) => {
+    // Handles moving subtasks between different parent notes
+    // Updates both source and target parent notes
     let movedSubtask: Note | null = null;
     setSections((prevSections) =>
       prevSections.map((section) => {
@@ -878,7 +899,9 @@ const ToDoList = ({
 
   // DRAG & DROP HANDLERS
 
+  // Drag and drop event handlers
   const handleDragStart = (event: DragStartEvent) => {
+    // Sets up drag overlay and tracks dragged item type
     const { active } = event;
     const activeData = active.data.current as DragData;
     if (activeData.type === "note") {
@@ -914,6 +937,10 @@ const ToDoList = ({
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
+    // Handles different types of drag operations:
+    // - Column reordering
+    // - Note moving between columns
+    // - Subtask reordering and reparenting
     const { active, over } = event;
     setActiveDragItem(null);
     if (!over) return;

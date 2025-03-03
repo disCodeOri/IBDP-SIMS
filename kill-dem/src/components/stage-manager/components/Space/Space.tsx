@@ -35,6 +35,8 @@ const DEFAULT_SNAP_WITH = "all";
 
 type SnappingOrientation = "horizontal" | "vertical";
 
+// Represents a window snapping connection between two windows 
+// and maintains the relationship between snapped windows
 class Snapping {
   orientation: SnappingOrientation;
   interactedWindow: SpaceWindow;
@@ -56,6 +58,7 @@ class Snapping {
     this.relatedWindows.merge(relatedWindows);
   }
 
+  // Checks if two snapping instances represent the same window connection
   equals(other: Snapping | null) {
     return (
       other &&
@@ -65,6 +68,7 @@ class Snapping {
     );
   }
 
+  // Generates a unique hash for the related windows to track snapping state
   getRelatedWindowsHash(prefix: string = ""): string {
     return (
       prefix +
@@ -74,6 +78,7 @@ class Snapping {
   }
 }
 
+// Extends Snapping to track active snapping states and z-index for rendering
 class Snap extends Snapping {
   snapMoving: boolean = false;
   snapResizing: boolean = false;
@@ -91,6 +96,7 @@ interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
   snapWith?: "all" | "move" | "resize";
 }
 
+// Main Space component that manages window layout, snapping, and interactions
 export function Space({
   children = null,
   autoHideStageds = DEFAULT_AUTO_HIDE_STAGEDS,
@@ -130,6 +136,7 @@ export function Space({
   }, [snaps]);
   const windowsRef = useRef<SpaceWindows>(new SpaceWindows());
 
+  // Updates snaps when windows are unmounted to prevent orphaned connections
   useEffect(() => {
     if (unmountedWindows.length === 0) return;
 
@@ -145,6 +152,7 @@ export function Space({
     setUnmountedWindows([]);
   }, [unmountedWindows]);
 
+  // Handles window position and size changes, managing snap connections
   const onWindowBoundsChange = useCallback(
     (
       id: string,
@@ -154,6 +162,7 @@ export function Space({
       resizing: boolean,
       staged: boolean
     ) => {
+      // Skip snapping logic if snapping is disabled or window is staged
       if (!snap) {
         windowsRef.current.set(
           new SpaceWindow(id, position, size, moving, resizing, staged)
@@ -179,6 +188,7 @@ export function Space({
 
       setSnaps([...snapsRef.current]);
 
+      // Find nearby windows within snapping threshold distance
       const nearbyWindows = windowsRef.current.map((other) => {
         if (other.id == id) return;
         if (other.staged) return;
@@ -214,6 +224,7 @@ export function Space({
         }
       });
 
+      // Remove existing snaps if windows are no longer nearby
       const existingSnaps = snapsRef.current.filter((snap) =>
         snap.relatedWindows.has(id)
       );
@@ -229,6 +240,7 @@ export function Space({
         }
       }
 
+      // Apply snapping based on window positions and snap configuration
       if (nearbyWindows.size == 0 || nearbyWindows.size > 2) {
         setToSnap(null);
         setSnapping(null);
@@ -330,6 +342,7 @@ export function Space({
   const onWindowMoveStart = useCallback(() => {}, []);
   const onWindowMoveEnd = useCallback(() => {}, []);
 
+  // Finalizes window snapping when user finishes moving/resizing
   const onUserBoundsChangeEnd = useCallback(
     (
       id: string,
@@ -365,6 +378,7 @@ export function Space({
         ? snapping.rightWindow
         : snapping.leftWindow;
 
+      // Calculate new position and size for snapped windows
       if (snapping.orientation == "horizontal") {
         snapsRef.current = snapsRef.current.filter(
           (snap) => !snap.relatedWindows.has(id)
@@ -420,6 +434,7 @@ export function Space({
     [snapWith, snapping, snapMargin, scaleX, scaleY, revertScaleX, revertScaleY]
   );
 
+  // Updates z-index for all windows in a snap group when focus changes
   useEffect(() => {
     if (!focusedWindow) return;
     const snap = snapsRef.current.find((snap) =>
@@ -688,6 +703,7 @@ export function Space({
   );
 }
 
+// Handles dragging of snapped window groups together
 interface SnapMoverProps {
   onMove: (positionDelta: [number, number]) => void;
   onMoveStart?: () => void;
@@ -712,6 +728,7 @@ function SnapMover({
     if (!lmb) setDragging(false);
   }, [lmb]);
 
+  // Updates window positions while dragging snap group
   useEffect(() => {
     if (!dragging) return;
     const positionDelta: [number, number] = [
@@ -748,6 +765,7 @@ function SnapMover({
   );
 }
 
+// Handles resizing between snapped windows
 interface SnapResizerProps {
   onResize: (sizeDelta: [number, number]) => void;
   onResizeStart?: () => void;
@@ -774,6 +792,7 @@ function SnapResizer({
     if (!lmb) setDragging(false);
   }, [lmb]);
 
+  // Updates window sizes while resizing snap connection
   useEffect(() => {
     if (!dragging) return;
     const positionDelta: [number, number] = [

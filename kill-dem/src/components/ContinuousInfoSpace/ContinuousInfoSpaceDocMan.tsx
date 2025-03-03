@@ -27,6 +27,10 @@ import {
   notebook,
 } from "@/lib/continuous-info-space-doc-man-actions";
 
+/**
+ * Component for displaying a single Notebook as a card.
+ * It handles rendering notebook details and provides interactive buttons for actions like previewing, opening, and deleting the notebook.
+ */
 function NotebookCard({
   notebook,
   onDelete,
@@ -55,6 +59,7 @@ function NotebookCard({
         </div>
       </div>
 
+      {/* Action buttons for the notebook, visible on hover */}
       <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
           variant="ghost"
@@ -85,38 +90,65 @@ function NotebookCard({
   );
 }
 
+/**
+ * Main component for managing and displaying notebooks.
+ * It handles fetching, creating, deleting, and previewing notebooks.
+ * Uses drag and drop context for potential future sortable notebook lists, although sorting is not implemented in this version.
+ */
 export default function NotebookManager() {
   const router = useRouter();
+  // State to hold the list of notebooks fetched from the database
   const [notebooks, setNotebooks] = useState<notebook[]>([]);
+  // State to control the visibility of the modal for creating a new notebook
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // State to control the visibility of the notebook preview dialog
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  // State to hold the notebook data that is currently being previewed
   const [selectedNotebook, setSelectedNotebook] = useState<notebook | null>(
     null
   );
+  // State to manage the input values for creating a new notebook (title and description)
   const [newNotebook, setNewNotebook] = useState({
     title: "",
     description: "",
   });
 
+  // Sensors for drag and drop functionality (pointer and keyboard sensors)
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
 
+  /**
+   * Handles opening the preview dialog for a given notebook.
+   * Sets the selected notebook to the notebook to be previewed and opens the preview modal.
+   * @param {notebook} notebook - The notebook object to preview.
+   */
   const handlePreview = (notebook: notebook) => {
     setSelectedNotebook(notebook);
     setIsPreviewOpen(true);
   };
 
+  // useEffect hook to load notebooks when the component mounts
   useEffect(() => {
     loadNotebooks();
   }, []);
 
+  /**
+   * Loads notebooks from the database and updates the component state.
+   * Fetches notebooks using `readNotebooks` action and sets the `notebooks` state.
+   */
   const loadNotebooks = async () => {
     const fetchedNotebooks = await readNotebooks();
     setNotebooks(fetchedNotebooks);
   };
 
+  /**
+   * Handles the submission of the new notebook form.
+   * Prevents default form submission, validates input, and calls `addNotebook` action to create a new notebook.
+   * After successful creation, it closes the modal, resets the new notebook input state, and navigates to the newly created notebook's page.
+   * @param {React.FormEvent} e - The form submit event.
+   */
   const handleCreateNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newNotebook.title) return;
@@ -137,6 +169,11 @@ export default function NotebookManager() {
     }
   };
 
+  /**
+   * Handles deleting a notebook.
+   * Calls the `deleteNotebook` action to remove a notebook from the database and then updates the local state by filtering out the deleted notebook.
+   * @param {string} id - The ID of the notebook to delete.
+   */
   const handleDeleteNotebook = async (id: string) => {
     try {
       await deleteNotebook(id);
@@ -148,6 +185,7 @@ export default function NotebookManager() {
 
   return (
     <div className="p-6">
+      {/* Header section with title and button to add a new notebook */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Notebooks</h1>
         <Button onClick={() => setIsModalOpen(true)}>
@@ -156,9 +194,11 @@ export default function NotebookManager() {
         </Button>
       </div>
 
+      {/* Drag and Drop Context for potential future sortable notebook list */}
       <DndContext sensors={sensors} collisionDetection={closestCenter}>
         <SortableContext items={notebooks} strategy={rectSortingStrategy}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {/* Map through notebooks and render each as a NotebookCard */}
             {notebooks.map((notebook) => (
               <NotebookCard
                 key={notebook.id}
@@ -176,6 +216,7 @@ export default function NotebookManager() {
         </SortableContext>
       </DndContext>
 
+      {/* Modal for creating a new notebook */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-full max-w-md">
@@ -224,6 +265,7 @@ export default function NotebookManager() {
         </div>
       )}
 
+      {/* Dialog for previewing a notebook */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-none border-b pb-4">
@@ -231,6 +273,7 @@ export default function NotebookManager() {
           </DialogHeader>
           <div className="flex-1 overflow-auto">
             <div className="space-y-4 p-6">
+              {/* Render sections and columns of the selected notebook for preview */}
               {selectedNotebook?.sections?.map(
                 (section: any, index: number) => (
                   <div
@@ -265,6 +308,7 @@ export default function NotebookManager() {
                   </div>
                 )
               )}
+              {/* Display message if the notebook has no sections */}
               {(!selectedNotebook?.sections ||
                 selectedNotebook.sections.length === 0) && (
                 <p className="text-gray-500 text-center py-8">

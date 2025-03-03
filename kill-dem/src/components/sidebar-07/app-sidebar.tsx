@@ -11,6 +11,10 @@ import {
 import { data } from "@/data/sidebar";
 import { UserButton } from "@clerk/nextjs";
 
+/**
+ * AppSidebar component is the main sidebar for the application.
+ * It integrates various sidebar components to create a functional application sidebar.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>

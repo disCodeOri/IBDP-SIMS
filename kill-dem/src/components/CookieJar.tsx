@@ -39,12 +39,17 @@ interface CookiesProps {
   gridCols?: number;
 }
 
+/**
+ * TrashZone Component: Represents the droppable area for deleting cookies.
+ * It becomes visible at the bottom of the screen during drag operations when delete is enabled.
+ */
 function TrashZone({ disabled }: { disabled: boolean }) {
   const { isOver, setNodeRef } = useDroppable({
     id: "trash",
     disabled,
   });
 
+  // If deletion is disabled, don't render the trash zone
   if (disabled) return null;
 
   return (
@@ -60,6 +65,10 @@ function TrashZone({ disabled }: { disabled: boolean }) {
   );
 }
 
+/**
+ * SortableCookieCard Component: Represents a single cookie card that can be dragged and sorted.
+ * It includes functionalities for editing and displaying cookie information.
+ */
 function SortableCookieCard({
   cookie,
   onEdit,
@@ -71,6 +80,7 @@ function SortableCookieCard({
   isDragging: boolean;
   disableEdit: boolean;
 }) {
+  // Hooks for sortable functionality from dnd-kit
   const {
     attributes,
     listeners,
@@ -79,6 +89,7 @@ function SortableCookieCard({
     transition,
   } = useSortable({ id: cookie.id });
 
+  // Hooks for draggable functionality from dnd-kit - nested draggable within sortable
   const {
     attributes: dragAttributes,
     listeners: dragListeners,
@@ -86,13 +97,14 @@ function SortableCookieCard({
     transform: dragTransform,
   } = useDraggable({
     id: cookie.id,
-    data: { type: "cookie" },
+    data: { type: "cookie" }, // Data to identify the type of draggable item
   });
 
+  // Style to apply during drag operation for visual feedback
   const style = {
     transform: CSS.Transform.toString(transform || dragTransform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1, // Make card slightly transparent during drag
   };
 
   return (
@@ -120,8 +132,8 @@ function SortableCookieCard({
         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
-              e.stopPropagation();
-              onEdit(cookie);
+              e.stopPropagation(); // Prevent card click from triggering parent actions
+              onEdit(cookie); // Callback to handle cookie editing
             }}
             className="text-gray-600 hover:text-gray-800" // Changed text color
           >
@@ -133,65 +145,75 @@ function SortableCookieCard({
   );
 }
 
+/**
+ * CookieJar Component: Main component for displaying and managing cookies in a draggable grid.
+ * It handles cookie data fetching, adding, editing, deleting, and reordering.
+ */
 export default function CookieJar({
   disableEdit = false,
   disableAdd = false,
   disableDelete = false,
   gridCols = 4,
 }: CookiesProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cookies, setCookies] = useState<Cookie[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for controlling the cookie modal
+  const [cookies, setCookies] = useState<Cookie[]>([]); // State to store the list of cookies
   const [newCookie, setNewCookie] = useState<Partial<Cookie>>({
     name: "",
     description: "",
-  });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingCookieId, setEditingCookieId] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  }); // State to manage new cookie input values in the modal
+  const [isEditing, setIsEditing] = useState(false); // State to track if the modal is in edit mode
+  const [editingCookieId, setEditingCookieId] = useState<string | null>(null); // State to hold the ID of the cookie being edited
+  const [activeId, setActiveId] = useState<string | null>(null); // State to track the currently dragged cookie ID
 
+  // Configure sensors for drag and drop interactions (Pointer and Keyboard)
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 30,
+        distance: 30, // Drag activation distance threshold
       },
     }),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates, // Use keyboard coordinates for accessibility
     })
   );
 
+  // useEffect hook to fetch cookies on component mount
   useEffect(() => {
     async function fetchCookies() {
-      const fetchedCookies = await readCookies();
-      setCookies(fetchedCookies);
+      const fetchedCookies = await readCookies(); // Call to fetch cookies from database
+      setCookies(fetchedCookies); // Update cookies state with fetched data
     }
     fetchCookies();
   }, []);
 
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleModal = () => setIsModalOpen(!isModalOpen); // Function to toggle modal visibility
 
+  // Handler for input changes in the modal form
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setNewCookie((prev) => ({
       ...prev,
-      [e.target.id]: e.target.value,
+      [e.target.id]: e.target.value, // Dynamically update the corresponding field in newCookie state
     }));
   };
 
+  // Handler to prepare modal for editing an existing cookie
   const handleEdit = (cookie: Cookie) => {
-    if (disableEdit) return;
-    setNewCookie(cookie);
-    setIsEditing(true);
-    setEditingCookieId(cookie.id);
-    setIsModalOpen(true);
+    if (disableEdit) return; // Prevent edit if editing is disabled
+    setNewCookie(cookie); // Populate modal form with cookie data
+    setIsEditing(true); // Set modal to edit mode
+    setEditingCookieId(cookie.id); // Store the ID of the cookie being edited
+    setIsModalOpen(true); // Open the modal
   };
 
+  // Handler for form submission (Add or Edit Cookie)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isEditing && editingCookieId) {
-      if (disableEdit) return;
+      // Handle cookie update
+      if (disableEdit) return; // Prevent update if editing is disabled
 
       const updatedCookie: Cookie = {
         ...newCookie,
@@ -199,19 +221,20 @@ export default function CookieJar({
       } as Cookie;
 
       try {
-        await updateCookie(updatedCookie);
-        const updatedCookies = await readCookies();
-        setCookies(updatedCookies);
+        await updateCookie(updatedCookie); // Call to update cookie in database
+        const updatedCookies = await readCookies(); // Re-fetch cookies to reflect changes
+        setCookies(updatedCookies); // Update local cookie state
       } catch (error) {
         console.error("Failed to update cookie:", error);
       } finally {
-        setIsEditing(false);
-        setEditingCookieId(null);
-        setNewCookie({ name: "", description: "" });
-        setIsModalOpen(false);
+        setIsEditing(false); // Reset edit mode state
+        setEditingCookieId(null); // Clear editing cookie ID
+        setNewCookie({ name: "", description: "" }); // Reset new cookie input state
+        setIsModalOpen(false); // Close the modal
       }
     } else {
-      if (disableAdd) return;
+      // Handle new cookie addition
+      if (disableAdd) return; // Prevent add if adding is disabled
 
       try {
         if (!newCookie.name || !newCookie.description) {
@@ -224,55 +247,60 @@ export default function CookieJar({
           description: newCookie.description,
         };
 
-        await addCookie(cookieToAdd, gridCols);
-        const updatedCookies = await readCookies();
-        setCookies(updatedCookies);
-        setNewCookie({ name: "", description: "" });
-        setIsModalOpen(false);
+        await addCookie(cookieToAdd, gridCols); // Call to add new cookie to database
+        const updatedCookies = await readCookies(); // Re-fetch cookies to reflect addition
+        setCookies(updatedCookies); // Update local cookie state
+        setNewCookie({ name: "", description: "" }); // Reset new cookie input state
+        setIsModalOpen(false); // Close the modal
       } catch (error) {
         console.error("Failed to add cookie:", error);
       }
     }
   };
 
+  // Handler for drag start event
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+    setActiveId(event.active.id as string); // Set active ID to the ID of the dragged cookie
   };
 
+  // Handler for drag end event
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
-    setActiveId(null);
+    setActiveId(null); // Reset active ID after drag end
 
     if (!disableDelete && over?.id === "trash" && active.id) {
-      await deleteCookie(String(active.id));
-      const updatedCookies = await readCookies();
-      setCookies(updatedCookies);
+      // Handle cookie deletion when dropped on trash zone
+      await deleteCookie(String(active.id)); // Call to delete cookie from database
+      const updatedCookies = await readCookies(); // Re-fetch cookies to reflect deletion
+      setCookies(updatedCookies); // Update local cookie state
       return;
     }
 
     setCookies((items) => {
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over?.id);
+      const oldIndex = items.findIndex((item) => item.id === active.id); // Find the original index of the dragged cookie
+      const newIndex = items.findIndex((item) => item.id === over?.id); // Find the new index based on drop target
 
       if (oldIndex === -1 || newIndex === -1) {
-        return items;
+        return items; // Return original items if indices are invalid
       }
 
-      const reorderedItems = arrayMove(items, oldIndex, newIndex);
+      const reorderedItems = arrayMove(items, oldIndex, newIndex); // Reorder items array
 
+      // Update positions based on new order in the grid
       const updatedItemsWithPositions = reorderedItems.map((item, index) => ({
         ...item,
         position: {
-          x: index % gridCols,
-          y: Math.floor(index / gridCols),
+          x: index % gridCols, // Calculate x position based on column
+          y: Math.floor(index / gridCols), // Calculate y position based on row
         },
       }));
 
-      updateCookiePositions(updatedItemsWithPositions);
-      return updatedItemsWithPositions;
+      updateCookiePositions(updatedItemsWithPositions); // Call to update cookie positions in database
+      return updatedItemsWithPositions; // Return updated items array
     });
   };
 
+  // Dynamic grid classes based on props
   const gridClasses = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-${gridCols} gap-4`;
 
   return (
@@ -280,9 +308,9 @@ export default function CookieJar({
       {!disableAdd && (
         <Button
           onClick={() => {
-            setNewCookie({ name: "", description: "" });
-            setIsEditing(false);
-            toggleModal();
+            setNewCookie({ name: "", description: "" }); // Reset input fields
+            setIsEditing(false); // Ensure modal is in add mode
+            toggleModal(); // Open the modal
           }}
           variant="outline"
           size="default"
@@ -293,15 +321,17 @@ export default function CookieJar({
         </Button>
       )}
 
+      {/* DndContext Provider for drag and drop functionality */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+        collisionDetection={closestCenter} // Strategy for detecting collisions during drag
+        onDragStart={handleDragStart} // Handler for drag start event
+        onDragEnd={handleDragEnd} // Handler for drag end event
       >
+        {/* SortableContext to manage sortable items */}
         <SortableContext
-          items={cookies.map((a) => a.id)}
-          strategy={rectSortingStrategy}
+          items={cookies.map((a) => a.id)} // Array of cookie IDs for sortable context
+          strategy={rectSortingStrategy} // Strategy for sorting (rectangle sorting)
         >
           <div className={gridClasses}>
             {cookies.map((cookie) => (
@@ -309,16 +339,18 @@ export default function CookieJar({
                 key={cookie.id}
                 cookie={cookie}
                 onEdit={handleEdit}
-                isDragging={activeId === cookie.id}
+                isDragging={activeId === cookie.id} // Pass dragging state to card for styling
                 disableEdit={disableEdit}
               />
             ))}
           </div>
         </SortableContext>
 
+        {/* TrashZone component for deleting cookies */}
         <TrashZone disabled={disableDelete} />
       </DndContext>
 
+      {/* Modal for adding/editing cookies */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-background p-6 rounded-lg w-full max-w-md">
@@ -367,8 +399,8 @@ export default function CookieJar({
                 <Button
                   type="button"
                   onClick={() => {
-                    toggleModal();
-                    setIsEditing(false);
+                    toggleModal(); // Close the modal
+                    setIsEditing(false); // Reset edit mode
                   }}
                   variant="secondary"
                   size="default"

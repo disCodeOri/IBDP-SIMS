@@ -75,23 +75,35 @@ export default function IdeaCard({
 }: IdeaCardProps) {
   // User authentication state
   const { user } = useUser();
+  // State to manage whether the full description is expanded or collapsed
   const [expanded, setExpanded] = useState(false);
+  // State to hold the solution text when resolving an idea
   const [solution, setSolution] = useState("");
+  // State for editing the idea title, initialized with the current idea title
   const [editTitle, setEditTitle] = useState(idea.title);
+  // State for editing the idea description, initialized with the current idea description
   const [editDescription, setEditDescription] = useState(idea.description);
+  // State to track if the solution is currently being edited
   const [isEditingSolution, setIsEditingSolution] = useState(false);
+  // State to hold the edited solution text, initialized with the current solution
   const [editedSolution, setEditedSolution] = useState(idea.solution || "");
+  // State to track if the idea itself is being edited (title and description)
   const [isEditing, setIsEditing] = useState(false);
+  // State to control the visibility of the delete confirmation dialog
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // State to track if there are changes in the edit form to prevent accidental navigation away
   const [hasEditChanges, setHasEditChanges] = useState(false);
-  // This state holds the nested comment tree built from the flat list.
+  // This state holds the nested comment tree built from the flat list of comments fetched from Firestore.
   const [nestedComments, setNestedComments] = useState<Comment[]>([]);
+  // useRef for the title edit input to detect outside clicks for cancelling edit mode
   const editTitleRef = useRef<HTMLDivElement>(null);
+  // useRef for the solution edit input to detect outside clicks for cancelling edit mode
   const editSolutionRef = useRef<HTMLDivElement>(null);
 
-  // Load flat comments from Firestore and build the nested structure.
+  // Load flat comments from Firestore and build the nested comment tree structure.
   useEffect(() => {
     if (!user) return;
+    // Reference to the comments subcollection for this idea
     const commentsRef = collection(
       db,
       "users",
@@ -100,7 +112,9 @@ export default function IdeaCard({
       idea.id,
       "comments"
     );
+    // Query to fetch comments ordered by creation time
     const q = query(commentsRef, orderBy("createdAt", "asc"));
+    // Subscribe to comment updates using onSnapshot to get real-time updates
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const loadedComments: Comment[] = [];
       snapshot.forEach((docSnap) => {
@@ -108,58 +122,65 @@ export default function IdeaCard({
           id: docSnap.id,
           text: docSnap.data().text,
           parentId: docSnap.data().parentId || null,
-          replies: [],
+          replies: [], // Initialize replies as empty array, to be populated in nesting logic
         });
       });
       // Build nested structure from flat comments
       const commentMap = new Map<string, Comment>();
       const topLevelComments: Comment[] = [];
       loadedComments.forEach((comment) => {
-        commentMap.set(comment.id, { ...comment, replies: [] });
+        commentMap.set(comment.id, { ...comment, replies: [] }); // Store comment in map for easy access
       });
       commentMap.forEach((comment) => {
         if (comment.parentId) {
+          // If comment has a parentId, find the parent comment and add this comment as a reply
           const parent = commentMap.get(comment.parentId);
           if (parent) {
             parent.replies.push(comment);
           } else {
+            // If parent not found (e.g., orphaned comment), treat as top-level
             topLevelComments.push(comment);
           }
         } else {
+          // If no parentId, it's a top-level comment
           topLevelComments.push(comment);
         }
       });
-      setNestedComments(topLevelComments);
+      setNestedComments(topLevelComments); // Update state with nested comments
     });
-    return () => unsubscribe();
+    return () => unsubscribe(); // Unsubscribe from snapshot listener when component unmounts
   }, [user, idea.id]);
 
+  // Handler for input changes in the title edit field
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditTitle(e.target.value);
-    setHasEditChanges(e.target.value !== idea.title);
+    setHasEditChanges(e.target.value !== idea.title); // Track changes for "are you sure?" logic
   };
 
+  // Handler for textarea changes in the description edit field
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setEditDescription(e.target.value);
-    setHasEditChanges(e.target.value !== idea.description);
+    setHasEditChanges(e.target.value !== idea.description); // Track changes for "are you sure?" logic
   };
 
+  // useEffect hook to handle clicks outside the edit title/solution area to cancel editing
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!hasEditChanges) {
+        // If no changes, clicking outside should cancel edit mode
         if (
           editTitleRef.current &&
           !editTitleRef.current.contains(event.target as Node)
         ) {
-          setIsEditing(false);
+          setIsEditing(false); // Exit title edit mode
         }
         if (
           editSolutionRef.current &&
           !editSolutionRef.current.contains(event.target as Node)
         ) {
-          setIsEditingSolution(false);
+          setIsEditingSolution(false); // Exit solution edit mode
         }
       }
     };
@@ -167,23 +188,27 @@ export default function IdeaCard({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [hasEditChanges]);
 
+  // Function to handle resolving an idea - calls the onResolve prop function
   const handleResolve = () => {
     onResolve(idea.id, solution);
-    setSolution("");
+    setSolution(""); // Clear the solution input after resolving
   };
 
+  // Function to handle initiating the edit mode for the idea (title/description)
   const handleEdit = () => {
     onEditIdea(idea.id, editTitle, editDescription);
   };
 
+  // Function to handle saving the edited solution
   const handleEditSolution = () => {
     onEditSolution(idea.id, editedSolution);
-    setIsEditingSolution(false);
+    setIsEditingSolution(false); // Exit solution edit mode after saving
   };
 
   return (
     <Card className={`${idea.resolved ? "bg-gray-50" : "bg-white"}`}>
       <CardHeader className="flex flex-row items-start space-x-4 pb-2">
+        {/* Upvote/Downvote buttons and score display */}
         <div className="flex flex-col items-center space-y-1">
           <Button
             variant="ghost"
@@ -228,6 +253,7 @@ export default function IdeaCard({
           </p>
         </div>
         <div className="flex space-x-2">
+          {/* Edit Idea Dialog */}
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
@@ -263,6 +289,7 @@ export default function IdeaCard({
               <Button onClick={handleEdit}>Save Changes</Button>
             </DialogContent>
           </Dialog>
+          {/* Delete Idea Dialog */}
           <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
             <DialogTrigger asChild>
               <Button
@@ -301,6 +328,7 @@ export default function IdeaCard({
             </DialogContent>
           </Dialog>
         </div>
+        {/* Reopen Idea Button - only shown if the idea is resolved */}
         {idea.resolved ? (
           <Button variant="outline" size="sm" onClick={() => onReopen(idea.id)}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -310,6 +338,7 @@ export default function IdeaCard({
       </CardHeader>
       <CardContent>
         <p className="text-sm whitespace-pre-wrap break-words">
+          {/* Conditionally render full description or truncated description based on expanded state */}
           {expanded ? idea.description : `${idea.description.slice(0, 200)}...`}
           {idea.description.length > 200 && (
             <Button
@@ -321,8 +350,10 @@ export default function IdeaCard({
             </Button>
           )}
         </p>
+        {/* Solution display - only shown if the idea is resolved and has a solution */}
         {idea.resolved && idea.solution && (
           <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+            {/* Conditionally render solution text or solution edit input based on isEditingSolution state */}
             {isEditingSolution ? (
               <div className="flex space-x-2">
                 <Input
@@ -352,6 +383,7 @@ export default function IdeaCard({
         )}
       </CardContent>
       <CardFooter className="flex flex-col items-start space-y-2">
+        {/* Resolve input and button - only shown if the idea is not resolved */}
         {!idea.resolved && (
           <div className="flex w-full space-x-2">
             <Input
@@ -365,6 +397,7 @@ export default function IdeaCard({
             </Button>
           </div>
         )}
+        {/* Comment section component for displaying and adding comments */}
         <CommentSection
           ideaId={idea.id}
           comments={nestedComments}
@@ -381,7 +414,7 @@ export default function IdeaCard({
   );
 }
 
-// Helper function to count nested replies
+// Helper function to recursively count nested replies for a comment
 function countReplies(comment: Comment): number {
   return comment.replies.reduce(
     (acc, reply) => acc + 1 + countReplies(reply),

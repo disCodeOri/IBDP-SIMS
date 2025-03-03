@@ -74,6 +74,7 @@ interface WindowProps extends React.HTMLAttributes<HTMLDivElement> {
   onBlur?: () => void;
 }
 
+// Base component that provides window functionality with dragging, resizing, and staging capabilities
 function Window({
   children = null,
   spaceId,
@@ -772,6 +773,7 @@ interface ResizersProps extends React.PropsWithChildren {
   onMove?: (position: [number, number]) => void;
 }
 
+// Manages resize handles for all edges and corners of the window
 function Resizers({
   onMayResize,
   onResize = () => {},
@@ -815,6 +817,7 @@ interface ResizerProps extends React.PropsWithChildren {
   onMove: (position: [number, number]) => void;
 }
 
+// Individual resize handle that manages resizing interactions for a specific edge/corner
 function Resizer({ direction, onMayResize, onResize, onMove }: ResizerProps) {
   const {
     position: managerPosition,
@@ -845,11 +848,13 @@ function Resizer({ direction, onMayResize, onResize, onMove }: ResizerProps) {
   useEffect(() => {
     if (!dragging) return;
 
+    // Calculate position delta and apply appropriate resize/move operations based on direction
     const delta = [
       pointer[0] - prevDragPositionRef.current[0],
       pointer[1] - prevDragPositionRef.current[1],
     ];
 
+    // Handle different resize directions and their corresponding size/position updates
     if (direction === "bottom") {
       onResizeCallback(sizeRef.current, [0, revertScaleX(delta[1])]);
     } else if (direction === "right") {
@@ -970,6 +975,7 @@ interface TitleBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onMove?: ([x, y]: [number, number]) => void;
 }
 
+// Draggable title bar component that enables window movement and contains window controls
 function TitleBar({
   children = null,
   onMove = () => {},
@@ -1008,6 +1014,7 @@ function TitleBar({
   );
 
   useEffect(() => {
+    // Update window position during drag operations
     if (!dragging) return;
     setMovingPosition([
       pointer[0] - moveStartPointerRef.current[0],
@@ -1085,6 +1092,7 @@ function TitleBar({
   );
 }
 
+// Container for window title text
 function Title({
   children = null,
   ...attrs
@@ -1102,6 +1110,7 @@ function Title({
   );
 }
 
+// Container for window control buttons (close, minimize, etc.)
 function Buttons({
   children = null,
   ...attrs
@@ -1185,6 +1194,7 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const DEFAULT_ON_UNFOCUSED_WHEEL = (): boolean => true;
 
+// Main content area of the window that handles scrolling and focus management
 function Content({
   children = null,
   onUnfocusedWheel = DEFAULT_ON_UNFOCUSED_WHEEL,
@@ -1233,6 +1243,7 @@ interface BasicWindowProps extends React.HTMLAttributes<HTMLDivElement> {
   onSizeChange?: (size: [number, number]) => void;
 }
 
+// High-level window implementation with standard title bar, content area, and window controls
 function BasicWindow({
   title = "Window",
   content = "", // Changed to empty string by default
@@ -1263,6 +1274,7 @@ function BasicWindow({
 
   // When the Firestore content changes (and not currently editing), update the state.
   useEffect(() => {
+    // Sync content with external changes only when not being edited locally
     if (!isEditingContent) {
       setCurrentContent(content);
       setIsEmpty(!content.trim());

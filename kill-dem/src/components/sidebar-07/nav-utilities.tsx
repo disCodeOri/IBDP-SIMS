@@ -24,6 +24,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+/**
+ * NavUtilities component renders a sidebar group for utility navigation items.
+ * It takes a list of utilities as props and renders them as menu items in the sidebar.
+ */
 export function NavUtilities({
   utilities,
 }: {

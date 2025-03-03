@@ -1,3 +1,4 @@
+/* Base window container with smooth animations and modern styling */
 .Window {
   position: absolute;
   left: 0px;
@@ -14,15 +15,23 @@
   box-sizing: border-box;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
+/* Special states for window interactions */
 .Window.Window__moving {
 }
+
+/* Transition state while window is being staged */
 .Window.Window__staging {
   transition: transform 0.25s, width 0.5s, height 0.5s, opacity 0.75s;
 }
+
+/* Enhanced visual feedback for the currently focused window */
 .Window.Window__focused {
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2),
     0px 0px 0px 1px rgba(0, 0, 0, 0.2);
 }
+
+/* Staged window appearance with 3D transform effects */
 .Window.Window__staged {
   animation: AppearWindow 0.5s forwards;
   position: static;
@@ -32,6 +41,7 @@
 .Window.Window__snapMoving {
 }
 
+/* Overlay layer for staged windows to prevent unwanted interactions */
 .Window_stagedLayer {
   position: absolute;
   left: 0px;
@@ -49,6 +59,7 @@
   display: flex;
 }
 
+/* Interactive 3D effects for staged windows with hover states */
 .Window_stagedWindow {
   position: relative;
   transition: all 0.5s;
@@ -57,12 +68,15 @@
   z-index: 100;
   overflow: visible;
 }
+
+/* Enhanced hover effect with zoom and perspective adjustment */
 .Window_stagedWindow:hover {
   transform: rotateY(0) translateX(10px);
   scale: 1.2;
   z-index: 200;
 }
 
+/* Animation keyframes for window transitions */
 @keyframes AppearWindow {
   0% {
     opacity: 0;
@@ -85,6 +99,7 @@
   }
 }
 
+/* Title bar styling with controls and draggable area */
 .TitleBar {
   width: 100%;
   height: 30px;
@@ -100,6 +115,8 @@
   box-sizing: border-box;
   position: relative;
 }
+
+/* Prevent text selection during window interactions */
 .TitleBar,
 .TitleBar * {
   cursor: default;
@@ -124,6 +141,7 @@
   display: flex;
 }
 
+/* Window control buttons (close, minimize, maximize) */
 .TitleBar .Buttons {
   display: flex;
   justify-content: space-between;
@@ -131,6 +149,7 @@
   margin-right: 5px;
 }
 
+/* Individual button styling with hover animations */
 .TitleBar .Buttons .Button {
   width: 15px;
   height: 15px;
@@ -171,6 +190,7 @@
   background-color: #ffc260;
 }
 
+/* Content area styling with placeholder support */
 .Content {
   flex-grow: 1;
   position: relative;
@@ -188,6 +208,7 @@
   position: absolute;
 }
 
+/* Fluid content layout for scrollable areas */
 .Content_fluid {
   position: absolute;
   left: 0px;
@@ -222,6 +243,7 @@
 .Resizers {
 }
 
+/* Window resize handles positioning and styling */
 .Resizer {
   position: absolute;
   width: 10px;
@@ -233,6 +255,7 @@
   animation: Disappear 0.5s forwards;
 }
 
+/* Directional resize handles with appropriate cursors */
 .Resizer__bottom {
   bottom: -5px;
   left: 50%;
@@ -285,6 +308,7 @@
   cursor: nesw-resize;
 }
 
+/* Animation for resize handles appearance/disappearance */
 .Window.Window__mayResize .Resizer,
 .Window.Window__showResizers .Resizer {
   animation: AppearResizer 0.5s forwards;
@@ -302,6 +326,7 @@
   user-select: none;
 }
 
+/* Interactive animations */
 @keyframes Bubble {
   0% {
     scale: 1;

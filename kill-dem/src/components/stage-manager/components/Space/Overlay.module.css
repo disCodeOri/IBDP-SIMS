@@ -1,3 +1,4 @@
+/* Style for the overlay component that covers the entire viewport. */
 .overlay {
   position: fixed;
   inset: 0;
@@ -8,11 +9,13 @@
   z-index: 1000;
 }
 
+/* Style for the horizontal row that contains the space thumbnails. */
 .horizontalRow {
   display: flex;
   gap: 16px;
 }
 
+/* Style for each space thumbnail. */
 .thumbnail {
   width: 120px;
   height: 90px;
@@ -25,12 +28,14 @@
   opacity: 0.8;
 }
 
+/* Style for the active state of a space thumbnail. */
 .thumbnail.active {
   transform: scale(1.1);
   border: 2px solid #007aff;
   opacity: 1;
 }
 
+/* Style for the label within each thumbnail. */
 .label {
   font-size: 14px;
   font-weight: bold;

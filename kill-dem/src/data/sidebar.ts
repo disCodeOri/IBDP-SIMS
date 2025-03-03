@@ -7,6 +7,10 @@ import {
   PieChart,
 } from "lucide-react";
 
+/**
+ * Data definition for the sidebar component.
+ * This data structure is used to populate the sidebar with user information,
+ */
 export const data = {
   user: {
     name: "shadcn",
