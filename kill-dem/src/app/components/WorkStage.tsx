@@ -245,6 +245,12 @@ export default function WorkStage() {
                   onContentChange={(newContent) =>
                     updateWindow(space.id, window.id, { content: newContent })
                   }
+                  onPositionChange={(newPosition) =>
+                    updateWindow(space.id, window.id, { position: newPosition })
+                  }
+                  onSizeChange={(newSize) =>
+                    updateWindow(space.id, window.id, { size: newSize })
+                  }
                   onClose={() => {
                     // Toast confirmation flow for window deletion
                     const triggerToast = () => {

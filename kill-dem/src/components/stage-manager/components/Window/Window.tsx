@@ -1229,6 +1229,8 @@ interface BasicWindowProps extends React.HTMLAttributes<HTMLDivElement> {
   onTitleChange?: (newTitle: string) => void;
   content?: string;
   onContentChange?: (content: string) => void;
+  onPositionChange?: (position: [number, number]) => void;
+  onSizeChange?: (size: [number, number]) => void;
 }
 
 function BasicWindow({
@@ -1239,6 +1241,8 @@ function BasicWindow({
   onTitleChange,
   onContentChange,
   onClose,
+  onPositionChange,
+  onSizeChange,
   ...attrs
 }: BasicWindowProps) {
   const [position, setPosition] = usePosition(initialPosition);
@@ -1280,8 +1284,22 @@ function BasicWindow({
       size={size}
       staged={staged}
       onStagedChange={setStaged}
-      onPositionChange={setPosition}
-      onSizeChange={setSize}
+      onPositionChange={
+        onPositionChange
+          ? (newPosition: [number, number], reason: any) => {
+              setPosition(newPosition);
+              onPositionChange(newPosition);
+            }
+          : (newPosition: [number, number], reason: any) => setPosition(newPosition)
+      }
+      onSizeChange={
+        onSizeChange
+          ? (newSize: [number, number], reason: any) => {
+              setSize(newSize);
+              onSizeChange(newSize);
+            }
+          : (newSize: [number, number], reason: any) => setSize(newSize)
+      }
       style={attrs.style}
     >
       <TitleBar onMove={setPosition}>
