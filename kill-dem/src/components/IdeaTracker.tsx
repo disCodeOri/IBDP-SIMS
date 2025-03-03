@@ -55,10 +55,10 @@ export default function IdeaTracker() {
   // useEffect hook to fetch ideas from Firestore when the component mounts or when the user changes.
   useEffect(() => {
     if (!user) return;
-    // Reference to the 'nugget' collection within the user's document in Firestore.
-    const nuggetRef = collection(db, "users", user.id, "nugget");
+    // Reference to the 'ideas' collection within the user's document in Firestore.
+    const ideasRef = collection(db, "users", user.id, "ideas");
     // Create a query to fetch ideas, ordered by creation time in descending order.
-    const q = query(nuggetRef, orderBy("createdAt", "desc"));
+    const q = query(ideasRef, orderBy("createdAt", "desc"));
     // Subscribe to real-time updates from Firestore using onSnapshot.
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const loadedIdeas: Idea[] = [];
@@ -87,10 +87,10 @@ export default function IdeaTracker() {
   const addIdea = async (title: string, description: string) => {
     if (!user) return;
     try {
-      // Get reference to the 'nugget' collection for the current user.
-      const nuggetRef = collection(db, "users", user.id, "nugget");
-      // Add a new document to the 'nugget' collection with the provided title and description.
-      await addDoc(nuggetRef, {
+      // Get reference to the 'ideas' collection for the current user.
+      const ideasRef = collection(db, "users", user.id, "ideas");
+      // Add a new document to the 'ideas' collection with the provided title and description.
+      await addDoc(ideasRef, {
         title,
         description,
         upvotes: 0,
@@ -108,8 +108,8 @@ export default function IdeaTracker() {
   const resolveIdea = async (id: string, solution: string) => {
     if (!user) return;
     try {
-      // Get reference to the specific idea document within the user's 'nugget' collection.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      // Get reference to the specific idea document within the user's 'ideas' collection.
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Update the idea document to mark it as resolved and add the provided solution.
       await updateDoc(ideaRef, { resolved: true, solution });
     } catch (error) {
@@ -122,7 +122,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Update the idea document to mark it as not resolved and clear the solution.
       await updateDoc(ideaRef, { resolved: false, solution: "" });
     } catch (error) {
@@ -135,7 +135,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Increment the upvotes count for the idea document using Firestore's increment operator.
       await updateDoc(ideaRef, { upvotes: increment(1) });
     } catch (error) {
@@ -148,7 +148,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Increment the downvotes count for the idea document using Firestore's increment operator.
       await updateDoc(ideaRef, { downvotes: increment(1) });
     } catch (error) {
@@ -169,7 +169,7 @@ export default function IdeaTracker() {
         db,
         "users",
         user.id,
-        "nugget",
+        "ideas",
         ideaId,
         "comments"
       );
@@ -197,7 +197,7 @@ export default function IdeaTracker() {
         db,
         "users",
         user.id,
-        "nugget",
+        "ideas",
         ideaId,
         "comments",
         commentId
@@ -218,7 +218,7 @@ export default function IdeaTracker() {
         db,
         "users",
         user.id,
-        "nugget",
+        "ideas",
         ideaId,
         "comments",
         commentId
@@ -235,7 +235,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Update the title and description fields of the idea document.
       await updateDoc(ideaRef, { title, description });
     } catch (error) {
@@ -248,7 +248,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Update the solution field of the idea document with the new solution.
       await updateDoc(ideaRef, { solution: newSolution });
     } catch (error) {
@@ -261,7 +261,7 @@ export default function IdeaTracker() {
     if (!user) return;
     try {
       // Get reference to the specific idea document to be deleted.
-      const ideaRef = doc(db, "users", user.id, "nugget", id);
+      const ideaRef = doc(db, "users", user.id, "ideas", id);
       // Delete the idea document from Firestore.
       await deleteDoc(ideaRef);
     } catch (error) {

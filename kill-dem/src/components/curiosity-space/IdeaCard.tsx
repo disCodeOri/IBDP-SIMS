@@ -108,7 +108,7 @@ export default function IdeaCard({
       db,
       "users",
       user.id,
-      "nugget",
+      "ideas",
       idea.id,
       "comments"
     );
