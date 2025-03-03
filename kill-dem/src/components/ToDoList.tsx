@@ -1357,7 +1357,7 @@ const ToDoList = ({
                           onClick={() => addNote(section.id, column.id)}
                         >
                           <Plus className="h-4 w-4 mr-2" />
-                          Add Note
+                          Add Task
                         </Button>
                       </DroppableColumn>
                     </DraggableColumn>
