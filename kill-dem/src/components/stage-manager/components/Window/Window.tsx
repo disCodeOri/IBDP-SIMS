@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-
 import { isMobileDevice, nonZeroPosition } from "../../space";
 import { usePosition, useSpaceId } from "../../hooks";
 import { ManagerContext, SpaceContext } from "../../contexts";
@@ -1246,9 +1245,9 @@ function BasicWindow({
   const [size, setSize] = useState(initialSize);
   const [spaceId] = useSpaceId();
   const [currentTitle, setCurrentTitle] = useState(title);
-  const [staged, setStaged] = useState(false); // Added staged state
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [currentContent, setCurrentContent] = useState(content);
+  const [staged, setStaged] = useState(false);
+  const [isEditingContent, setIsEditingContent] = useState(false);
   const [isEmpty, setIsEmpty] = useState(!content);
 
   // Handle title changes
@@ -1258,34 +1257,29 @@ function BasicWindow({
     onTitleChange?.(newTitle);
   };
 
-  // Handle content changes
-  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
-    if (!contentRef.current) return;
-    const newContent = contentRef.current.innerText;
+  // When the Firestore content changes (and not currently editing), update the state.
+  useEffect(() => {
+    if (!isEditingContent) {
+      setCurrentContent(content);
+      setIsEmpty(!content.trim());
+    }
+  }, [content, isEditingContent]);
+
+  // Content change handler for the textarea
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    setCurrentContent(newContent);
     setIsEmpty(!newContent.trim());
     onContentChange?.(newContent);
   };
-
-  // Sync props with state
-  useEffect(() => {
-    setCurrentTitle(title);
-  }, [title]);
-
-  // Only update content from props when not editing
-  useEffect(() => {
-    if (contentRef.current && !isEditing) {
-      contentRef.current.innerText = content;
-      setIsEmpty(!content.trim());
-    }
-  }, [content, isEditing]);
 
   return (
     <Window
       spaceId={spaceId}
       position={position}
       size={size}
-      staged={staged} // Pass staged state
-      onStagedChange={setStaged} // Connect state updater
+      staged={staged}
+      onStagedChange={setStaged}
       onPositionChange={setPosition}
       onSizeChange={setSize}
       style={attrs.style}
@@ -1305,22 +1299,19 @@ function BasicWindow({
         </Title>
       </TitleBar>
       <Content>
-        <div
-          ref={contentRef}
-          contentEditable
-          className={`p-4 min-h-full outline-none ${
-            isEmpty ? styles["empty-content"] : ""
-          }`}
-          onInput={handleContentChange}
-          onFocus={() => setIsEditing(true)}
-          onBlur={() => setIsEditing(false)}
-          suppressContentEditableWarning={true}
-          data-placeholder="Start typing..."
+        <textarea
+          value={currentContent}
+          onChange={handleContentChange}
+          onFocus={() => setIsEditingContent(true)}
+          onBlur={() => setIsEditingContent(false)}
+          placeholder="Start typing..."
+          className={`p-4 min-h-full outline-none w-full h-full resize-none border-none bg-transparent placeholder-gray-400`}
         />
       </Content>
     </Window>
   );
 }
+
 
 export {
   Window,
