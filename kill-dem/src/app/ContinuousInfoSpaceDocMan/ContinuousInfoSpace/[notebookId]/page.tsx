@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -927,3 +925,4 @@ const TodoListInterface = () => {
 };
 
 export default TodoListInterface;
+export const runtime = 'edge';
