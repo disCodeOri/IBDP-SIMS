@@ -4,6 +4,8 @@ from tkinter import ttk, filedialog, scrolledtext
 from datetime import datetime
 import threading
 import re
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 class FileCheckboxTree(ttk.Frame):
     def __init__(self, master, **kwargs):
@@ -105,6 +107,7 @@ class FileProcessorGUI:
         self.ignore_vars = {}
         self.files_to_ignore = {"collation-engine.py", "combined_output.txt", "file_structure.txt"}
         
+        self.observer = None
         self.setup_gui()
         
     def setup_gui(self):
@@ -137,11 +140,6 @@ class FileProcessorGUI:
         select_frame.pack(fill="x", pady=5)
         ttk.Button(select_frame, text="Select All", command=self.checkbox_tree.select_all).pack(side="left", padx=5)
         ttk.Button(select_frame, text="Deselect All", command=self.checkbox_tree.deselect_all).pack(side="left")
-        
-        # Refresh button
-        refresh_frame = ttk.Frame(left_frame)
-        refresh_frame.pack(fill="x", pady=5)
-        ttk.Button(refresh_frame, text="Refresh File Tree", command=self.refresh_file_list).pack(side="left")
         
         # Right panel
         right_frame = ttk.Frame(main_frame)
@@ -202,6 +200,8 @@ class FileProcessorGUI:
         folder = filedialog.askdirectory()
         if folder:
             self.folder_path.set(folder)
+            self.stop_monitoring()
+            self.start_monitoring(folder)
             self.refresh_file_list()
             
     def refresh_file_list(self):
@@ -528,8 +528,35 @@ class FileProcessorGUI:
         self.checkbox_tree.deselect_all()
         self.refresh_file_list()
 
+    def start_monitoring(self, path):
+        self.observer = Observer()
+        handler = FileSystemHandler(self.refresh_file_list)
+        self.observer.schedule(handler, path, recursive=True)
+        self.observer.start()
+    
+    def stop_monitoring(self):
+        if self.observer:
+            self.observer.stop()
+            self.observer.join()
+            self.observer = None
+
     def run(self):
-        self.root.mainloop()
+        try:
+            self.root.mainloop()
+        finally:
+            self.stop_monitoring()
+
+class FileSystemHandler(FileSystemEventHandler):
+    def __init__(self, callback):
+        self.callback = callback
+        self.timer = None
+        
+    def on_any_event(self, event):
+        # Debounce the refresh to avoid multiple rapid updates
+        if self.timer:
+            self.timer.cancel()
+        self.timer = threading.Timer(0.5, self.callback)
+        self.timer.start()
 
 if __name__ == "__main__":
     app = FileProcessorGUI()
