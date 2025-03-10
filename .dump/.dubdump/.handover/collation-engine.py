@@ -149,6 +149,10 @@ class FileProcessorGUI:
         ttk.Button(ignore_frame, text="Remove Selected", command=self.remove_custom_ignore).grid(
             row=len(self.default_ignores)//2 + 3, column=0, columnspan=2, sticky="w", pady=2)
         
+        # Add new button for converting selections to ignores
+        ttk.Button(ignore_frame, text="Add Selected as Ignores", command=self.add_selected_as_ignores).grid(
+            row=len(self.default_ignores)//2 + 4, column=0, columnspan=2, sticky="w", pady=2)
+        
         # File selection
         file_frame = ttk.LabelFrame(left_frame, text="Select Files to Include", padding="5")
         file_frame.pack(fill="both", expand=True, pady=5)
@@ -514,6 +518,15 @@ class FileProcessorGUI:
             self.custom_patterns.pop(index)
             self.custom_listbox.delete(index)
             self.refresh_file_list()
+
+    def add_selected_as_ignores(self):
+        selected = self.checkbox_tree.get_selected()
+        for path in selected:
+            if path not in self.custom_patterns:
+                self.custom_patterns.append(path)
+                self.custom_listbox.insert(tk.END, path)
+        self.checkbox_tree.deselect_all()
+        self.refresh_file_list()
 
     def run(self):
         self.root.mainloop()
