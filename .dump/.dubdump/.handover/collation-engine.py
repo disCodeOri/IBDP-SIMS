@@ -167,8 +167,12 @@ class FileProcessorGUI:
         self.custom_patterns = []
         self.custom_listbox = tk.Listbox(ignore_frame, height=4, width=30)
         self.custom_listbox.grid(row=len(self.default_ignores)//2 + 2, column=0, columnspan=2, sticky="w", pady=5)
-        ttk.Button(ignore_frame, text="Remove Selected", command=self.remove_custom_ignore).grid(
-            row=len(self.default_ignores)//2 + 3, column=0, columnspan=2, sticky="w", pady=2)
+        
+        # Buttons frame for ignore pattern actions
+        ignore_buttons_frame = ttk.Frame(ignore_frame)
+        ignore_buttons_frame.grid(row=len(self.default_ignores)//2 + 3, column=0, columnspan=2, sticky="w", pady=2)
+        ttk.Button(ignore_buttons_frame, text="Remove Selected", command=self.remove_custom_ignore).pack(side="left", padx=2)
+        ttk.Button(ignore_buttons_frame, text="Clear All", command=self.clear_custom_ignores).pack(side="left", padx=2)
         
         # Add Selected as Ignores button
         ttk.Button(ignore_frame, text="Add Selected as Ignores", command=self.add_selected_as_ignores).grid(
@@ -526,6 +530,11 @@ class FileProcessorGUI:
                 self.custom_patterns.append(path)
                 self.custom_listbox.insert(tk.END, path)
         self.checkbox_tree.deselect_all()
+        self.refresh_file_list()
+
+    def clear_custom_ignores(self):
+        self.custom_patterns = []
+        self.custom_listbox.delete(0, tk.END)
         self.refresh_file_list()
 
     def start_monitoring(self, path):
