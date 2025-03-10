@@ -124,8 +124,31 @@ class FileProcessorGUI:
         ttk.Entry(folder_frame, textvariable=self.folder_path, width=50).pack(side="left", padx=5)
         ttk.Button(folder_frame, text="Browse", command=self.browse_folder).pack(side="left")
         
-        # Ignore patterns
-        ignore_frame = ttk.LabelFrame(left_frame, text="Ignore Patterns", padding="5")
+        # File selection (now comes right after folder selection in left panel)
+        file_frame = ttk.LabelFrame(left_frame, text="Select Files to Include", padding="5")
+        file_frame.pack(fill="both", expand=True, pady=5)
+        
+        # Add checkbox tree
+        self.checkbox_tree = FileCheckboxTree(file_frame)
+        self.checkbox_tree.pack(fill="both", expand=True, pady=5)
+        
+        # Selection buttons
+        select_frame = ttk.Frame(left_frame)
+        select_frame.pack(fill="x", pady=5)
+        ttk.Button(select_frame, text="Select All", command=self.checkbox_tree.select_all).pack(side="left", padx=5)
+        ttk.Button(select_frame, text="Deselect All", command=self.checkbox_tree.deselect_all).pack(side="left")
+        
+        # Refresh button
+        refresh_frame = ttk.Frame(left_frame)
+        refresh_frame.pack(fill="x", pady=5)
+        ttk.Button(refresh_frame, text="Refresh File Tree", command=self.refresh_file_list).pack(side="left")
+        
+        # Right panel
+        right_frame = ttk.Frame(main_frame)
+        right_frame.grid(row=0, column=1, sticky="nsew")
+        
+        # Move Ignore patterns section to right panel
+        ignore_frame = ttk.LabelFrame(right_frame, text="Ignore Patterns", padding="5")
         ignore_frame.pack(fill="x", pady=5)
         
         for i, pattern in enumerate(self.default_ignores):
@@ -149,32 +172,9 @@ class FileProcessorGUI:
         ttk.Button(ignore_frame, text="Remove Selected", command=self.remove_custom_ignore).grid(
             row=len(self.default_ignores)//2 + 3, column=0, columnspan=2, sticky="w", pady=2)
         
-        # Add new button for converting selections to ignores
+        # Add Selected as Ignores button
         ttk.Button(ignore_frame, text="Add Selected as Ignores", command=self.add_selected_as_ignores).grid(
             row=len(self.default_ignores)//2 + 4, column=0, columnspan=2, sticky="w", pady=2)
-        
-        # File selection
-        file_frame = ttk.LabelFrame(left_frame, text="Select Files to Include", padding="5")
-        file_frame.pack(fill="both", expand=True, pady=5)
-        
-        # Add checkbox tree
-        self.checkbox_tree = FileCheckboxTree(file_frame)
-        self.checkbox_tree.pack(fill="both", expand=True, pady=5)
-        
-        # Selection buttons
-        select_frame = ttk.Frame(left_frame)
-        select_frame.pack(fill="x", pady=5)
-        ttk.Button(select_frame, text="Select All", command=self.checkbox_tree.select_all).pack(side="left", padx=5)
-        ttk.Button(select_frame, text="Deselect All", command=self.checkbox_tree.deselect_all).pack(side="left")
-        
-        # Refresh button
-        refresh_frame = ttk.Frame(left_frame)
-        refresh_frame.pack(fill="x", pady=5)
-        ttk.Button(refresh_frame, text="Refresh File Tree", command=self.refresh_file_list).pack(side="left")
-        
-        # Right panel
-        right_frame = ttk.Frame(main_frame)
-        right_frame.grid(row=0, column=1, sticky="nsew")
         
         # Options
         options_frame = ttk.LabelFrame(right_frame, text="Options", padding="5")
