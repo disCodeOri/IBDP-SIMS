@@ -30,6 +30,7 @@ class FileCheckboxTree(ttk.Frame):
         self.checkboxes = {}
         self.vars = {}
         self.disabled_checkboxes = {}
+        self.directories = set()  # Track directory paths
         
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
@@ -46,21 +47,34 @@ class FileCheckboxTree(ttk.Frame):
         self.checkboxes = {}
         self.vars = {}
         self.disabled_checkboxes = {}
+        self.directories = set()
         
-    def add_item(self, path, indent=0, disabled=False):
+    def add_item(self, key, display_text, indent=0, disabled=False, is_directory=False):
         var = tk.BooleanVar()
+        var.trace_add("write", lambda *args, k=key: self.on_checkbox_toggle(k))
         checkbox = ttk.Checkbutton(
             self.scrollable_frame,
-            text=path,
+            text=display_text,
             variable=var,
             padding=(indent*20, 0, 0, 0),
             state="disabled" if disabled else "normal"
         )
         checkbox.pack(anchor="w", fill="x")
-        self.checkboxes[path] = checkbox
-        self.vars[path] = var
+        self.checkboxes[key] = checkbox
+        self.vars[key] = var
         if disabled:
-            self.disabled_checkboxes[path] = checkbox
+            self.disabled_checkboxes[key] = checkbox
+        if is_directory:
+            self.directories.add(key)
+            
+    def on_checkbox_toggle(self, key):
+        if key in self.directories:
+            state = self.vars[key].get()
+            dir_prefix = key + os.sep
+            for file_key in self.vars:
+                if file_key.startswith(dir_prefix):
+                    # Set state for both files and subdirectories
+                    self.vars[file_key].set(state)
         
     def select_all(self):
         for path, var in self.vars.items():
@@ -126,7 +140,14 @@ class FileProcessorGUI:
         ttk.Label(custom_frame, text="Custom ignore:").pack(side="left")
         self.custom_ignore = ttk.Entry(custom_frame, width=20)
         self.custom_ignore.pack(side="left", padx=5)
-        ttk.Button(custom_frame, text="Apply", command=self.refresh_file_list).pack(side="left")
+        ttk.Button(custom_frame, text="Add", command=self.add_custom_ignore).pack(side="left")
+        
+        # Custom ignore patterns list
+        self.custom_patterns = []
+        self.custom_listbox = tk.Listbox(ignore_frame, height=4, width=30)
+        self.custom_listbox.grid(row=len(self.default_ignores)//2 + 2, column=0, columnspan=2, sticky="w", pady=5)
+        ttk.Button(ignore_frame, text="Remove Selected", command=self.remove_custom_ignore).grid(
+            row=len(self.default_ignores)//2 + 3, column=0, columnspan=2, sticky="w", pady=2)
         
         # File selection
         file_frame = ttk.LabelFrame(left_frame, text="Select Files to Include", padding="5")
@@ -154,7 +175,7 @@ class FileProcessorGUI:
         # Options
         options_frame = ttk.LabelFrame(right_frame, text="Options", padding="5")
         options_frame.pack(fill="x", pady=5)
-        ttk.Checkbutton(options_frame, text="Remove Comments", variable=self.remove_comments_var).pack(anchor="w") #Added the new checkbox
+        ttk.Checkbutton(options_frame, text="Remove Comments", variable=self.remove_comments_var).pack(anchor="w")
         
         # Generate buttons
         buttons_frame = ttk.Frame(right_frame)
@@ -198,9 +219,10 @@ class FileProcessorGUI:
                         
                     if os.path.isfile(full_path):
                         disabled = os.path.basename(full_path) in self.files_to_ignore
-                        self.checkbox_tree.add_item(relative_path, indent, disabled)
+                        display_name = os.path.basename(relative_path)
+                        self.checkbox_tree.add_item(relative_path, display_name, indent, disabled)
                     else:
-                        self.checkbox_tree.add_item(f"[{item}]", indent)
+                        self.checkbox_tree.add_item(relative_path, f"[{item}]", indent, is_directory=True)
                         add_files(full_path, indent + 1)
             except Exception as e:
                 self.log_message(f"Error accessing {path}: {str(e)}")
@@ -213,15 +235,11 @@ class FileProcessorGUI:
         
     def get_ignore_patterns(self):
         patterns = {pattern for pattern, var in self.ignore_vars.items() if var.get()}
-        custom = self.custom_ignore.get().strip()
-        if custom:
-            patterns.add(custom)
+        patterns.update(self.custom_patterns)
         return patterns
         
     def generate_tree(self, dir_path, output_file, ignore_patterns):
         with open(output_file, 'w', encoding='utf-8') as f:
-            #f.write(f"Directory structure generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            
             def write_tree(path, prefix=""):
                 if any(pattern in path for pattern in ignore_patterns):
                     return
@@ -234,10 +252,6 @@ class FileProcessorGUI:
             write_tree(dir_path)
 
     def remove_comments(self, content, file_extension):
-        """
-        Remove comments from code based on file extension
-        """
-        # Define comment patterns for different languages
         patterns = {
             '.py': {
                 'single': r'#.*$',
@@ -249,17 +263,17 @@ class FileProcessorGUI:
                 'multi': r'/\*[\s\S]*?\*/',
                 'inline_multi': True
             },
-            '.ts': {  # TypeScript patterns
+            '.ts': {
                 'single': r'//.*$',
                 'multi': r'/\*[\s\S]*?\*/',
                 'inline_multi': True,
-                'jsdoc': r'/\*\*[\s\S]*?\*/'  # JSDoc comments
+                'jsdoc': r'/\*\*[\s\S]*?\*/'
             },
-            '.tsx': {  # TypeScript JSX patterns
+            '.tsx': {
                 'single': r'//.*$',
                 'multi': r'/\*[\s\S]*?\*/',
                 'inline_multi': True,
-                'jsdoc': r'/\*\*[\s\S]*?\*/'  # JSDoc comments
+                'jsdoc': r'/\*\*[\s\S]*?\*/'
             },
             '.jsx': {
                 'single': r'//.*$',
@@ -294,35 +308,25 @@ class FileProcessorGUI:
             }
         }
         
-        # Get patterns for file type or use TypeScript patterns as default
-        ext = os.path.splitext(file_extension.lower())[0] + os.path.splitext(file_extension.lower())[1]
-        pattern = patterns.get(ext, patterns['.ts'])  # Default to TypeScript patterns
+        ext = os.path.splitext(file_extension.lower())[1]
+        pattern = patterns.get(ext, patterns['.ts'])
         
-        # Remove JSDoc comments first if pattern supports it
         if pattern.get('jsdoc'):
             content = re.sub(pattern['jsdoc'], '', content)
             
-        # Remove multi-line comments
         if pattern['multi']:
             content = re.sub(pattern['multi'], '', content)
         
-        # Remove single-line comments
         if pattern['single']:
-            # Split into lines, remove comments, and rejoin
             lines = content.split('\n')
             lines = [re.sub(pattern['single'], '', line) for line in lines]
             content = '\n'.join(lines)
         
-        # Remove empty lines and normalize spacing
         lines = content.split('\n')
         lines = [line.rstrip() for line in lines if line.strip()]
         return '\n'.join(lines)
 
     def count_non_comment_lines(self, content, file_extension):
-        """
-        Count lines of code excluding comments and empty lines
-        """
-        # Define comment patterns for different languages
         patterns = {
             '.py': {
                 'single': r'#.*$',
@@ -368,8 +372,8 @@ class FileProcessorGUI:
             }
         }
 
-        ext = os.path.splitext(file_extension.lower())[0] + os.path.splitext(file_extension.lower())[1]
-        pattern = patterns.get(ext, patterns['.js'])  # Default to JavaScript patterns
+        ext = os.path.splitext(file_extension.lower())[1]
+        pattern = patterns.get(ext, patterns['.js'])
 
         lines = content.split('\n')
         non_comment_lines = 0
@@ -378,14 +382,11 @@ class FileProcessorGUI:
         for line in lines:
             line = line.strip()
             
-            # Skip empty lines
             if not line:
                 continue
 
-            # Handle multi-line comments
             if pattern['multi_start'] and re.search(pattern['multi_start'], line):
                 in_multi_comment = True
-                # Check if multi-line comment ends on the same line
                 if pattern['multi_end'] and re.search(pattern['multi_end'], line):
                     in_multi_comment = False
                 continue
@@ -395,26 +396,20 @@ class FileProcessorGUI:
                     in_multi_comment = False
                 continue
 
-            # Handle single-line comments
             if pattern['single'] and re.match(pattern['single'], line.lstrip()):
                 continue
 
-            # If we get here, it's a line of code
             non_comment_lines += 1
 
         return non_comment_lines
 
     def combine_files(self, source_dir, output_file):
-        """
-        Modified version that counts non-comment lines
-        """
         selected_files = self.checkbox_tree.get_selected()
         line_counts = {}
 
         with open(output_file, 'w', encoding='utf-8') as f:
             if self.remove_comments_var.get():
-                f.write("Comments have been removed from the source files")
-                f.write("\n")
+                f.write("Comments have been removed from the source files\n")
 
             selected_files.sort(key=lambda x: x.count(os.sep))
             current_dir = None
@@ -443,7 +438,6 @@ class FileProcessorGUI:
                         try:
                             with open(file_path, 'r', encoding='utf-8') as infile:
                                 content = infile.read()
-                                # Count non-comment lines before potentially removing comments
                                 line_counts[relative_path] = self.count_non_comment_lines(content, os.path.splitext(file_path)[1])
                                 if self.remove_comments_var.get():
                                     content = self.remove_comments(content, os.path.splitext(file_path)[1])
@@ -464,7 +458,6 @@ class FileProcessorGUI:
         return line_counts
 
     def generate_line_counts_file(self, line_counts):
-        """Generates a file with total lines and per-file counts."""
         total_lines = sum(line_counts.values())
         counts_file = os.path.join(self.script_dir, 'line_counts.txt')
         with open(counts_file, 'w', encoding='utf-8') as f:
@@ -485,11 +478,9 @@ class FileProcessorGUI:
         def process():
             try:
                 if mode == 'counts':
-                    # Only generate line counts
                     content_file = os.path.join(self.script_dir, 'combined_output_temp.txt')
                     line_counts = self.combine_files(folder, content_file)
                     self.generate_line_counts_file(line_counts)
-                    # Remove temporary file
                     if os.path.exists(content_file):
                         os.remove(content_file)
                 else:
@@ -507,6 +498,22 @@ class FileProcessorGUI:
                 self.log_message(f"Error: {str(e)}")
 
         threading.Thread(target=process, daemon=True).start()
+
+    def add_custom_ignore(self):
+        pattern = self.custom_ignore.get().strip()
+        if pattern and pattern not in self.custom_patterns:
+            self.custom_patterns.append(pattern)
+            self.custom_listbox.insert(tk.END, pattern)
+            self.custom_ignore.delete(0, tk.END)
+            self.refresh_file_list()
+            
+    def remove_custom_ignore(self):
+        selection = self.custom_listbox.curselection()
+        if selection:
+            index = selection[0]
+            self.custom_patterns.pop(index)
+            self.custom_listbox.delete(index)
+            self.refresh_file_list()
 
     def run(self):
         self.root.mainloop()
