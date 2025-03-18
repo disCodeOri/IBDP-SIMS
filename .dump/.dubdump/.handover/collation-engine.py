@@ -423,23 +423,26 @@ class FileProcessorGUI:
             current_dir = None
 
             for relative_path in selected_files:
+                # Skip directory entries that are shown in square brackets in the UI
                 if relative_path.startswith('[') and relative_path.endswith(']'):
                     continue
 
                 file_path = os.path.join(source_dir, relative_path)
-                if os.path.basename(file_path) in self.files_to_ignore:
+                
+                # Skip if it's a directory or ignored file
+                if os.path.isdir(file_path) or os.path.basename(file_path) in self.files_to_ignore:
                     continue
 
                 dir_path = os.path.dirname(relative_path)
                 if dir_path != current_dir:
                     if dir_path:
-                        f.write(f"{'='*11}\nDirectory: {dir_path}\n{'='*11}\n\n")
+                        f.write(f"\n{'='*11}\nDirectory: {dir_path}\n{'='*11}\n\n")
                     current_dir = dir_path
 
                 f.write(f"File: {relative_path}\n{'-'*20}\n\n")
 
                 try:
-                    if os.path.getsize(file_path) > 1024 * 1024:
+                    if os.path.getsize(file_path) > 1024 * 1024:  # Skip files larger than 1MB
                         f.write("File too large to include in combined output\n")
                         line_counts[relative_path] = 0
                     else:
