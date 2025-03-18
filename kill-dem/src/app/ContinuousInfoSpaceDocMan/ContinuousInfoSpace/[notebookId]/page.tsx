@@ -925,4 +925,3 @@ const TodoListInterface = () => {
 };
 
 export default TodoListInterface;
-export const runtime = 'edge';
