@@ -183,14 +183,26 @@ class FileProcessorGUI:
         options_frame.pack(fill="x", pady=5)
         ttk.Checkbutton(options_frame, text="Remove Comments", variable=self.remove_comments_var).pack(anchor="w")
         
-        # Generate buttons
-        buttons_frame = ttk.Frame(right_frame)
-        buttons_frame.pack(pady=10)
-        ttk.Button(buttons_frame, text="Generate Both", command=lambda: self.generate('both')).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Structure Only", command=lambda: self.generate('structure')).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Content Only", command=lambda: self.generate('content')).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Line Counts", command=lambda: self.generate('counts')).pack(side="left", padx=5)
+        # Add custom save location option
+        self.custom_save_location = tk.BooleanVar(value=False)
+        ttk.Checkbutton(options_frame, text="Choose Custom Save Location", variable=self.custom_save_location).pack(anchor="w")
         
+        # Replace the Generate buttons section with Save section
+        save_frame = ttk.LabelFrame(right_frame, text="Save", padding="5")
+        save_frame.pack(fill="x", pady=10)
+        
+        # Add checkboxes for different save options
+        self.save_structure = tk.BooleanVar(value=False)
+        self.save_content = tk.BooleanVar(value=False)
+        self.save_line_counts = tk.BooleanVar(value=False)
+        
+        ttk.Checkbutton(save_frame, text="File Structure", variable=self.save_structure).pack(anchor="w")
+        ttk.Checkbutton(save_frame, text="File Contents", variable=self.save_content).pack(anchor="w")
+        ttk.Checkbutton(save_frame, text="Line Counts", variable=self.save_line_counts).pack(anchor="w")
+        
+        # Add the Save button
+        ttk.Button(save_frame, text="Save", command=self.save_selected).pack(pady=10)
+
         # Output log
         log_frame = ttk.LabelFrame(right_frame, text="Output Log", padding="5")
         log_frame.pack(fill="both", expand=True)
@@ -486,25 +498,40 @@ class FileProcessorGUI:
 
         ignore_patterns = self.get_ignore_patterns()
 
+        def get_save_location(default_name):
+            if self.custom_save_location.get():
+                return filedialog.asksaveasfilename(
+                    defaultextension=".txt",
+                    initialfile=default_name,
+                    filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+                )
+            return os.path.join(self.script_dir, default_name)
+
         def process():
             try:
                 if mode == 'counts':
                     content_file = os.path.join(self.script_dir, 'combined_output_temp.txt')
                     line_counts = self.combine_files(folder, content_file)
-                    self.generate_line_counts_file(line_counts)
+                    counts_file = get_save_location('line_counts.txt')
+                    if counts_file:
+                        self.generate_line_counts_file(line_counts)
                     if os.path.exists(content_file):
                         os.remove(content_file)
                 else:
                     if mode in ['both', 'structure']:
-                        structure_file = os.path.join(self.script_dir, 'file_structure.txt')
-                        self.generate_tree(folder, structure_file, ignore_patterns)
-                        self.log_message(f"Generated structure file: {structure_file}")
+                        structure_file = get_save_location('file_structure.txt')
+                        if structure_file:
+                            self.generate_tree(folder, structure_file, ignore_patterns)
+                            self.log_message(f"Generated structure file: {structure_file}")
 
                     if mode in ['both', 'content']:
-                        content_file = os.path.join(self.script_dir, 'combined_output.txt')
-                        line_counts = self.combine_files(folder, content_file)
-                        self.log_message(f"Generated content file: {content_file}")
-                        self.generate_line_counts_file(line_counts)
+                        content_file = get_save_location('combined_output.txt')
+                        if content_file:
+                            line_counts = self.combine_files(folder, content_file)
+                            self.log_message(f"Generated content file: {content_file}")
+                            counts_file = get_save_location('line_counts.txt')
+                            if counts_file:
+                                self.generate_line_counts_file(line_counts)
             except Exception as e:
                 self.log_message(f"Error: {str(e)}")
 
@@ -557,6 +584,22 @@ class FileProcessorGUI:
             self.root.mainloop()
         finally:
             self.stop_monitoring()
+
+    # Add new method to handle saving selected options
+    def save_selected(self):
+        if not any([self.save_structure.get(), self.save_content.get(), self.save_line_counts.get()]):
+            self.log_message("Please select at least one save option!")
+            return
+            
+        if self.save_structure.get() and self.save_content.get():
+            self.generate('both')
+        elif self.save_structure.get():
+            self.generate('structure')
+        elif self.save_content.get():
+            self.generate('content')
+            
+        if self.save_line_counts.get():
+            self.generate('counts')
 
 class FileSystemHandler(FileSystemEventHandler):
     def __init__(self, callback):
