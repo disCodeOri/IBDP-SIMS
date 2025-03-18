@@ -590,16 +590,41 @@ class FileProcessorGUI:
         if not any([self.save_structure.get(), self.save_content.get(), self.save_line_counts.get()]):
             self.log_message("Please select at least one save option!")
             return
+        
+        # Store current selections before generating files
+        current_selections = self.checkbox_tree.get_selected()
+        
+        # Temporarily disable file monitoring
+        self.stop_monitoring()
+        
+        try:
+            if self.save_structure.get() and self.save_content.get():
+                self.generate('both')
+            elif self.save_structure.get():
+                self.generate('structure')
+            elif self.save_content.get():
+                self.generate('content')
             
-        if self.save_structure.get() and self.save_content.get():
-            self.generate('both')
-        elif self.save_structure.get():
-            self.generate('structure')
-        elif self.save_content.get():
-            self.generate('content')
+            if self.save_line_counts.get():
+                self.generate('counts')
+                
+            # Wait a short moment for files to be generated
+            self.root.after(100, lambda: self.restore_selections(current_selections))
             
-        if self.save_line_counts.get():
-            self.generate('counts')
+        except Exception as e:
+            self.log_message(f"Error during save: {str(e)}")
+
+    def restore_selections(self, selections):
+        try:
+            for path in selections:
+                if path in self.checkbox_tree.vars:
+                    self.checkbox_tree.vars[path].set(True)
+            # Resume monitoring after restoring selections
+            folder = self.folder_path.get()
+            if folder:
+                self.start_monitoring(folder)
+        except Exception as e:
+            self.log_message(f"Error restoring selections: {str(e)}")
 
 class FileSystemHandler(FileSystemEventHandler):
     def __init__(self, callback):
