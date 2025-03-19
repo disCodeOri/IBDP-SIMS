@@ -103,7 +103,7 @@ class FileProcessorGUI:
         # Variables
         self.folder_path = tk.StringVar()
         self.remove_comments_var = tk.BooleanVar(value=False)
-        self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__', 'package-lock.json', '.ico'}
+        self.default_ignores = {'.git', 'node_modules', '.next', '__pycache__', 'package-lock.json', '.ico', 'pastebin'}
         self.ignore_vars = {}
         self.files_to_ignore = {"collation-engine.py", "combined_output.txt", "file_structure.txt"}
         
