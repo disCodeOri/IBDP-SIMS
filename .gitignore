@@ -1,5 +1,6 @@
 # handover
 combined_output.txt
+file_structure.txt
 line_counts.txt
 **/node_modules/**
 /crac45-discord-bot/.env
