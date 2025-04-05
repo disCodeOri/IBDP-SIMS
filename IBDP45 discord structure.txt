@@ -1,0 +1,27 @@
+Discord
+- Channel structure
+- Boiler plate information for the channel purposes
+- Bot
+	Member data collection when entry
+		Subject selections
+		Student or alumni?
+		Current grades or alumni grades
+		Data collection for automated personal AI generated msgs from the bot to painfully remind the user about their goals.
+			Purpose of joining the community (what do you hope to achieve?)
+			Why do you want to achieve that? OR What drives you to achieve that?
+			What made you pick this goal up?
+			Why do you think you are qualified?
+		
+	Buddy management and accountability
+	VC management
+		breaks and study session duration tracking
+		music playing for music enabled VC study channels and for music 
+	Tournaments and duels management
+	Data tracking and metrics collection on user performance on tasks (database storage)
+		VC data
+		Tournaments and duels data
+
+Story 1:
+Event: User joins the server.
+
+User can only see the rules q

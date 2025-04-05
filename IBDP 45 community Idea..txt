@@ -1,0 +1,126 @@
+I’m planning to start an online community for the most driven and individuals who want to badly badly badly achieve a 45/45 in the IBDP programme. Without the using any illicit methods whatsoever (stuff like performance enhancing drugs, cheating devices and methods, use of any exam paper leaks, paying someone to do you work and passing it as your own, etc…).
+
+I plan to have two community avenues, one on Reddit and the other is on discord. The Reddit community is the main community and discord is the supporting character, allowing more intense and immediate discussions on stuff.
+
+I need to build an application suite for this community so that the communities are conducive for the student to attain a 45/45.
+
+Here’s the entire vision for the entire community system.
+
+Branches:
+- Reddit (subReddit will be called “r/IBDP45”. No other name will be used)
+- Discord (called “r/IBDP45” as well for consistency)
+- Web Portal (UI design and other aspect will be decided upon later)
+
+Reddit:
+- collab doc for all contingencies and doors to move forward on.
+- Posts
+    - Allowance
+        - 
+Discord
+- Individual threads for each user/community-member in a specific but common channel for progress updates
+- Assigned buddies for accountability
+    - Bot sends reminders for accountability checkups between the buddies.
+- possible competitive sprints between buddies and buddy pairs.
+- Bot
+    - buddy assignment/re-assignment, check ups and competitions between buddies and buddy pairs.
+    - Streaks and point based progress management.
+        - Points for each task will either be assigned by the buddy for the other buddy’s tasks or use a preset of point combinations.
+    - Reports to the batcave web portal.
+    - VC
+        - Study time tracker.
+        - Records breaks from either a message to the bot or a keyword listener for the audio in the VC. (Advanced)
+        - Music streaming
+            - Input the links for the Spotify playlist and the song will be played on the VC.
+            - Side note: I will not be adding this feature to the web portal as it might just be redundant to do so. When the users are likely to be fluent with the general workflow of discord, the web portal is just a supplementary portal for them. 
+
+Batcave web portal. (personalised for every community member that signs up {need to decide what account system will be used for this, the best option would be discord account signups but I'm not sure what limitations are there for this.})
+- Analytics on discord study sessions.
+    - Marty lobdell graph on energy showing the data recorded of all the breaks. (When the user inputs the data for the breaks and session start durations, the user will also be prompted to rate their energy levels at that point of time) calculation of optimal breaks (advanced)
+    - Productivity report
+        - Tasks completed from planned set of tasks
+        - also for better morale boost for the ones that go really hard on themselves:
+            - An input for the expected rate/percentage of completion (EPC). (Ex: 80% EPC means that 80% of all the planned tasks will be completed in a NORMAL day of work.)
+            - An input for the acceptable failure rate/percentage of the tasks completed. (Ex: 10% failure rate means that there is an expected of 10% of the tasks that will not be completed in the literal worst case scenario.)
+            - An input for the stretch rate/percentage. (Ex: 10% stretch rate will mean that in the ideal case conditions. There is a possibility that 10% more of the EPC will be completed, i.e. 90% of the tasks will be completed.)
+
+
+
+
+More stuff for the discord:
+slowmode control bot - need a bot that can dynamically modify the slowmode as per the msg rate of the channels.
+
+staff:
+roles:
++ admin
++ mod
++ trial mod
+
+Staff applications:
++ people that understand the server's workings
++ emotionally mature ppl
++ people with sound judgement for appropriate punishments
+
+Staff security
+- 2FA enabled
+- https://getcoinplate.com/bip39-seed-phrase-mnemonics-generator-offline-online-tool/ - seed phrases for account migrations
+- Staff satisfaction
+ - staff breaks
+
+
+You don't want a huge discord server, so consider creating branch servers like some hogwarts houses type of stuff, where the community remains a small place so that things are more intimate and stronger relationships are formed. a fat ass server only means a degradation in quality of chats.
+
+I'm thinking of limiting the server size to 3000 members, excluding me and interserver mods, but including the local mods of the server.
+
+
+
+I also mean to pass this on as my IBDP CS HL IA:
+So here's the criteria for complexity:
+Here is the IA complexity list. We also need to make sure that the documentation part doesn't become a problem later on after this sprint of development.
+<>
+IBDP CS HL IA: How to get marks for ‘complexity’
+In 2014 the Computer Science was dramatically updated, but we are still coding Java and bits that were complex before, appear to still count as ‘complex’.
+The rule of thumb used to be that a HL project had to have at least 10 of the following 18 aspects to be counted as ‘sufficiently complicated’. They are:
+1. Adding data to an instance of the RandomAccessFile class by direct manipulation of the file pointer using the seek method
+2. Deleting data from an instance of the RandomAccessFile class by direct manipulation of the file pointer using the seek method. (Data primitives or
+objects may be shuffled or marked as deleted by use of a flag field. Therefore files may be ordered or unordered)
+3. Searching for specified data in a file
+4. Recursion
+5. Merging two or more sorted data structures
+6. Polymorphism
+7. Inheritance
+8. Encapsulation
+9. Parsing a text file or other data stream
+10. Implementing a hierarchical composite data structure. A composite data structure in this definition is a class implementing a record style data
+structure. A hierarchical composite data structure is one that contains more than one element and at least one of the elements is a composite data
+structure. Examples are, an array or linked list of records, a record that has one field that is another record, or an array
+11.Use of additional libraries (such as utilities and graphical libraries not included in appendix 2 Java Examination Tool Subsets)
+12. Inserting data into an ordered sequential file without reading the entire file into RAM
+13. Deleting data from a sequential file without reading the entire file into RAM
+14. Arrays of two or more dimensions.
+IB Computer Science DGS Computer Science Dept
+15.to 18. Up to four aspects can be awarded for the implementation of abstract data types (ADTs)
+
+ADT Table:
+```markdown
+| ADT Name | 1 aspect | 2 aspects | 3 aspects | 4 aspects |
+|----------|----------|-----------|------------|------------|
+| General criteria | An incomplete ADT is implemented. | An ADT is implemented with all key methods implemented. | An ADT is implemented that includes some error checking. | An ADT is implemented completely and robustly. |
+| Lists, implemented using references (such as, a dynamically linked list). | A node style class with appropriate constructors and methods to set and get data elements. | Methods are implemented to add at / remove from the tail and the head of the list. | Proper checks are made for errors such as attempting to get an element from an empty list or inserting the same element twice. | All error conditions are checked for, and all appropriate methods are implemented. For a doubly linked list these could be: `size`, `isEmpty`, `first`, `last`, `before`, `after`, `insertHead`, `insertTail`, `insertBefore`, `insertAfter` |
+| Tree (simple, ordered binary tree is sufficient using arrays or dynamically linked object instances) | A class or interface with appropriate constructors and methods to set and get data elements. | Methods are implemented to add at / remove from the correct point in the tree. | Proper checks are made for errors such as attempting to get an element from an empty tree or not inserting the same element twice. | All error conditions are checked for, all appropriate methods are implemented. For a simple ordered, binary tree these could be: `size`, `isEmpty`, `root`, `parent`, `leftChild`, `rightChild` |
+| Stack implemented dynamically or statically. | A class or interface with appropriate constructors and methods to push and pop items. | Methods to test for full and empty stack are added. | Proper checks are made for errors such as attempting to get an element from an empty stack. | Probable methods `push`, `pop`, `top`, `isEmpty`, `isFull`, `size` |
+| Queue implemented dynamically or statically | A class or interface with appropriate constructors and methods to enqueue and dequeue items. | Methods to test for full and empty queue are added. | Proper checks are made for errors such as attempting to get an element from an empty queue. | Probable methods `enqueue`, `dequeue`, `isEmpty`, `isFull`, `size` |
+| Hash table implemented in an array. | A class or interface with appropriate constructors and methods to insert and remove items. | Methods to test for full table and duplicate keys are added. | Proper checks are made for errors such as attempting to get a non-existent key. Hashes are dealt with properly | Probable methods `hashFunction`, `insertKey`, `removeKey`, `isDuplicate`, `isEmpty`, `isFull`, `size` |
+```
+
+The “Non-trivial” principle means that the programmer must demonstrate that the program benefits from the use of the aspect.
+Where one aspect includes others, all are credited (always provided that the use is non-trivial, well-documented and appropriate).
+<>
+
+We need to decide every nook and cranny of the application and it's features right away and espectially how each of the Complexities are met.
+
+Just for your information this discord bot will be for the IBDP 45 community thing and the story will be that the client needs a bot that can meet the discord server members' needs for studying and collaboration and accountability.
+
+Also I'm gonna call this bot `crac45` with the project folder for this being `crac45-discord-bot`
+
+
+We should first make a mega document that details every single aspect of the IBDP 45 community, since I still want to fully build it. I would like ot have a document that really goes deep into the trenches of detail to literally lay out the entire vision of hte community.
