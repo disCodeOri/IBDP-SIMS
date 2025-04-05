@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "cookieJar",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "position.y",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "position.x",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

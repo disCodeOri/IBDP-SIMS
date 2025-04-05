@@ -1,0 +1,370 @@
+/* Base window container with smooth animations and modern styling */
+.Window {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 500px;
+  height: 400px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  animation: AppearWindow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Special states for window interactions */
+.Window.Window__moving {
+}
+
+/* Transition state while window is being staged */
+.Window.Window__staging {
+  transition: transform 0.25s, width 0.5s, height 0.5s, opacity 0.75s;
+}
+
+/* Enhanced visual feedback for the currently focused window */
+.Window.Window__focused {
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Staged window appearance with 3D transform effects */
+.Window.Window__staged {
+  animation: AppearWindow 0.5s forwards;
+  position: static;
+  transition: all 0.5s !important;
+  z-index: 100;
+}
+.Window.Window__snapMoving {
+}
+
+/* Overlay layer for staged windows to prevent unwanted interactions */
+.Window_stagedLayer {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  content: " ";
+  display: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+.Window.Window__staged .Window_stagedLayer {
+  display: flex;
+}
+
+/* Interactive 3D effects for staged windows with hover states */
+.Window_stagedWindow {
+  position: relative;
+  transition: all 0.5s;
+  transform: rotateY(20deg);
+  margin-bottom: 25px;
+  z-index: 100;
+  overflow: visible;
+}
+
+/* Enhanced hover effect with zoom and perspective adjustment */
+.Window_stagedWindow:hover {
+  transform: rotateY(0) translateX(10px);
+  scale: 1.2;
+  z-index: 200;
+}
+
+/* Animation keyframes for window transitions */
+@keyframes AppearWindow {
+  0% {
+    opacity: 0;
+    scale: 0.25;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes DisappearWindow {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.25;
+  }
+}
+
+/* Title bar styling with controls and draggable area */
+.TitleBar {
+  width: 100%;
+  height: 30px;
+  background: whitesmoke;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  border-bottom: rgb(204, 204, 204) 1px solid;
+  user-select: none;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Prevent text selection during window interactions */
+.TitleBar,
+.TitleBar * {
+  cursor: default;
+}
+.TitleBar__dragging {
+}
+
+.TitleBar_stagingLayer {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  content: " ";
+  display: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+.Window.Window.Window__staging .TitleBar_stagingLayer {
+  display: flex;
+}
+
+/* Window control buttons (close, minimize, maximize) */
+.TitleBar .Buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 5px;
+}
+
+/* Individual button styling with hover animations */
+.TitleBar .Buttons .Button {
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+  margin-left: 5px;
+  font-size: 9px;
+  color: white;
+  line-height: 15px;
+  text-align: center;
+  transition: all 0.25s;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.TitleBar .Buttons .Button:hover {
+  animation: Bubble 0.25s forwards;
+  box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+}
+
+.Title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 10px 0px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 5px;
+}
+
+.CloseButton {
+  background-color: #ef4444;
+  color: white !important;
+}
+
+.StageButton {
+  background-color: #ffc260;
+}
+
+/* Content area styling with placeholder support */
+.Content {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add this near the Content styles */
+.Content [contenteditable].empty-content:before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.3);
+  font-style: italic;
+  cursor: text;
+  position: absolute;
+}
+
+/* Fluid content layout for scrollable areas */
+.Content_fluid {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: start;
+}
+
+.Content_unfocusedLayer {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  content: " ";
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.Window.Window__focused .Content_unfocusedLayer {
+  display: none;
+}
+
+.Resizers {
+}
+
+/* Window resize handles positioning and styling */
+.Resizer {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: Disappear 0.5s forwards;
+}
+
+/* Directional resize handles with appropriate cursors */
+.Resizer__bottom {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.Resizer__top {
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.Resizer__left {
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.Resizer__right {
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.Resizer__bottomLeft {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+.Resizer__bottomRight {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}
+
+.Resizer__topLeft {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.Resizer__topRight {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+/* Animation for resize handles appearance/disappearance */
+.Window.Window__mayResize .Resizer,
+.Window.Window__showResizers .Resizer {
+  animation: AppearResizer 0.5s forwards;
+  pointer-events: all;
+  transition: scale 0.25s;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.Window.Window__mayResize .Resizer:hover,
+.Window.Window__showResizers .Resizer:hover {
+  scale: 1.25 !important;
+}
+
+.Window.Window__mayResize,
+.Window.Window__mayResize * {
+  user-select: none;
+}
+
+/* Interactive animations */
+@keyframes Bubble {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.25;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes AppearResizer {
+  0% {
+    opacity: 0;
+    scale: 0;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.25;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes Disappear {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.25;
+  }
+  100% {
+    opacity: 0;
+    scale: 0;
+  }
+}
