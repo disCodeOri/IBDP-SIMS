@@ -2,7 +2,7 @@
 
 > **Note from the developer:** I built this application at 17 as my final project (Internal Assessment) for the IBDP Computer Science HL course. It was designed and developed from the ground up for a specific client, a student who needed a digital solution to a chaotic and inefficient paper-based workflow. This project represents my passion for solving real-world problems with technology and showcases my early skills in full-stack development, UI/UX design, and client-centric product development.
 
-[![Demo video](https://raw.githubusercontent.com/disCodeOri/repository/main/thumbnail.jpg)](https://raw.githubusercontent.com/disCodeOri/repository/main/demo.mp4)
+[![Demo video](https://raw.githubusercontent.com/disCodeOri/IBDP-SIMS/main/thumbnail.jpg)](https://raw.githubusercontent.com/disCodeOri/IBDP-SIMS/main/demo.mp4)
 
 ## ✨ Core Features
 
