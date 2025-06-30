@@ -1,9 +1,0 @@
-- use https://playwright.dev/ to ensure that your application works like it is supposed to, this is essentially automating the entire process of verifying that your code works as intended
-
-Create a pseudo code for yourself about whatever technologies that you will be using, make the AI generate that.
-You can make it look like anything that you want even a cooking recipe. But practically you'd want it to look like yaml.
-You can use this to write the pseudo code for the component and then have it translated into actual react components.
-This allows you to create functionality in any programming language that you want without actually knowing it.
-
-"Goldman Sachs just released a report saying that 300 million jobs could be affected by AI in the near future but there's no reason to be afraid. Software systems in real life are complex beyond belief and not even state-of-the-art ai will want to touch that code I do believe that AI will make writing code significantly easier but building complex software that powers the world will still be done by humans in the foreseeable future" - Fireship
-

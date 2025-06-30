@@ -29,7 +29,7 @@
           command = [
             "sh"
             "-c"
-            "cd kill-dem && PORT=$PORT npm run dev"
+            "cd ibdp-sims && PORT=$PORT npm run dev"
           ];
           manager = "web";
         };
@@ -50,7 +50,7 @@
     workspace = {
       # Runs when a workspace is first created
       onCreate = {
-        npm-install = "cd kill-dem && npm install";
+        npm-install = "cd ibdp-sims && npm install";
         # Example: install JS dependencies from NPM
         # npm-install = "npm install";
       };
