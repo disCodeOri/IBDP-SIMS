@@ -1,6 +1,6 @@
 # IBDP-SIMS: Personal Performance Optimization Platform
 
-> **Note from the developer:** I built this application at 17 as my final project (Internal Assessment) for the IBDP Computer Science HL course. It was designed and developed from the ground up for a specific client, a student who needed a digital solution to a chaotic and inefficient paper-based workflow. This project represents my passion for solving real-world problems with technology and showcases my early skills in full-stack development, UI/UX design, and client-centric product development.
+> **Note from the developer:** I built this application at 17 as my final project (Internal Assessment) for the IBDP Computer Science HL course. It was designed and developed from the ground up for a specific client, a student who needed a digital solution to a chaotic and inefficient paper-based workflow. This project represents and showcases my early skills in full-stack development, UI/UX design, and client-centric product development.
 
 Demo video:
 
@@ -93,8 +93,8 @@ Follow these instructions to get a local copy of the project up and running.
 1.  **Clone the repository:**
 
     ```sh
-    git clone https://github.com/your-username/ibdp-cs-ia-sims.git
-    cd ibdp-cs-ia-sims
+    git clone https://github.com/your-username/ibdp-sims.git
+    cd ibdp-sims
     ```
 
 2.  **Install dependencies:**
